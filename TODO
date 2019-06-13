@@ -1,0 +1,10 @@
+TENSOR:
+    ☐ implement slice argument (use a struct with one, two or three arguments? a tuple<size_t, size_t>).
+    ☐ implement request_slice
+    ☐ operator(): get subslice<N-1> when argument is size_t
+    ☐ operator(): get subslice<N> when argument is slice (size_t t1, size_t t2) and t1<t2
+    ☐ operator(): get subslice<N> when argument is slice (size_t t1, size_t step, size_t t2) and t1<t2
+    ☐ operator(): get subslice<N-1> when argument is slice (size_t t1, size_t t2) and t1==t2
+    ☐ operator(): get subslice<N-1> when argument is slice (size_t t1, size_t step, size_t t2) and t1==t2
+    ☐ Function to traverse the elements f a TensorRef
+    ☐ Add tensor operations (resize, reshape, (transpose?))
