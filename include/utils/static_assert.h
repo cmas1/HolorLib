@@ -1,33 +1,31 @@
-//  ____   _____   _____   __       __   __   __   ______       _______   _____   _____   __       _____ 
-//  |   \ |   __| |  _  \ |  |     |  | |  \ |  | |  ____|     |__   __| |  _  | |  _  | |  |     |   __|
-//  ____/  \  \   | |_| | |  |     |  | |       | |  |__          | |    | | | | | | | | |  |      \  \  
-//  |   \  _\  \  |  ___/ |  |___  |  | |  |\   | |  |___         | |    | |_| | | |_| | |  |___   _\  \ 
-//  ____/ |_____| |__|    |______| |__| |__| \__| |______|        |_|    |_____| |_____| |______| |_____|
+// This file is part of Holor, a C++ template library for multi-dimensional containers
 
-// This file is part of BSTools, a lightweight C++ template library that implements B-Splines
+// Copyright 2020 Carlo Masone
 
-// Copyright 2019 Carlo Masone
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to 
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is 
+// furnished to do so, subject to the following conditions:
 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 
-//     http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// DEALINGS IN THE SOFTWARE.
 
 
-#ifndef STATIC_ASSERT_H
-#define STATIC_ASSERT_H
+
+#ifndef HOLOR_STATIC_ASSERT_H
+#define HOLOR_STATIC_ASSERT_H
 
 #include <type_traits>
-#include "../polynomials/polynomial.h"
-#include "../polynomials/polynomial_sparse.h"
 
 // TODO: add documentation
 
@@ -37,7 +35,7 @@
  *
  * This header contains utils related to static assertions used within BSTools.
  */
-namespace bst{
+namespace holor{
 
 namespace assert{
     /****************************************************************
@@ -65,23 +63,6 @@ namespace assert{
         return b || some(args...);
     }
 
-    /****************************************************************
-                        IS_POLYNOMIAL
-    ****************************************************************/
-
-    template<typename...>
-    struct is_polynomial: std::false_type{};
-
-    template<typename T>
-    struct is_polynomial<Polynomial<T>>: std::true_type{};
-
-    template<typename T>
-    struct is_polynomial<PolynomialSparse<T>>: std::true_type{};
-
-    template<typename T>
-    constexpr bool is_polynomial_v(){
-        return is_polynomial<T>::value;
-    }
 
     /****************************************************************
                         HAS_FUNCTIONS
@@ -95,32 +76,32 @@ namespace assert{
     struct substitution_succeeded<substitution_failure>: std::false_type {};
 
 
-    //----------------     IS PRINTABLE   -------------------------
-    template<typename T>
-    struct get_print{
-        private:
-            std::ostream& os;
+    // //----------------     IS PRINTABLE   -------------------------
+    // template<typename T>
+    // struct get_print{
+    //     private:
+    //         std::ostream& os;
 
-            template<typename X>
-            static auto check(X const& x) -> decltype(operator<<(os, x));
+    //         template<typename X>
+    //         static auto check(X const& x) -> decltype(operator<<(os, x));
 
-            static substitution_failure check(...);
+    //         static substitution_failure check(...);
         
-        public:
-            using type = decltype(check(std::declval<T>()));
-    };
+    //     public:
+    //         using type = decltype(check(std::declval<T>()));
+    // };
 
-    template<typename T>
-    struct is_printable: substitution_succeeded<typename get_print<T>::type>{};
+    // template<typename T>
+    // struct is_printable: substitution_succeeded<typename get_print<T>::type>{};
 
-    template<typename T>
-    constexpr bool is_printable_v(){
-        return is_printable<T>::value;
-    }
+    // template<typename T>
+    // constexpr bool is_printable_v(){
+    //     return is_printable<T>::value;
+    // }
 
 } //namespace assert
 
-} //namespace bst
+} //namespace holor
 
 
-#endif // STATIC_ASSERT_H
+#endif // HOLOR_STATIC_ASSERT_H
