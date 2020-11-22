@@ -52,7 +52,7 @@ namespace impl{
     */
     // template<typename... Args>
     // constexpr bool requesting_slice(){
-    //     return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, slice_request>() || std::is_convertible<Args, slice_request>())...) && assert::some(std::is_same<Args, slice_request>()...);
+    //     return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, impl::slice_request>() || std::is_convertible<Args, impl::slice_request>())...) && assert::some(std::is_same<Args, impl::slice_request>()...);
     // }
 
 

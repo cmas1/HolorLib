@@ -22,6 +22,7 @@
 
 
 #include "../../include/holor/holor.h"
+#include "../../include/holor/holor_ref.h"
 #include "../../include/holor/slice.h"
 #include <iostream>
 #include <vector>
@@ -74,6 +75,14 @@ int main(){
     auto bubu = impl::slice_dim<0>();
     Slice<1> row = bubu(0,my_slice);
     std::cout << "pluto.col(0) = " << pluto.data()[row(0)] << ", " << pluto.data()[row(1)]  << "\n";
+
+
+    HolorRef<int,2> pluto_ref(pluto.descriptor(), pluto.data());
+    std::cout << "pluto_ref(0,2) = " << pluto_ref(0,2) << "\n";
+    std::cout << "pluto_ref(1,1) = " << pluto_ref(1,1) << "\n";
+
+    pluto_ref(0,2) = 11;
+    std::cout << "pluto(0,2) = " << pluto(0,2) << "\n";
 
     return 0;
 }

@@ -22,31 +22,30 @@
 
 
 
-#ifndef TENSOR_REF_H
-#define TENSOR_REF_H
+#ifndef HOLOR_REF_H
+#define HOLOR_REF_H
 
 #include <cstddef>
-#include <vector>
-#include <type_traits>
+// #include <type_traits>
 
-#include "tensor_initializer.h"
-#include "tensor_slice.h"
-#include "tensor_predicates.h"
-#include "tensor_utils.h"
-
+// #include "tensor_initializer.h"
+#include "slice.h"
+// #include "tensor_predicates.h"
+// #include "tensor_utils.h"
 
 
-namespace bst{
 
-/// TensorRef class
+namespace holor{
+
+/// HolorRef class
 /*!
  * Class providing a dense implementation of a reference general n-dimensional tensor container.
- * Unlike a Tensor object, a TensorRef object does not own its elements. In practice, whereas a Tensor has a vector containing its elements,
- * a TensorRef contains a pointer to the elements of a Tensor objects.
- * The application of TensorRef is to represent subtensors of a Tensor.
+ * Unlike a Tensor object, a HolorRef object does not own its elements. In practice, whereas a Tensor has a vector containing its elements,
+ * a HolorRef contains a pointer to the elements of a Tensor objects.
+ * The application of HolorRef is to represent subtensors of a Tensor.
  */
 template<typename T, size_t N>
-class TensorRef{
+class HolorRef{
     public:
         /****************************************************************
                                 ALIASES
@@ -60,14 +59,14 @@ class TensorRef{
                 CONSTRUCTORS, ASSIGNEMENTS AND DESTRUCTOR
         ****************************************************************/
         /*!
-        *   TensorRef constructor.
+        *   HolorRef constructor.
         * 
         * \param slice Tensorslice describing how the data is stored in memory
         * \param ptr pointer to the stored elements
         * 
         * \return A Tensor whose elements have the default value for their type.
         */
-        TensorRef(const TensorSlice<N>& slice, T* ptr): layout_{slice}, dataptr_{ptr} {};
+        HolorRef(const Slice<N>& slice, T* ptr): layout_{slice}, dataptr_{ptr} {};
 
       
 
@@ -171,31 +170,30 @@ class TensorRef{
         * Access tensor element subscripting with integers without range check
         */
         template<typename... Args>
-        std::enable_if_t<tensor_impl::requesting_element<Args...>(), T&> operator()(Args... args){
+        std::enable_if_t<impl::requesting_element<Args...>(), T&> operator()(Args... args){
             return *(dataptr_ + layout_(args...));
         }
 
 
         //TODO: implement const version
-        // /*
-        // * ccess tensor element subscripting with integers without range check
-        // */
-        // template<typename... Args>
-        // std::enable_if_t<tensor_impl::requesting_element<Args...>(), const T> operator()(Args... args) const{
-        //     std::cout<<"pippo ";
-        //     return data_[layout_(args...)];
-        // }
-
-
         /*
-        * Access tensor element subscripting with integers with range check
+        * ccess tensor element subscripting with integers without range check
         */
         template<typename... Args>
-        std::enable_if_t<tensor_impl::requesting_element<Args...>(), T&> at(Args... args){
-            dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstRuntimeError>( tensor_impl::check_bounds(layout_, args...), \
-                EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
-            return *(dataptr_ + layout_(args...));
+        std::enable_if_t<impl::requesting_element<Args...>(), const T> operator()(Args... args) const{
+            return dataptr_[layout_(args...)];
         }
+
+
+        // /*
+        // * Access tensor element subscripting with integers with range check
+        // */
+        // template<typename... Args>
+        // std::enable_if_t<impl::requesting_element<Args...>(), T&> at(Args... args){
+        //     dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstRuntimeError>( tensor_impl::check_bounds(layout_, args...), \
+        //         EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
+        //     return *(dataptr_ + layout_(args...));
+        // }
 
 
         /****************************************************************
@@ -208,7 +206,7 @@ class TensorRef{
         * Slice that describes the memory layout of the Tensor, i.e. the number of elements along each dimension,
         * the total number of elements, the offset and the strides for iterating through the vector containing the actual data
         */
-        TensorSlice<N> layout_;
+        Slice<N> layout_;
 
 
         /*
@@ -217,11 +215,11 @@ class TensorRef{
         T* dataptr_;
 
     private:
-        template<typename X, size_t NN>
-        friend std::ostream& operator<<(std::ostream& os, const TensorRef<X,NN>& t);
+        // template<typename X, size_t NN>
+        // friend std::ostream& operator<<(std::ostream& os, const HolorRef<X,NN>& t);
 
-        template<typename X, size_t NN>
-        friend std::ostream& print(std::ostream& os, const TensorRef<X,NN>& t);
+        // template<typename X, size_t NN>
+        // friend std::ostream& print(std::ostream& os, const HolorRef<X,NN>& t);
 };
 
 
@@ -231,43 +229,43 @@ class TensorRef{
 /****************************************************************
                         OPERATORS
 ****************************************************************/
-template<typename T, size_t N>
-std::ostream& print(std::ostream& os, const T* ptr, const TensorSlice<N>& ts){
-    os << "[";
-    for (auto i = 0; i<ts.lengths_[0]-1; i++){
-        auto tmp = tensor_impl::slice_dim<0>();
-        TensorSlice<N-1> row = tmp(i, ts);
-        print(os, ptr, row );
-        os << ", ";
-    }
-    auto tmp = tensor_impl::slice_dim<0>();
-    TensorSlice<N-1> row = tmp(ts.lengths_[0]-1, ts);
-    print(os, ptr, row );
-    os << "]";
-    return os;
-}
+// template<typename T, size_t N>
+// std::ostream& print(std::ostream& os, const T* ptr, const TensorSlice<N>& ts){
+//     os << "[";
+//     for (auto i = 0; i<ts.lengths_[0]-1; i++){
+//         auto tmp = tensor_impl::slice_dim<0>();
+//         TensorSlice<N-1> row = tmp(i, ts);
+//         print(os, ptr, row );
+//         os << ", ";
+//     }
+//     auto tmp = tensor_impl::slice_dim<0>();
+//     TensorSlice<N-1> row = tmp(ts.lengths_[0]-1, ts);
+//     print(os, ptr, row );
+//     os << "]";
+//     return os;
+// }
 
 
-template<typename T>
-std::ostream& print(std::ostream& os, const T* ptr, const TensorSlice<1>& ts){
-    os << "[";
-    for (auto i = 0; i<ts.lengths_[0]-1; i++){
-        os << *(ptr + ts(i)) << ", ";
-    }
-    os << *(ptr + ts(ts.lengths_[0]-1) ) ;
-    os << "]";
-    return os;
-}
+// template<typename T>
+// std::ostream& print(std::ostream& os, const T* ptr, const TensorSlice<1>& ts){
+//     os << "[";
+//     for (auto i = 0; i<ts.lengths_[0]-1; i++){
+//         os << *(ptr + ts(i)) << ", ";
+//     }
+//     os << *(ptr + ts(ts.lengths_[0]-1) ) ;
+//     os << "]";
+//     return os;
+// }
 
 
 
-template<typename T, size_t N>
-std::ostream& operator<<(std::ostream& os, const TensorRef<T,N>& t){
-    // static_assert(is_printable_v<T>, "operator<<: element of the tensor are not printable.");
-    return print(os, t.dataptr_, t.layout_);
-}
+// template<typename T, size_t N>
+// std::ostream& operator<<(std::ostream& os, const HolorRef<T,N>& t){
+//     // static_assert(is_printable_v<T>, "operator<<: element of the tensor are not printable.");
+//     return print(os, t.dataptr_, t.layout_);
+// }
 
 
 } //namespace bst
 
-#endif // TENSOR_REF_H
+#endif // HOLOR_REF_H

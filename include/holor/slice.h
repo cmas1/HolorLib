@@ -534,6 +534,20 @@ namespace impl{
             return res;
         }
     };
+
+
+    struct slice_request{
+        size_t start_;
+        size_t end_;
+        size_t step_;
+
+        slice_request(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
+            // dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstInvalidArgument>( end>start, \
+            //         EXCEPTION_MESSAGE("slice_request: invalid argument. end<start") );
+            // dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstInvalidArgument>( step>0, \
+            //         EXCEPTION_MESSAGE("slice_request: invalid argument. step>0") );
+        }
+    };
 }
 
 
