@@ -313,7 +313,7 @@ class Holor{
         * 
         */
         template<typename... Args>
-        auto operator()(Args... args) -> enable_if_t<holor_impl::requesting_slice<Args...>(), int> {
+        auto operator()(Args... args) -> std::enable_if_t<holor_impl::requesting_slice<Args...>(), int> {
             // HolorRef<T,n_slices> res;
         };
 
