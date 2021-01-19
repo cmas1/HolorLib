@@ -46,14 +46,6 @@ namespace impl{
     }
 
 
-    /*
-    * function used to verify that some of the subscripts used to access the elements of a tensor are slices
-    * return \p true if some of the arguments are slices
-    */
-    // template<typename... Args>
-    // constexpr bool requesting_slice(){
-    //     return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, impl::slice_request>() || std::is_convertible<Args, impl::slice_request>())...) && assert::some(std::is_same<Args, impl::slice_request>()...);
-    // }
 
 
     /*

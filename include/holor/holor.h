@@ -40,6 +40,8 @@
 
 namespace holor{
 
+
+
 /// Holor class
 /*!
  * Class providing a dense implementation of a general n-dimensional tensor container.
@@ -310,14 +312,15 @@ class Holor{
         /*
         * 
         */
-        //TODO it cannot work like this, the return type cannot be deduced dynamically
-        // template<typename... Args>
-        // auto operator()(Args... args) -> enable_if_t<holor_impl::requesting_slice<Args...>(), int> {
-        //     const size_t n_slices = count_slices(args...);
-        //     std::cout << n_slices <<  "    SIIIIIIIIIIIIIIIII\n";
-        //     // HolorRef<T,n_slices> res;
-        //     return 1;
-        // };
+        template<typename... Args>
+        auto operator()(Args... args) -> enable_if_t<holor_impl::requesting_slice<Args...>(), int> {
+            // HolorRef<T,n_slices> res;
+        };
+
+
+
+
+
 
         
         // /*
@@ -483,6 +486,28 @@ class Holor{
 // }
 
 
+//CMCMCM Work in progress
+namespace impl{
+    template<size_t M, typename Type, typename FirstArg, typename... Args>
+    auto get_slice(HolorRef<M, Type> ref_container, FirstArg first, Args... args){
+        if constexpr (){
+
+        }else{
+
+        }
+    }
+
+    template<size_t M, typename Type, typename FirstArg>
+    auto get_slice(HolorRef<M, Type> ref_container, FirstArg first){
+        if constexpr (){
+            return;
+        }else{
+            return;
+        }
+    }
+}
+
+
 } //namespace holor
 
-#endif // HOR_H
+#endif // HOLOR_H

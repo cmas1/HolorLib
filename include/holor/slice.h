@@ -27,6 +27,7 @@
 #include <cstddef>
 #include <array>
 #include <numeric>
+#include <type_traits>
 
 #include "../utils/static_assert.h"
 #include "./predicates.h"
@@ -482,33 +483,6 @@ class Slice{
 
 
 
-// struct slice_request{
-//     size_t start_;
-//     size_t end_;
-//     size_t step_;
-
-//     slice_request(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
-//         dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstInvalidArgument>( end>start, \
-//                 EXCEPTION_MESSAGE("slice_request: invalid argument. end<start") );
-//         dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstInvalidArgument>( step>0, \
-//                 EXCEPTION_MESSAGE("slice_request: invalid argument. step>0") );
-//     }
-// };
-
-// constexpr size_t count_slices(){
-//     return 0;
-// }
-
-// template<typename X>
-// constexpr size_t count_slices(X x){
-//     return  (std::is_same<X, slice_request>())? 1:0;
-// }
-
-// template<typename X, typename... Args>
-// constexpr size_t count_slices(X x, Args... args){
-//     return count_slices(x) + count_slices(args...);
-// }
-
 
 
 
@@ -545,8 +519,33 @@ namespace impl{
             // dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstInvalidArgument>( end>start, \
             //         EXCEPTION_MESSAGE("slice_request: invalid argument. end<start") );
             // dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstInvalidArgument>( step>0, \
-            //         EXCEPTION_MESSAGE("slice_request: invalid argument. step>0") );
+            //         EXCEPTION_MESSAGE("slice_request: invalid argument. step<0") );
         }
+
+        
+    
+        /* function used to verify that some of the subscripts used to access the elements of a tensor are slices
+        * return \p true if some of the arguments are slices
+        */
+        template<typename... Args>
+        constexpr bool requesting_slice(){
+            return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, impl::slice_request>() || std::is_convertible<Args, impl::slice_request>())...) && assert::some(std::is_same<Args, impl::slice_request>()...);
+        }
+
+
+        // constexpr size_t count_slices(){
+        //     return 0;
+        // }
+
+        // template<typename X>
+        // constexpr size_t count_slices(X x){
+        //     return  (std::is_same<X, slice_request>())? 1:0;
+        // }
+
+        // template<typename X, typename... Args>
+        // constexpr size_t count_slices(X x, Args... args){
+        //     return count_slices(x) + count_slices(args...);
+        // }
     };
 }
 
