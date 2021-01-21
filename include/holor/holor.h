@@ -128,16 +128,16 @@ class Holor{
 
 
         // /*!
-        // * Constructor from a HolorRef object
+        // * Constructor from a Slice object
         // *
         // * /return a Holor
         // */
         // // template<typename U>
-        // // Holor(const HolorRef<U,N>& x): layout_{x.layout_}, data_{x.begin(), x.end()} {
+        // // Holor(const Slice<U,N>& x): layout_{x.layout_}, data_{x.begin(), x.end()} {
         // //     static_assert(std::is_convertible<U,T>(), "Holor constructor: incompatible element types");
         // // }
         // template<typename U>
-        // Holor(const HolorRef<U,N>& x) {
+        // Holor(const Slice<U,N>& x) {
         //     static_assert(std::is_convertible<U,T>(), "Holor constructor: incompatible element types");
         //     layout_.lengths_ = x.layout_.lengths_;
         //     layout_.offset_ = 0;
@@ -148,12 +148,12 @@ class Holor{
 
 
         // /*!
-        // * Assignment operator from a HolorRef object
+        // * Assignment operator from a Slice object
         // * 
         // * /return a reference to Holor
         // */
         // template<typename U>
-        // Holor& operator=(const HolorRef<U,N>& x){
+        // Holor& operator=(const Slice<U,N>& x){
         //     static_assert(std::is_convertible<U,T>(), "Holor constructor: incompatible element types");
         //     layout_.lengths_ = x.layout_.lengths_;
         //     layout_.offset_ = 0;
@@ -210,11 +210,11 @@ class Holor{
         // ****************************************************************/
 
         /*
-         * \brief Function that returns the Slice containing the description of the indexing for the full Holor
+         * \brief Function that returns the Layout containing the description of the indexing for the full Holor
          * 
-         * \return Slice defining subscripting
+         * \return Layout defining subscripting
          */
-        const Slice<N>& descriptor() const{
+        const Layout<N>& descriptor() const{
             return layout_;
         }
 
@@ -314,7 +314,7 @@ class Holor{
         */
         template<typename... Args>
         auto operator()(Args... args) -> std::enable_if_t<holor_impl::requesting_slice<Args...>(), int> {
-            // HolorRef<T,n_slices> res;
+            // Slice<T,n_slices> res;
         };
 
 
@@ -327,7 +327,7 @@ class Holor{
         // * 
         // */
         // template<typename... Args>
-        // enable_if_t<holor_impl::Requesting_slice<Args...>(), HolorRef<const T,N>> operator()(const Args&... args) const;
+        // enable_if_t<holor_impl::Requesting_slice<Args...>(), Slice<const T,N>> operator()(const Args&... args) const;
 
         
         /*
@@ -337,7 +337,7 @@ class Holor{
         * 
         * \return the \a i-th row of the tensor
         */
-        // HolorRef<T, N-1> operator[](size_t i){
+        // Slice<T, N-1> operator[](size_t i){
         //     return row(i);
         // }
 
@@ -349,7 +349,7 @@ class Holor{
         * 
         * \return the \a i-th row of the tensor
         */
-        // HolorRef<const T, N-1> operator[](size_t i) const{
+        // Slice<const T, N-1> operator[](size_t i) const{
         //     return row(i);
         // }
 
@@ -357,11 +357,11 @@ class Holor{
         /*
         *
         */
-        // HolorRef<T, N-1> row(size_t n){
+        // Slice<T, N-1> row(size_t n){
         //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
         //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
         //     auto myslice = holor_impl::slice_dim<0>();
-        //     HolorSlice<N-1> row = myslice(n, layout_);
+        //     HolorLayout<N-1> row = myslice(n, layout_);
         //     return {row, data()};
         // }
 
@@ -369,11 +369,11 @@ class Holor{
         /*
         *
         */
-        // HolorRef<const T, N-1> row(size_t n) const{
+        // Slice<const T, N-1> row(size_t n) const{
         //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
         //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
         //     auto myslice = holor_impl::slice_dim<0>();
-        //     HolorSlice<N-1> row = myslice(n, layout_);
+        //     HolorLayout<N-1> row = myslice(n, layout_);
         //     return {row, data()};
         // }
 
@@ -381,11 +381,11 @@ class Holor{
         /*
         *
         */
-        // HolorRef<T, N-1> col(size_t n){
+        // Slice<T, N-1> col(size_t n){
         //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
         //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
         //     auto myslice = holor_impl::slice_dim<1>();
-        //     HolorSlice<N-1> col = myslice(n, layout_);
+        //     HolorLayout<N-1> col = myslice(n, layout_);
         //     return {col, data()};
         // }
 
@@ -393,22 +393,22 @@ class Holor{
         /*
         *
         */
-        // HolorRef<const T, N-1> col(size_t n) const{
+        // Slice<const T, N-1> col(size_t n) const{
         //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
         //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
         //     auto myslice = holor_impl::slice_dim<1>();
-        //     HolorSlice<N-1> col = myslice(n, layout_);
+        //     HolorLayout<N-1> col = myslice(n, layout_);
         //     return {col, data()};
         // }
 
 
         // // TODO add a general function, like row and col, to get the n-th dimension slice
         // template<size_t M>
-        // HolorRef<const T, N-1> dim_slice(size_t n) const{
+        // Slice<const T, N-1> dim_slice(size_t n) const{
         //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
         //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
         //     auto myslice = holor_impl::slice_dim<M>();
-        //     HolorSlice<N-1> slice = myslice(n, layout_);
+        //     HolorLayout<N-1> slice = myslice(n, layout_);
         //     return {slice, data()};
         // }
 
@@ -443,10 +443,10 @@ class Holor{
 
     private:
         /*
-         * \brief Slice that describes the memory layout of the container, i.e. the number of elements along each dimension,
+         * \brief Layout that describes the memory layout of the container, i.e. the number of elements along each dimension,
          * the total number of elements, the offset and the strides for iterating through the vector containing the actual data
          */
-        Slice<N> layout_;
+        Layout<N> layout_;
 
 
         /*
@@ -456,17 +456,17 @@ class Holor{
 
 
         // template<typename U, size_t M>
-        // void push_element( const U* ptr, const HolorSlice<M>& ts){
+        // void push_element( const U* ptr, const HolorLayout<M>& ts){
         //     for (auto i = 0; i<ts.lengths_[0]; i++){
         //         auto tmp = holor_impl::slice_dim<0>();
-        //         HolorSlice<N-1> row = tmp(i, ts);
+        //         HolorLayout<N-1> row = tmp(i, ts);
         //         push_element(ptr, row);
         //     }
         // }
 
 
         // template<typename U>
-        // void push_element( const U* ptr, const HolorSlice<1>& ts){
+        // void push_element( const U* ptr, const HolorLayout<1>& ts){
         //     for (auto i = 0; i<ts.lengths_[0]; i++){
         //         data_.push_back(*(ptr + ts(i)));
         //     }
@@ -489,7 +489,7 @@ class Holor{
 //CMCMCM Work in progress
 namespace impl{
     template<size_t M, typename Type, typename FirstArg, typename... Args>
-    auto get_slice(HolorRef<M, Type> ref_container, FirstArg first, Args... args){
+    auto get_slice(Slice<M, Type> ref_container, FirstArg first, Args... args){
         if constexpr (){
 
         }else{
@@ -498,7 +498,7 @@ namespace impl{
     }
 
     template<size_t M, typename Type, typename FirstArg>
-    auto get_slice(HolorRef<M, Type> ref_container, FirstArg first){
+    auto get_slice(Slice<M, Type> ref_container, FirstArg first){
         if constexpr (){
             return;
         }else{

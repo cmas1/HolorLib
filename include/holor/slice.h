@@ -1,555 +1,271 @@
-// This file is part of Holor, a C++ template library for multi-dimensional containers
+//  ____   _____   _____   __       __   __   __   ______       _______   _____   _____   __       _____ 
+//  |   \ |   __| |  _  \ |  |     |  | |  \ |  | |  ____|     |__   __| |  _  | |  _  | |  |     |   __|
+//  ____/  \  \   | |_| | |  |     |  | |       | |  |__          | |    | | | | | | | | |  |      \  \  
+//  |   \  _\  \  |  ___/ |  |___  |  | |  |\   | |  |___         | |    | |_| | | |_| | |  |___   _\  \ 
+//  ____/ |_____| |__|    |______| |__| |__| \__| |______|        |_|    |_____| |_____| |______| |_____|
 
-// Copyright 2020 Carlo Masone
+// This file is part of BSTools, a lightweight C++ template library that implements B-Splines
 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to 
-// deal in the Software without restriction, including without limitation the
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-// sell copies of the Software, and to permit persons to whom the Software is 
-// furnished to do so, subject to the following conditions:
+// Copyright 2019 Carlo Masone
 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-// DEALINGS IN THE SOFTWARE.
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 
-#ifndef HOLOR_SLICE_H
-#define HOLOR_SLICE_H
+
+#ifndef HOLOR_REF_H
+#define HOLOR_REF_H
 
 #include <cstddef>
-#include <array>
-#include <numeric>
-#include <type_traits>
+// #include <type_traits>
 
-#include "../utils/static_assert.h"
-#include "./predicates.h"
+// #include "tensor_initializer.h"
+#include "layout.h"
+// #include "tensor_predicates.h"
+// #include "tensor_utils.h"
+
 
 
 namespace holor{
 
-
+/// HolorRef class
 /*!
- * \brief Class that represents a multi-dimensional subset of a Holor container.
- *
- * The Slice class contains the information for indexing a multi-dimensional subset of a Holor container. 
- * It uses the  idea of generalized slices from the standard library, i.e. it is based on the fact that the elements of a Holor
- * are stored as a 1D data sequence following a row-major representation.
- * 
- * Indexing a slice of a Holor container is done via three parameters: 
- *      - The \b offset is the index of the first element of the container that is part of the slice.  
- *      - The \b lengths are the numbers of elements for every dimension of the slice.
- *      - The \b strides are the distances in the 1D data sequence between successive elements in individual dimensions of the slice.
- *  For a Slice with `N` dimensions, both the length array and the stride array must be size `N`.
- * 
- * Given a Holor container with `N` dimensions, the elements of a slice are indexed from the underlying 1D data sequence according to the following formula
- * \f[
- *  index = offset + \sum_{j=0}^{N-1} j \cdot strides[j]
- * \f]
- * 
- * \verbatim embed:rst:leading-asterisk
- *  .. note::
- *      The strides depend on the lengths of the original tensor.
- * \endverbatim
+ * Class providing a dense implementation of a reference general n-dimensional tensor container.
+ * Unlike a Tensor object, a HolorRef object does not own its elements. In practice, whereas a Tensor has a vector containing its elements,
+ * a HolorRef contains a pointer to the elements of a Tensor objects.
+ * The application of HolorRef is to represent subtensors of a Tensor.
  */
-
-
-//Forward declaration to make this a friend class of Slice
-namespace impl{
-    template<size_t M>
-    struct slice_dim;
-}
-
-
-
-
-
-template<size_t N>
-class Slice{
+template<typename T, size_t N>
+class HolorRef{
     public:
+        /****************************************************************
+                                ALIASES
+        ****************************************************************/
+        // number of dimensions
+        static constexpr size_t order = N;
+        using value_type = T;
+
 
         /****************************************************************
                 CONSTRUCTORS, ASSIGNEMENTS AND DESTRUCTOR
-        ****************************************************************/    
+        ****************************************************************/
         /*!
-         * \brief Default constructor that creates an empty slice with no elements
-         */
-        Slice():size_{0}, offset_{0}{};
+        *   HolorRef constructor.
+        * 
+        * \param layout Tensorlayout describing how the data is stored in memory
+        * \param ptr pointer to the stored elements
+        * 
+        * \return A Tensor whose elements have the default value for their type.
+        */
+        HolorRef(const Layout<N>& layout, T* ptr): layout_{layout}, dataptr_{ptr} {};
+
+      
+
+        // /****************************************************************
+        //                     GET AND SET
+        // ****************************************************************/
+        
+        /*
+        * Function that provides a pointer to the location of the first stored element
+        * 
+        * \return a pointer to the first stored element
+        */
+        T* begin(){
+            return dataptr_;
+        }
 
 
-        /*!
-         * \brief Copy constructor
-         * 
-         * \param a Slice
-         * 
-         * \return a copy of the input Slice
-         */
-        Slice(const Slice<N>& slice) = default;
+        /*
+        * Function that provides a pointer to the location of the first stored element
+        * 
+        * \return a pointer to the first stored element
+        */
+        const T* begin() const{
+            return dataptr_;
+        }
+
+        
+        /*
+        * Function that provides a pointer to the location after the last stored element
+        * 
+        * \return a pointer to the location after the last stored element
+        */
+        T* end(){
+            return dataptr_ + layout_.size_;
+        }
 
 
-        /*!
-         * \brief Copy assignment
-         * 
-         * \param a Slice
-         * 
-         * \return a Slice copied from the input
-         */
-        Slice<N>& operator=(const Slice<N>& slice) = default;
+        /*
+        * Function that provides a pointer to the location after the last stored element
+        * 
+        * \return a pointer to the location after the last stored element
+        */
+        const T* end() const{
+            return dataptr_ + layout_.size_;
+        }
 
-
-        /*!
-         * \brief Move constructor
-         * 
-         * \param a Slice
-         * 
-         * \return a Slice moved from the input
-         */
-        Slice(Slice<N>&& slice) = default;
-
-
-        /*!
-         * \brief Move assignment
-         * 
-         * \param a Slice
-         * 
-         * \return a Slice moved from the input
-         */
-        Slice<N>& operator=(Slice<N>&& slice) = default;
-
-
-        /*!
-         * \brief Constructor of a slice from an offset and an array of lengths
-         * 
-         * \param lengths array containing the number of elements along each dimension of the slice
-         * \param offset index of the first element of the slice in the original Holor container
-         * 
-         * \return a Slice
-         */
-        Slice(const std::array<size_t,N>& lengths, size_t offset=0): offset_{offset}, lengths_{lengths} {
-            compute_strides();
-        };
-
-
-        /*!
-         * \brief Constructor of a slice from an offset and an array of lengths
-         * 
-         * \param lengths array containing the number of elements along each dimension of the slice
-         * \param offset index of the first element of the slice in the original Holor container
-         * 
-         * \return a Slice
-         */
-        Slice(std::array<size_t,N>&& lengths, size_t offset): offset_{offset}, lengths_{lengths} {
-            compute_strides();
-        };
-
-
-        // /*!
-        //  * Constructor from a list of lengths
-        //  * 
-        //  * \tparam lengths number of elements along each dimension of the slice
-        //  * 
-        //  * \return a Slice
-        //  */
-        // //TODO: do we need this constructor? Needs Improvements!!! Do we need a simple constructor from an array of lengths, without offset?
-        // template<typename... Lengths>
-        // Slice(Lengths... lengths){
-        //     static_assert(sizeof...(Lengths)==N, "Slice constructor dimension mismatch");
-        //     std::array<size_t,N> tmp{size_t(lengths)...};
-        //     lengths_ = std::move(tmp);
-        //     offset_ = 0;
-        //     this->compute_strides();
+        // /*
+        // * Function that returns the number of elements along the \p n dimension
+        // * 
+        // * \param n dimension of the tensor along which count the number of elements
+        // * 
+        // * \return the number of elements along the \p n-th dimension
+        // */
+        // size_t length(size_t n) const{
+        //     return layout_.lenghts_[n];
         // }
 
 
+        // /*
+        // * Function that returns the total number of elements in the tensor
+        // * 
+        // * \return the total number of elements in the tensor
+        // */
+        // size_t size() const{
+        //     return layout_.size_;
+        // }
+
+
+        // /*
+        // * Function that returns the TensorLayout defining the extensions of the Tensor in its \p N dimensions
+        // * 
+        // * \return TensorLayout defining subscripting
+        // */
+        // const TensorLayout<N>& descriptor() const{
+        //     return layout_;
+        // }
+
+
+        // /*
+        // * Function that provides a flat access to the data contained in the tensor
+        // * 
+        // * \return a pointer to the data stored in the tensor
+        // */
+        // T* data(){
+        //     return data_.data();
+        // }
+
         
-        /***********************************************************************
-        *                           GET/SET FUNCTIONS
-        ***********************************************************************/
-        /*!
-         * \brief Get the number of dimensions of the slice
-         * 
-         * \return the number `N` of dimensions of the slice.
-         */
-        constexpr size_t dimensions(){
-            return N;
+        // /* 
+        // * \return a const pointer to the data stored in the tensor
+        // */
+        // const T* data() const{
+        //     return data_.data();
+        // }
+
+
+        /****************************************************************
+                                    ACCESS
+        ****************************************************************/
+        /*
+        * Access tensor element subscripting with integers without range check
+        */
+        template<typename... Args>
+        std::enable_if_t<impl::requesting_element<Args...>(), T&> operator()(Args... args){
+            return *(dataptr_ + layout_(args...));
         }
 
-        /*!
-         * \brief Get the size of the slice
-         * 
-         * \return the size (total number of elements) of the slice
-         */
-        size_t size() const{
-            return size_;
+
+        //TODO: implement const version
+        /*
+        * ccess tensor element subscripting with integers without range check
+        */
+        template<typename... Args>
+        std::enable_if_t<impl::requesting_element<Args...>(), const T> operator()(Args... args) const{
+            return dataptr_[layout_(args...)];
         }
 
-        /*!
-         * \brief Get the offset of the slice
-         * 
-         * \return the offset (with respect to the sliced Holor container) of the slice
-         */
-        size_t offset() const{
-            return offset_;
-        }
 
-        /*!
-         * \brief Get the lengths of the slice
-         * 
-         * \return the lengths (number of elements per dimension) of the slice
-         */
-        std::array<size_t,N> lengths() const{
-            return lengths_;
-        }
-
-        /*!
-         * \brief Get the strides of the slice
-         * 
-         * \return the strides of the slice
-         */
-        std::array<size_t,N> strides() const{
-            return strides_;
-        }
-
-        /*!
-         * \brief Set the lengths of the slice
-         * 
-         * \param the lengths to be set
-         */
-        void set_lengths(std::array<size_t,N> lengths) {
-            lengths_ = lengths;
-            compute_strides();
-        }
-
-        /*!
-         * \brief Set the offset of the slice
-         * 
-         * \param offset is the new offset of the slice
-         */
-        void set_offset(size_t offset) {
-            offset_ = offset;
-        }
+        // /*
+        // * Access tensor element subscripting with integers with range check
+        // */
+        // template<typename... Args>
+        // std::enable_if_t<impl::requesting_element<Args...>(), T&> at(Args... args){
+        //     dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstRuntimeError>( tensor_impl::check_bounds(layout_, args...), \
+        //         EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
+        //     return *(dataptr_ + layout_(args...));
+        // }
 
 
         /****************************************************************
                                 OPERATORS
         ****************************************************************/
-        /*!
-         * \brief Given a set of subscripts referring to a Slice, it returns the index of the corresponding element in the Holor
-         * 
-         * \param dims parameters pack containing the subscripts
-         * 
-         * \return the index of the subscripted element in the Holor
-         */
-
-        //TODO: rewrite this function in a better way
-        template<typename... Dims>
-        std::enable_if_t<impl::requesting_element<Dims...>(), size_t> operator()(Dims... dims) const{
-            static_assert(sizeof...(Dims)==N, "Slice<N>::operator(): dimension mismatch");
-            size_t args[N]{size_t(dims)... }; 
-            return offset_ + std::inner_product(args, args+N, strides_.begin(), size_t{0});
-        }
 
 
+        // TODO: these should be private
+        /*
+        * Layout that describes the memory layout of the Tensor, i.e. the number of elements along each dimension,
+        * the total number of elements, the offset and the strides for iterating through the vector containing the actual data
+        */
+        Layout<N> layout_;
+
+
+        /*
+        * Pointer to the data
+        */
+        T* dataptr_;
 
     private:
-        /*!
-        * number of elements in each dimension
-        */
-        std::array<size_t,N> lengths_;
+        // template<typename X, size_t NN>
+        // friend std::ostream& operator<<(std::ostream& os, const HolorRef<X,NN>& t);
 
-        /*!
-        * total number of elements of the slice
-        */
-        size_t size_;
-
-        /*!
-        * offset from the beginning of the array of elements of the tensor where the slice starts
-        */
-        size_t offset_;
-
-        /*!
-        * distance between consecutive elements in each dimension
-        */
-        std::array<size_t,N> strides_;
-
-
-        /*!
-         * \brief Computes and sets the strides and total size of the Slice given the lengths of the Holor container
-         */
-        void compute_strides(){
-            size_ = 1;
-            for(int i = N-1; i>=0; --i){
-                strides_[i] = size_;
-                size_ *= lengths_[i];
-            }
-        }
-
-        // friend class that can access the private variables
-        template<size_t M>
-        friend class impl::slice_dim; 
-
+        // template<typename X, size_t NN>
+        // friend std::ostream& print(std::ostream& os, const HolorRef<X,NN>& t);
 };
 
 
 
-// /****************************************************************
-// *                   SPECIALIZATIONS FOR N = 1
-// ****************************************************************/
-// /*!
-// * Specialization of operator Slice() for <tt>N=1</tt> and for \p int subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<1>::operator()(int i) const{
-//     return offset_ + i*strides_[0];
-// }
 
-// /*!
-// * Specialization of operator Slice() for <tt>N=1</tt> and for <tt>unsigned int</tt> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<1>::operator()(unsigned int i) const{
-//     return offset_ + i*strides_[0];
-// }
 
-// /*!
-// * Specialization of operator Slice() for <tt>N=1</tt> and for \p long subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<1>::operator()(long i) const{
-//     return offset_ + i*strides_[0];
-// }
-
-// /*!
-// * Specialization of operator Slice() for <tt>N=1</tt> and for <tt>unsigned long</tt>> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<1>::operator()(unsigned long i) const{
-//     return offset_ + i*strides_[0];
+/****************************************************************
+                        OPERATORS
+****************************************************************/
+// template<typename T, size_t N>
+// std::ostream& print(std::ostream& os, const T* ptr, const TensorLayout<N>& ts){
+//     os << "[";
+//     for (auto i = 0; i<ts.lengths_[0]-1; i++){
+//         auto tmp = tensor_impl::layout_dim<0>();
+//         TensorLayout<N-1> row = tmp(i, ts);
+//         print(os, ptr, row );
+//         os << ", ";
+//     }
+//     auto tmp = tensor_impl::layout_dim<0>();
+//     TensorLayout<N-1> row = tmp(ts.lengths_[0]-1, ts);
+//     print(os, ptr, row );
+//     os << "]";
+//     return os;
 // }
 
 
-// /****************************************************************
-// *                   SPECIALIZATIONS FOR N = 2
-// ****************************************************************/
-// /*!
-// * Specialization of operator Slice() for <tt>N=2</tt> and for \p int subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<2>::operator()(int i, int j) const{
-//     return offset_ + i*strides_[0] + j*strides_[1];
-// }
-
-// /*!
-// * Specialization of operator Slice() for <tt>N=2</tt> and for <tt>unsigned int</tt> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<2>::operator()(unsigned int i, unsigned int j) const{
-//     return offset_ + i*strides_[0] + j*strides_[1];
-// }
-
-// /*!
-// * Specialization of operator Slice() for <tt>N=2</tt> and for \p long subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<2>::operator()(long i, long j) const{
-//     return offset_ + i*strides_[0] + j*strides_[1];
-// }
-
-// /*!
-// * Specialization of operator Slice() for <tt>N=2</tt> and for <tt>unsigned long</tt>> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<2>::operator()(unsigned long i, unsigned long j) const{
-//     return offset_ + i*strides_[0] + j*strides_[1];
+// template<typename T>
+// std::ostream& print(std::ostream& os, const T* ptr, const TensorLayout<1>& ts){
+//     os << "[";
+//     for (auto i = 0; i<ts.lengths_[0]-1; i++){
+//         os << *(ptr + ts(i)) << ", ";
+//     }
+//     os << *(ptr + ts(ts.lengths_[0]-1) ) ;
+//     os << "]";
+//     return os;
 // }
 
 
 
-// /****************************************************************
-// *                   SPECIALIZATIONS FOR N = 3
-// ****************************************************************/
-// /*!
-// * Specialization of operator Slice() for <tt>N=3</tt> and for \p int subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * \param k subscript along third dimension (depth)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<3>::operator()(int i, int j, int k) const{
-//     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
+// template<typename T, size_t N>
+// std::ostream& operator<<(std::ostream& os, const HolorRef<T,N>& t){
+//     // static_assert(is_printable_v<T>, "operator<<: element of the tensor are not printable.");
+//     return print(os, t.dataptr_, t.layout_);
 // }
-
-// /*!
-// * Specialization of operator Slice() for <tt>N=3</tt> and for <tt>unsigned int</tt> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * \param k subscript along third dimension (depth)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<3>::operator()(unsigned int i, unsigned int j, unsigned int k) const{
-//     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
-// }
-
-// /*!
-// * Specialization of operator Slice() for <tt>N=3</tt> and for \p long subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * \param k subscript along third dimension (depth)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<3>::operator()(long i, long j, long k) const{
-//     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
-// }
-
-// /*!
-// * Specialization of operator Slice() for <tt>N=3</tt> and for <tt>unsigned long</tt>> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * \param k subscript along third dimension (depth)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Slice<3>::operator()(unsigned long i, unsigned long j, unsigned long k) const{
-//     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
-// }
-
-
-
-
-
-
-
-
-namespace impl{
-    template<size_t M>
-    struct slice_dim{
-        template<size_t N> requires (M<N)
-        Slice<N-1> operator()(size_t n, Slice<N> in){
-            // dynamic_assert<assertion_level(AssertionLevel::internal), bst::exception::BstInvalidArgument>( n < in.lengths_[M], \
-                EXCEPTION_MESSAGE("slice_dim error: n is greater than the length in the dimension M") );
-            Slice<N-1> res;
-            size_t i = 0;
-            for(size_t j = 0; j < N; j++){
-                res.size_ = 1;
-                if (j != M){
-                    res.lengths_[i] = in.lengths_[j];
-                    res.strides_[i] = in.strides_[j];
-                    res.size_ *= in.lengths_[j];
-                    i++;
-                }
-                res.offset_ = in.offset_ + n*in.strides_[M];
-            }
-            return res;
-        }
-    };
-
-
-    struct slice_request{
-        size_t start_;
-        size_t end_;
-        size_t step_;
-
-        slice_request(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
-            // dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstInvalidArgument>( end>start, \
-            //         EXCEPTION_MESSAGE("slice_request: invalid argument. end<start") );
-            // dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstInvalidArgument>( step>0, \
-            //         EXCEPTION_MESSAGE("slice_request: invalid argument. step<0") );
-        }
-
-        
-    
-        /* function used to verify that some of the subscripts used to access the elements of a tensor are slices
-        * return \p true if some of the arguments are slices
-        */
-        template<typename... Args>
-        constexpr bool requesting_slice(){
-            return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, impl::slice_request>() || std::is_convertible<Args, impl::slice_request>())...) && assert::some(std::is_same<Args, impl::slice_request>()...);
-        }
-
-
-        // constexpr size_t count_slices(){
-        //     return 0;
-        // }
-
-        // template<typename X>
-        // constexpr size_t count_slices(X x){
-        //     return  (std::is_same<X, slice_request>())? 1:0;
-        // }
-
-        // template<typename X, typename... Args>
-        // constexpr size_t count_slices(X x, Args... args){
-        //     return count_slices(x) + count_slices(args...);
-        // }
-    };
-}
 
 
 } //namespace bst
 
-#endif // HOLOR_SLICE_H;
+#endif // HOLOR_REF_H
