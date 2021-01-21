@@ -33,7 +33,41 @@
 #include "./predicates.h"
 
 
+
+
+
+
 namespace holor{
+
+
+struct slice_request{
+    size_t start_;
+    size_t end_;
+    size_t step_;
+
+    slice_request(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
+        // it must be end > start, start >=0, end <= length[dim]
+        // check also step?
+    }        
+};
+
+/* function used to verify that some of the subscripts used to access the elements of a tensor are layouts
+* return \p true if some of the arguments are layouts
+*/
+template<typename... Args>
+constexpr bool requesting_slice(){
+    return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, impl::slice_request>() || std::is_convertible<Args, impl::slice_request>())...) && assert::some(std::is_same<Args, impl::slice_request>()...);
+}
+
+
+
+
+
+
+
+
+
+
 
 
 /*!
@@ -74,6 +108,8 @@ namespace holor{
 template<size_t N>
 class Layout{
     public:
+
+        // create degenerate case for N = 0
 
         /****************************************************************
                 CONSTRUCTORS, ASSIGNEMENTS AND DESTRUCTOR
@@ -250,10 +286,53 @@ class Layout{
 
         //TODO: rewrite this function in a better way
         template<typename... Dims>
-        std::enable_if_t<impl::requesting_element<Dims...>(), size_t> operator()(Dims... dims) const{
+        std::enable_if_t<impl::requesting_element<Dims...>(), size_t> index_layout()(Dims... dims) const{
             static_assert(sizeof...(Dims)==N, "Layout<N>::operator(): dimension mismatch");
             size_t args[N]{size_t(dims)... }; 
             return offset_ + std::inner_product(args, args+N, strides_.begin(), size_t{0});
+        }
+
+
+        // template<typename... Args>
+        // std::enable_if_t<impl::requesting_slice<Args...>(), size_t> slice_layout()(Args... args) const{
+        // }
+
+
+        //slices the layout along one single dimension
+        Layout<N> slice_dimension(size_t dim, slice_request range){
+            Layout<N> res;
+            // size_t i = 0;
+            // for(size_t j = 0; j < N; j++){
+            //     res.size_ = 1;
+            //     if (j != dim){
+            //         res.lengths_[i] = lengths_[j];
+            //         res.strides_[i] = strides_[j];
+            //         res.size_ *= lengths_[j];
+            //         i++;
+            //     }
+            //     res.offset_ = offset_ + n*strides_[dim];
+            // }
+            return res;
+        }
+
+
+
+        //slices the layout along one single dimension
+        Layout<N-1> slice_dimension(size_t dim, size_t step = 1){
+            //step is not used right now, should be modified in the future to use it
+            Layout<N-1> res;
+            size_t i = 0;
+            for(size_t j = 0; j < N; j++){
+                res.size_ = 1;
+                if (j != dim){
+                    res.lengths_[i] = lengths_[j];
+                    res.strides_[i] = strides_[j];
+                    res.size_ *= lengths_[j];
+                    i++;
+                }
+                res.offset_ = offset_ + n*strides_[dim];
+            }
+            return res;
         }
 
 
@@ -290,11 +369,6 @@ class Layout{
                 size_ *= lengths_[i];
             }
         }
-
-        // friend class that can access the private variables
-        template<size_t M>
-        friend class impl::layout_dim; 
-
 };
 
 
@@ -480,76 +554,6 @@ class Layout{
 // }
 
 
-
-
-
-
-
-
-namespace impl{
-    template<size_t M>
-    // struct layout_dim{
-    //     template<size_t N> requires (M<N)
-    //     Layout<N-1> operator()(size_t n, Layout<N> in){
-    //         // dynamic_assert<assertion_level(AssertionLevel::internal), bst::exception::BstInvalidArgument>( n < in.lengths_[M], \
-    //             EXCEPTION_MESSAGE("layout_dim error: n is greater than the length in the dimension M") );
-    //         Layout<N-1> res;
-    //         size_t i = 0;
-    //         for(size_t j = 0; j < N; j++){
-    //             res.size_ = 1;
-    //             if (j != M){
-    //                 res.lengths_[i] = in.lengths_[j];
-    //                 res.strides_[i] = in.strides_[j];
-    //                 res.size_ *= in.lengths_[j];
-    //                 i++;
-    //             }
-    //             res.offset_ = in.offset_ + n*in.strides_[M];
-    //         }
-    //         return res;
-    //     }
-    // };
-
-
-    struct layout_request{
-        size_t start_;
-        size_t end_;
-        size_t step_;
-
-        layout_request(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
-            // dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstInvalidArgument>( end>start, \
-            //         EXCEPTION_MESSAGE("layout_request: invalid argument. end<start") );
-            // dynamic_assert<assertion_level(AssertionLevel::release), bst::exception::BstInvalidArgument>( step>0, \
-            //         EXCEPTION_MESSAGE("layout_request: invalid argument. step<0") );
-        }
-
-        
-    
-        /* function used to verify that some of the subscripts used to access the elements of a tensor are layouts
-        * return \p true if some of the arguments are layouts
-        */
-        template<typename... Args>
-        constexpr bool requesting_layout(){
-            return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, impl::layout_request>() || std::is_convertible<Args, impl::layout_request>())...) && assert::some(std::is_same<Args, impl::layout_request>()...);
-        }
-
-
-        // constexpr size_t count_layouts(){
-        //     return 0;
-        // }
-
-        // template<typename X>
-        // constexpr size_t count_layouts(X x){
-        //     return  (std::is_same<X, layout_request>())? 1:0;
-        // }
-
-        // template<typename X, typename... Args>
-        // constexpr size_t count_layouts(X x, Args... args){
-        //     return count_layouts(x) + count_layouts(args...);
-        // }
-    };
-}
-
-
-} //namespace bst
+} //namespace holor
 
 #endif // HOLOR_LAYOUT_H;
