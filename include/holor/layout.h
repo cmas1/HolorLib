@@ -40,12 +40,12 @@
 namespace holor{
 
 
-struct slice_request{
+struct slice_range{
     size_t start_;
     size_t end_;
     size_t step_;
 
-    slice_request(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
+    slice_range(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
         // it must be end > start, start >=0, end <= length[dim]
         // check also step?
     }        
@@ -56,7 +56,7 @@ struct slice_request{
 */
 template<typename... Args>
 constexpr bool requesting_slice(){
-    return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, impl::slice_request>() || std::is_convertible<Args, impl::slice_request>())...) && assert::some(std::is_same<Args, impl::slice_request>()...);
+    return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, slice_range>() || std::is_convertible<Args, slice_range>())...) && assert::some(std::is_same<Args, slice_range>()...);
 }
 
 
@@ -107,9 +107,9 @@ constexpr bool requesting_slice(){
 
 template<size_t N>
 class Layout{
+    
+    friend class Layout<N+1>;
     public:
-
-        // create degenerate case for N = 0
 
         /****************************************************************
                 CONSTRUCTORS, ASSIGNEMENTS AND DESTRUCTOR
@@ -286,7 +286,7 @@ class Layout{
 
         //TODO: rewrite this function in a better way
         template<typename... Dims>
-        std::enable_if_t<impl::requesting_element<Dims...>(), size_t> index_layout()(Dims... dims) const{
+        std::enable_if_t<impl::requesting_element<Dims...>(), size_t> index_layout(Dims... dims) const{
             static_assert(sizeof...(Dims)==N, "Layout<N>::operator(): dimension mismatch");
             size_t args[N]{size_t(dims)... }; 
             return offset_ + std::inner_product(args, args+N, strides_.begin(), size_t{0});
@@ -299,26 +299,18 @@ class Layout{
 
 
         //slices the layout along one single dimension
-        Layout<N> slice_dimension(size_t dim, slice_request range){
-            Layout<N> res;
-            // size_t i = 0;
-            // for(size_t j = 0; j < N; j++){
-            //     res.size_ = 1;
-            //     if (j != dim){
-            //         res.lengths_[i] = lengths_[j];
-            //         res.strides_[i] = strides_[j];
-            //         res.size_ *= lengths_[j];
-            //         i++;
-            //     }
-            //     res.offset_ = offset_ + n*strides_[dim];
-            // }
+        Layout<N> slice_dimension(size_t dim, slice_range range){
+            Layout<N> res = *this;
+            res.lengths_[dim] = range.end_-range.start_+1;
+            res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
+            res.offset_ = offset_ + range.start_*strides_[dim];
             return res;
         }
 
 
-
+        //TODO: now this requires that Layout<N> is friend to Layout<N+1>. This is not a clean solution
         //slices the layout along one single dimension
-        Layout<N-1> slice_dimension(size_t dim, size_t step = 1){
+        Layout<N-1> slice_dimension(size_t dim, size_t num, size_t step = 1){
             //step is not used right now, should be modified in the future to use it
             Layout<N-1> res;
             size_t i = 0;
@@ -330,7 +322,7 @@ class Layout{
                     res.size_ *= lengths_[j];
                     i++;
                 }
-                res.offset_ = offset_ + n*strides_[dim];
+                res.offset_ = offset_ + num*strides_[dim];
             }
             return res;
         }
@@ -371,6 +363,11 @@ class Layout{
         }
 };
 
+
+
+
+
+// create degenerate case for N = 0
 
 
 // /****************************************************************
