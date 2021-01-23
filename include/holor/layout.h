@@ -293,9 +293,20 @@ class Layout{
         }
 
 
-        // template<typename... Args>
-        // std::enable_if_t<impl::requesting_slice<Args...>(), size_t> slice_layout()(Args... args) const{
-        // }
+        //TODO: change std_enable_if with requires, maybe createing a concept for the type of arguments allowed
+        template<typename FirstArg, typename... OtherArgs>
+        auto slice_layout(size_t dim, FirstArg first, OtherArgs... other) {
+            if constexpr(std::is_same<FirstArg, slice_range>() || std::is_convertible<FirstArg, slice_range>()){
+                return slice_dimension(dim, first).slice_layout(dim+1, other...);
+            }else{
+                return slice_dimension(dim, first).slice_layout(dim, other...);
+            }
+        }
+
+        template<typename FirstArg>
+        auto slice_layout(size_t dim, FirstArg first) {
+            return slice_dimension(dim, first);
+        }
 
 
         //slices the layout along one single dimension

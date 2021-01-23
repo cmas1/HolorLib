@@ -58,5 +58,21 @@ int main(){
     std::cout << "strides = [" << E.strides()[0] << "]\n";
     std::cout << "offset = " << E.offset() << "\n\n";
 
+
+    auto F = A.slice_layout(0, slice_range{0,1}, slice_range{1,2});
+    std::cout << "F:\nlengths = [" << F.lengths()[0] << ", " << F.lengths()[1] << "]\n";
+    std::cout << "strides = [" << F.strides()[0] << ", " << F.strides()[1] << "]\n";
+    std::cout << "offset = " << F.offset() << "\n\n";
+
+    auto G = A.slice_layout(0, 1, slice_range{1,2});
+    std::cout << "G:\nlengths = [" << G.lengths()[0] << "]\n";
+    std::cout << "strides = [" << G.strides()[0] << "]\n";
+    std::cout << "offset = " << G.offset() << "\n\n";
+
+    auto H = A.slice_layout(0, slice_range{1,2}, 0);
+    std::cout << "H:\nlengths = [" << H.lengths()[0] << "]\n";
+    std::cout << "strides = [" << H.strides()[0] << "]\n";
+    std::cout << "offset = " << H.offset() << "\n\n";
+
     return 0;
 }
