@@ -274,7 +274,7 @@ class Layout{
 
 
         /****************************************************************
-                                OPERATORS
+                                INDEXING AND SLICING
         ****************************************************************/
         /*!
          * \brief Given a set of subscripts referring to a Layout, it returns the index of the corresponding element in the Holor
@@ -293,47 +293,69 @@ class Layout{
         }
 
 
-        //TODO: change std_enable_if with requires, maybe createing a concept for the type of arguments allowed
-        template<typename FirstArg, typename... OtherArgs>
-        auto slice_layout(size_t dim, FirstArg first, OtherArgs... other) {
+        // //TODO: change std_enable_if with requires, maybe creating a concept for the type of arguments allowed
+        // template<typename FirstArg, typename... OtherArgs>
+        // auto slice_layout(size_t dim, FirstArg first, OtherArgs... other) {
+        //     if constexpr(std::is_same<FirstArg, slice_range>() || std::is_convertible<FirstArg, slice_range>()){
+        //         return slice_dimension(dim, first).slice_layout(dim+1, other...);
+        //     }else{
+        //         return slice_dimension(dim, first).slice_layout(dim, other...);
+        //     }
+        // }
+
+        // template<typename FirstArg>
+        // auto slice_layout(size_t dim, FirstArg first) {
+        //     return slice_dimension(dim, first);
+        // }
+
+        
+        //TODO: change std_enable_if with requires, maybe creating a concept for the type of arguments allowed
+        template<size_t Dim, typename FirstArg, typename... OtherArgs>
+        auto slice_layout(FirstArg first, OtherArgs... other) {
             if constexpr(std::is_same<FirstArg, slice_range>() || std::is_convertible<FirstArg, slice_range>()){
-                return slice_dimension(dim, first).slice_layout(dim+1, other...);
+                // return slice_layout<Dim+1>(other...);
+                auto pippo = slice_dimension<Dim>(first);
+                return pippo.slice_layout<Dim+1>(other...);
+                // return slice_dimension<Dim>(first).slice_layout<Dim+1>(other...);
             }else{
-                return slice_dimension(dim, first).slice_layout(dim, other...);
+                return slice_layout<Dim>(other...);
+                // return slice_dimension<Dim>(first).slice_layout<Dim>(other...);
             }
         }
 
-        template<typename FirstArg>
-        auto slice_layout(size_t dim, FirstArg first) {
-            return slice_dimension(dim, first);
+        template<size_t Dim, typename FirstArg>
+        auto slice_layout(FirstArg first) {
+            return slice_dimension<Dim>(first);
         }
 
 
         //slices the layout along one single dimension
-        Layout<N> slice_dimension(size_t dim, slice_range range){
+        template<size_t Dim>
+        Layout<N> slice_dimension(slice_range range){
             Layout<N> res = *this;
-            res.lengths_[dim] = range.end_-range.start_+1;
+            res.lengths_[Dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
-            res.offset_ = offset_ + range.start_*strides_[dim];
+            res.offset_ = offset_ + range.start_*strides_[Dim];
             return res;
         }
 
 
         //TODO: now this requires that Layout<N> is friend to Layout<N+1>. This is not a clean solution
         //slices the layout along one single dimension
-        Layout<N-1> slice_dimension(size_t dim, size_t num, size_t step = 1){
+        template<size_t Dim>
+        Layout<N-1> slice_dimension(size_t num, size_t step = 1){
             //step is not used right now, should be modified in the future to use it
             Layout<N-1> res;
             size_t i = 0;
             for(size_t j = 0; j < N; j++){
                 res.size_ = 1;
-                if (j != dim){
+                if (j != Dim){
                     res.lengths_[i] = lengths_[j];
                     res.strides_[i] = strides_[j];
                     res.size_ *= lengths_[j];
                     i++;
                 }
-                res.offset_ = offset_ + num*strides_[dim];
+                res.offset_ = offset_ + num*strides_[Dim];
             }
             return res;
         }
