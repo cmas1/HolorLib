@@ -40,23 +40,34 @@
 namespace holor{
 
 
-struct slice_range{
+/*!
+ * \brief Structure that represents the range for a slice of a Holor container. 
+ * 
+ * \b Example: Assume to have a 1D Holor container of size 7. If we wanted to select the slice that takes the elements from the second to the fourth, we 
+ * can index the holor using `range{1, 3}` to create the slice.
+ * 
+ * \b Example: `range{1, 5, 1}` is equivalent to `1:5` in Matlab.
+ * 
+ */
+struct range{
     size_t start_;
     size_t end_;
     size_t step_;
 
-    slice_range(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
-        // it must be end > start, start >=0, end <= length[dim]
-        // check also step?
+    range(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
+        // it must be end > start, start >=0, end <= length[dim], step >=1
+        //TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
     }        
 };
 
-/* function used to verify that some of the subscripts used to access the elements of a tensor are layouts
+
+
+/* predicate used to verify that some of the subscripts used to access the elements of a tensor are layouts
 * return \p true if some of the arguments are layouts
 */
 template<typename... Args>
 constexpr bool requesting_slice(){
-    return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, slice_range>() || std::is_convertible<Args, slice_range>())...) && assert::some(std::is_same<Args, slice_range>()...);
+    return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, range>() || std::is_convertible<Args, range>())...) && assert::some(std::is_same<Args, range>()...);
 }
 
 
@@ -292,70 +303,37 @@ class Layout{
             return offset_ + std::inner_product(args, args+N, strides_.begin(), size_t{0});
         }
 
-
-        // //TODO: change std_enable_if with requires, maybe creating a concept for the type of arguments allowed
-        // template<typename FirstArg, typename... OtherArgs>
-        // auto slice_layout(size_t dim, FirstArg first, OtherArgs... other) {
-        //     if constexpr(std::is_same<FirstArg, slice_range>() || std::is_convertible<FirstArg, slice_range>()){
-        //         return slice_dimension(dim, first).slice_layout(dim+1, other...);
-        //     }else{
-        //         return slice_dimension(dim, first).slice_layout(dim, other...);
-        //     }
-        // }
-
-        // template<typename FirstArg>
-        // auto slice_layout(size_t dim, FirstArg first) {
-        //     return slice_dimension(dim, first);
-        // }
-
-        
-        //TODO: change std_enable_if with requires, maybe creating a concept for the type of arguments allowed
-        template<size_t Dim, typename FirstArg, typename... OtherArgs>
-        auto slice_layout(FirstArg first, OtherArgs... other) {
-            if constexpr(std::is_same<FirstArg, slice_range>() || std::is_convertible<FirstArg, slice_range>()){
-                // return slice_layout<Dim+1>(other...);
-                auto pippo = slice_dimension<Dim>(first);
-                return pippo.slice_layout<Dim+1>(other...);
-                // return slice_dimension<Dim>(first).slice_layout<Dim+1>(other...);
-            }else{
-                return slice_layout<Dim>(other...);
-                // return slice_dimension<Dim>(first).slice_layout<Dim>(other...);
-            }
-        }
-
-        template<size_t Dim, typename FirstArg>
-        auto slice_layout(FirstArg first) {
-            return slice_dimension<Dim>(first);
+        template<typename... Args>
+        auto slice(Args... args){
+            return slice_helper(0, args...);
         }
 
 
         //slices the layout along one single dimension
-        template<size_t Dim>
-        Layout<N> slice_dimension(slice_range range){
+        //step is not used right now.
+        Layout<N> slice_dimension(size_t dim, range range){
             Layout<N> res = *this;
-            res.lengths_[Dim] = range.end_-range.start_+1;
+            res.lengths_[dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
-            res.offset_ = offset_ + range.start_*strides_[Dim];
+            res.offset_ = offset_ + range.start_*strides_[dim];
             return res;
         }
 
 
         //TODO: now this requires that Layout<N> is friend to Layout<N+1>. This is not a clean solution
         //slices the layout along one single dimension
-        template<size_t Dim>
-        Layout<N-1> slice_dimension(size_t num, size_t step = 1){
-            //step is not used right now, should be modified in the future to use it
+        Layout<N-1> slice_dimension(size_t dim, size_t num){
             Layout<N-1> res;
             size_t i = 0;
             for(size_t j = 0; j < N; j++){
                 res.size_ = 1;
-                if (j != Dim){
+                if (j != dim){
                     res.lengths_[i] = lengths_[j];
                     res.strides_[i] = strides_[j];
                     res.size_ *= lengths_[j];
                     i++;
                 }
-                res.offset_ = offset_ + num*strides_[Dim];
+                res.offset_ = offset_ + num*strides_[dim];
             }
             return res;
         }
@@ -394,10 +372,35 @@ class Layout{
                 size_ *= lengths_[i];
             }
         }
+
+        //TODO: change std_enable_if with requires, maybe creating a concept for the type of arguments allowed
+        template<typename FirstArg, typename... OtherArgs>
+        auto slice_helper(size_t dim, FirstArg first, OtherArgs... other) {
+            if constexpr(std::is_same<FirstArg, range>() || std::is_convertible<FirstArg, range>()){
+                return slice_dimension(dim, first).slice_helper(dim+1, other...);
+            }else{
+                return slice_dimension(dim, first).slice_helper(dim, other...);
+            }
+        }
+
+        template<typename FirstArg>
+        auto slice_helper(size_t dim, FirstArg first) {
+            return slice_dimension(dim, first);
+        }
 };
 
 
 
+
+
+// =====================================================================================================================
+// =====================================================================================================================
+// =====================================================================================================================
+// =====================================================================================================================
+// =====================================================================================================================
+// =====================================================================================================================
+// =====================================================================================================================
+// =====================================================================================================================
 
 
 // create degenerate case for N = 0
