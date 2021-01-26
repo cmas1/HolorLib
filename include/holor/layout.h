@@ -34,40 +34,53 @@
 
 
 
-
-
-
 namespace holor{
 
 
 /*!
- * \brief Structure that represents the range for a slice of a Holor container. 
+ * \brief Structure that represents a range to index a slice of a Holor container. 
  * 
  * \b Example: Assume to have a 1D Holor container of size 7. If we wanted to select the slice that takes the elements from the second to the fourth, we 
  * can index the holor using `range{1, 3}` to create the slice.
  * 
- * \b Example: `range{1, 5, 1}` is equivalent to `1:5` in Matlab.
- * 
+ * \b Note: `range{1, 5, 1}` is equivalent to `1:5` in Matlab.
  */
 struct range{
-    size_t start_;
-    size_t end_;
-    size_t step_;
+    size_t start_; /*! beginning of the range */
+    size_t end_; /*! end of the range (this element is included in the range) */
+    size_t step_; /*! number of steps between elements. \b Example: step = 1, the elements in the range are contiguous; step = 2, the range skips every other element. */
 
+    /*!
+     * \brief Constructor with checks on the arguments
+     * \param start beginning of the range
+     * \param end end (last element) of the range
+     * \param step step between two elements in the range. Defaults to 1.
+     */
     range(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
-        // it must be end > start, start >=0, end <= length[dim], step >=1
-        //TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
+        // TODO: implement checks using dynamic asserts. it must be end > start, start >=0, end <= length[dim], step >=1
+
+        // TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
     }        
 };
 
 
+//TODO: introduce concept for range indexing
+//TODO: introduce concept for size_t indexing?
 
-/* predicate used to verify that some of the subscripts used to access the elements of a tensor are layouts
-* return \p true if some of the arguments are layouts
-*/
+
+
+/*! 
+ * \brief predicate used to verify that at least one of the arguments used to index a layout is a range. This is needed to differentiate indexing of an element
+ * and indexing of a slice
+ * 
+ * \tparam Args parameter pack of template arguments to be verified
+ * 
+ * \return true if some of the arguments are layouts
+ */
 template<typename... Args>
 constexpr bool requesting_slice(){
     return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, range>() || std::is_convertible<Args, range>())...) && assert::some(std::is_same<Args, range>()...);
+    //TODO: replace with concepts
 }
 
 
@@ -78,18 +91,15 @@ constexpr bool requesting_slice(){
 
 
 
-
-
-
 /*!
- * \brief Class that represents the layout of a Holor container or a Slice of a Holor, i.e., how the elements are stored in memory.
+ * \brief Class that represents the memory layout of a Holor container or a Slice of a Holor.
  *
- * The Layout class contains the information for indexing a multi-dimensional subset of a Holor container. 
- * It uses the  idea of generalized layouts from the standard library, i.e. it is based on the fact that the elements of a Holor
+ * The Layout class contains the information for indexing the contiguous memory where the elements of the Holor or Slice are stored.
+ * It uses the  idea of generalized layouts from the standard library, i.e., it is based on the fact that the elements of a Holor or Slice
  * are stored as a 1D data sequence following a row-major representation.
  * 
- * Indexing a layout of a Holor container is done via three parameters: 
- *      - The \b offset is the index of the first element of the container that is part of the layout.  
+ * A layout contains three fundamental information: 
+ *      - The \b offset is the offset in the contiguous memory of the first element indexed by the layout.  
  *      - The \b lengths are the numbers of elements for every dimension of the layout.
  *      - The \b strides are the distances in the 1D data sequence between successive elements in individual dimensions of the layout.
  *  For a Layout with `N` dimensions, both the length array and the stride array must be size `N`.
@@ -99,27 +109,12 @@ constexpr bool requesting_slice(){
  *  index = offset + \sum_{j=0}^{N-1} j \cdot strides[j]
  * \f]
  * 
- * \verbatim embed:rst:leading-asterisk
- *  .. note::
- *      The strides depend on the lengths of the original tensor.
- * \endverbatim
+ * \tparam N is the number of dimensions in the layout
  */
-
-
-// //Forward declaration to make this a friend class of Layout
-// namespace impl{
-//     template<size_t M>
-//     struct layout_dim;
-// }
-
-
-
-
-
 template<size_t N>
 class Layout{
     
-    friend class Layout<N+1>;
+    friend class Layout<N+1>; //TODO: this is ugly, needs to be fixed
     public:
 
         /****************************************************************
@@ -134,7 +129,7 @@ class Layout{
         /*!
          * \brief Copy constructor
          * 
-         * \param a Layout
+         * \param layout Layout to be copied
          * 
          * \return a copy of the input Layout
          */
@@ -144,7 +139,7 @@ class Layout{
         /*!
          * \brief Copy assignment
          * 
-         * \param a Layout
+         * \param layout Layout to be copied
          * 
          * \return a Layout copied from the input
          */
@@ -154,7 +149,7 @@ class Layout{
         /*!
          * \brief Move constructor
          * 
-         * \param a Layout
+         * \param layout Layout to be moved
          * 
          * \return a Layout moved from the input
          */
@@ -164,7 +159,7 @@ class Layout{
         /*!
          * \brief Move assignment
          * 
-         * \param a Layout
+         * \param layout Layout to be moved
          * 
          * \return a Layout moved from the input
          */
@@ -175,7 +170,7 @@ class Layout{
          * \brief Constructor of a layout from an offset and an array of lengths
          * 
          * \param lengths array containing the number of elements along each dimension of the layout
-         * \param offset index of the first element of the layout in the original Holor container
+         * \param offset index of the first element of the layout in the original Holor container (default is 0)
          * 
          * \return a Layout
          */
@@ -194,6 +189,32 @@ class Layout{
          */
         Layout(std::array<size_t,N>&& lengths, size_t offset): offset_{offset}, lengths_{lengths} {
             compute_strides();
+        };
+
+
+        /*!
+         * \brief Constructor of a layout from an offset, an array of lengths and an array of strides
+         * 
+         * \param lengths array containing the number of elements along each dimension of the layout
+         * \param strides array containing the strides along each dimension of the layout
+         * \param offset index of the first element of the layout in the original Holor container (default is 0)
+         * 
+         * \return a Layout
+         */
+        Layout(const std::array<size_t,N>& lengths, const std::array<size_t,N>& strides, size_t offset=0): offset_{offset}, lengths_{lengths}, strides_{strides} {
+        };
+
+
+        /*!
+         * \brief Constructor of a layout from an offset and an array of lengths
+         * 
+         * \param lengths array containing the number of elements along each dimension of the layout
+         * \param strides array containing the strides along each dimension of the layout
+         * \param offset index of the first element of the layout in the original Holor container
+         * 
+         * \return a Layout
+         */
+        Layout(std::array<size_t,N>&& lengths, std::array<size_t,N>&& strides, size_t offset): offset_{offset}, lengths_{lengths}, strides_{strides} {
         };
 
 
@@ -240,7 +261,7 @@ class Layout{
         /*!
          * \brief Get the offset of the layout
          * 
-         * \return the offset (with respect to the layoutd Holor container) of the layout
+         * \return the offset (with respect to the layout Holor container) of the layout
          */
         size_t offset() const{
             return offset_;
