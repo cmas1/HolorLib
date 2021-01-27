@@ -201,8 +201,7 @@ class Layout{
          * 
          * \return a Layout
          */
-        Layout(const std::array<size_t,N>& lengths, const std::array<size_t,N>& strides, size_t offset=0): offset_{offset}, lengths_{lengths}, strides_{strides} {
-        };
+        Layout(const std::array<size_t,N>& lengths, const std::array<size_t,N>& strides, size_t offset=0): offset_{offset}, lengths_{lengths}, strides_{strides} {};
 
 
         /*!
@@ -214,8 +213,7 @@ class Layout{
          * 
          * \return a Layout
          */
-        Layout(std::array<size_t,N>&& lengths, std::array<size_t,N>&& strides, size_t offset): offset_{offset}, lengths_{lengths}, strides_{strides} {
-        };
+        Layout(std::array<size_t,N>&& lengths, std::array<size_t,N>&& strides, size_t offset): offset_{offset}, lengths_{lengths}, strides_{strides} {};
 
 
         // /*!
