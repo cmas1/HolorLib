@@ -37,12 +37,13 @@
 namespace holor{
 
 
+/*==============================================================================================
+                        MONO-DIMENSIONAL RANGE FOR SLICING LAYOUTS
+===============================================================================================*/
 /*!
  * \brief Structure that represents a range to index a slice of a Holor container. 
- * 
- * \b Example: Assume to have a 1D Holor container of size 7. If we wanted to select the slice that takes the elements from the second to the fourth, we 
+ * \b Example: Assume to have a 1D Holor container of size 7. To select the slice that takes the elements from the second to the fourth, we 
  * can index the holor using `range{1, 3}` to create the slice.
- * 
  * \b Note: `range{1, 5, 1}` is equivalent to `1:5` in Matlab.
  */
 struct range{
@@ -58,49 +59,56 @@ struct range{
      */
     range(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
         // TODO: implement checks using dynamic asserts. it must be end > start, start >=0, end <= length[dim], step >=1
-
         // TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
     }        
 };
 
 
-//TODO: introduce concept for range indexing
-//TODO: introduce concept for size_t indexing?
+
+
+/*================================================================================================
+                                    CONCEPTS AND PREDICATES
+================================================================================================*/
+//TODO: Check predicates and modify them using concepts: a concept for range indexing and a concept for single-element indexing
+    namespace impl{
+        /*! 
+        * \brief predicate used to verify that the arguments of an indexing operation refer to a slice, rather than a single element
+        * \tparam Args parameter pack of template arguments to be verified
+        * \return true if at least one of the arguments is indexing a range in a dimension of the layout
+        */
+        template<typename... Args>
+        constexpr bool single_element_indexing(){
+            return assert::all(std::is_convertible<Args, size_t>()...);
+        }
+
+
+        /*! 
+        * \brief predicate used to verify that the arguments of an indexing operation refer to a single element
+        * \tparam Args parameter pack of template arguments to be verified
+        * \return true if all the arguments index a single element along each dimension of the layout
+        */
+        template<typename... Args>
+        constexpr bool range_indexing(){
+            return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, range>() || std::is_convertible<Args, range>())...) && assert::some(std::is_same<Args, range>()...);
+        }
+    }
 
 
 
-/*! 
- * \brief predicate used to verify that at least one of the arguments used to index a layout is a range. This is needed to differentiate indexing of an element
- * and indexing of a slice
- * 
- * \tparam Args parameter pack of template arguments to be verified
- * 
- * \return true if some of the arguments are layouts
- */
-template<typename... Args>
-constexpr bool requesting_slice(){
-    return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, range>() || std::is_convertible<Args, range>())...) && assert::some(std::is_same<Args, range>()...);
-    //TODO: replace with concepts
-}
 
-
-
-
-
-
-
-
-
+/*================================================================================================
+                                    Layout Class
+================================================================================================*/
 /*!
- * \brief Class that represents the memory layout of a Holor container or a Slice of a Holor.
+ * \brief Class that represents the contiguous memory layout of a Holor container or a Slice of a Holor.
  *
  * The Layout class contains the information for indexing the contiguous memory where the elements of the Holor or Slice are stored.
- * It uses the  idea of generalized layouts from the standard library, i.e., it is based on the fact that the elements of a Holor or Slice
+ * It uses the idea of generalized layouts from the standard library, i.e., it is based on the fact that the elements of a Holor or Slice
  * are stored as a 1D data sequence following a row-major representation.
  * 
  * A layout contains three fundamental information: 
  *      - The \b offset is the offset in the contiguous memory of the first element indexed by the layout.  
- *      - The \b lengths are the numbers of elements for every dimension of the layout.
+ *      - The \b lengths are the numbers of elements along every dimension of the layout.
  *      - The \b strides are the distances in the 1D data sequence between successive elements in individual dimensions of the layout.
  *  For a Layout with `N` dimensions, both the length array and the stride array must be size `N`.
  * 
@@ -114,12 +122,10 @@ constexpr bool requesting_slice(){
 template<size_t N>
 class Layout{
     
-    friend class Layout<N+1>; //TODO: this is ugly, needs to be fixed
     public:
-
-        /****************************************************************
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 CONSTRUCTORS, ASSIGNEMENTS AND DESTRUCTOR
-        ****************************************************************/    
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/    
         /*!
          * \brief Default constructor that creates an empty layout with no elements
          */
@@ -128,9 +134,7 @@ class Layout{
 
         /*!
          * \brief Copy constructor
-         * 
          * \param layout Layout to be copied
-         * 
          * \return a copy of the input Layout
          */
         Layout(const Layout<N>& layout) = default;
@@ -138,19 +142,15 @@ class Layout{
 
         /*!
          * \brief Copy assignment
-         * 
          * \param layout Layout to be copied
-         * 
-         * \return a Layout copied from the input
+         * \return a copy of the input Layout
          */
         Layout<N>& operator=(const Layout<N>& layout) = default;
 
 
         /*!
          * \brief Move constructor
-         * 
          * \param layout Layout to be moved
-         * 
          * \return a Layout moved from the input
          */
         Layout(Layout<N>&& layout) = default;
@@ -158,9 +158,7 @@ class Layout{
 
         /*!
          * \brief Move assignment
-         * 
          * \param layout Layout to be moved
-         * 
          * \return a Layout moved from the input
          */
         Layout<N>& operator=(Layout<N>&& layout) = default;
@@ -168,10 +166,8 @@ class Layout{
 
         /*!
          * \brief Constructor of a layout from an offset and an array of lengths
-         * 
          * \param lengths array containing the number of elements along each dimension of the layout
          * \param offset index of the first element of the layout in the original Holor container (default is 0)
-         * 
          * \return a Layout
          */
         Layout(const std::array<size_t,N>& lengths, size_t offset=0): offset_{offset}, lengths_{lengths} {
@@ -181,10 +177,8 @@ class Layout{
 
         /*!
          * \brief Constructor of a layout from an offset and an array of lengths
-         * 
          * \param lengths array containing the number of elements along each dimension of the layout
          * \param offset index of the first element of the layout in the original Holor container
-         * 
          * \return a Layout
          */
         Layout(std::array<size_t,N>&& lengths, size_t offset): offset_{offset}, lengths_{lengths} {
@@ -194,11 +188,9 @@ class Layout{
 
         /*!
          * \brief Constructor of a layout from an offset, an array of lengths and an array of strides
-         * 
          * \param lengths array containing the number of elements along each dimension of the layout
          * \param strides array containing the strides along each dimension of the layout
          * \param offset index of the first element of the layout in the original Holor container (default is 0)
-         * 
          * \return a Layout
          */
         Layout(const std::array<size_t,N>& lengths, const std::array<size_t,N>& strides, size_t offset=0): offset_{offset}, lengths_{lengths}, strides_{strides} {};
@@ -206,41 +198,22 @@ class Layout{
 
         /*!
          * \brief Constructor of a layout from an offset and an array of lengths
-         * 
          * \param lengths array containing the number of elements along each dimension of the layout
          * \param strides array containing the strides along each dimension of the layout
          * \param offset index of the first element of the layout in the original Holor container
-         * 
          * \return a Layout
          */
         Layout(std::array<size_t,N>&& lengths, std::array<size_t,N>&& strides, size_t offset): offset_{offset}, lengths_{lengths}, strides_{strides} {};
 
 
-        // /*!
-        //  * Constructor from a list of lengths
-        //  * 
-        //  * \tparam lengths number of elements along each dimension of the layout
-        //  * 
-        //  * \return a Layout
-        //  */
-        // //TODO: do we need this constructor? Needs Improvements!!! Do we need a simple constructor from an array of lengths, without offset?
-        // template<typename... Lengths>
-        // Layout(Lengths... lengths){
-        //     static_assert(sizeof...(Lengths)==N, "Layout constructor dimension mismatch");
-        //     std::array<size_t,N> tmp{size_t(lengths)...};
-        //     lengths_ = std::move(tmp);
-        //     offset_ = 0;
-        //     this->compute_strides();
-        // }
-
-
+        //TODO: think about a constructor from a range of view of lengths. Perhaps using std::span?
         
-        /***********************************************************************
-        *                           GET/SET FUNCTIONS
-        ***********************************************************************/
+
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                    GET/SET FUNCTIONS
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         /*!
          * \brief Get the number of dimensions of the layout
-         * 
          * \return the number `N` of dimensions of the layout.
          */
         constexpr size_t dimensions(){
@@ -248,8 +221,7 @@ class Layout{
         }
 
         /*!
-         * \brief Get the size of the layout
-         * 
+         * \brief Get the size of the layout. This is a const function.
          * \return the size (total number of elements) of the layout
          */
         size_t size() const{
@@ -257,8 +229,7 @@ class Layout{
         }
 
         /*!
-         * \brief Get the offset of the layout
-         * 
+         * \brief Get the offset of the layout. This is a const function.
          * \return the offset (with respect to the layout Holor container) of the layout
          */
         size_t offset() const{
@@ -266,8 +237,7 @@ class Layout{
         }
 
         /*!
-         * \brief Get the lengths of the layout
-         * 
+         * \brief Get the lengths of the layout. This is a const function.
          * \return the lengths (number of elements per dimension) of the layout
          */
         std::array<size_t,N> lengths() const{
@@ -275,18 +245,26 @@ class Layout{
         }
 
         /*!
-         * \brief Get the strides of the layout
-         * 
+         * \brief Get the strides of the layout. This is a const function.
          * \return the strides of the layout
          */
         std::array<size_t,N> strides() const{
             return strides_;
         }
 
+
+        //TODO: for the set methods that take a std::array argument, check if they can be generalized using ranges, handling separately the cases of fixed length range and dynamic length range.
         /*!
-         * \brief Set the lengths of the layout
-         * 
-         * \param the lengths to be set
+         * \brief Set the lengths of the layout, wihout updating the strides
+         * \param lengths are the lengths to be set
+         */
+        void set_lengths_nostrides(std::array<size_t,N> lengths) {
+            lengths_ = lengths;
+        }
+
+        /*!
+         * \brief Set the lengths of the layout, updating also the strides
+         * \param lengths are the lengths to be set
          */
         void set_lengths(std::array<size_t,N> lengths) {
             lengths_ = lengths;
@@ -294,8 +272,15 @@ class Layout{
         }
 
         /*!
+         * \brief Set the strides of the layout
+         * \param strides are the strides to be set
+         */
+        void set_strides(std::array<size_t,N> strides) {
+            strides_ = strides;
+        }
+
+        /*!
          * \brief Set the offset of the layout
-         * 
          * \param offset is the new offset of the layout
          */
         void set_offset(size_t offset) {
@@ -303,20 +288,18 @@ class Layout{
         }
 
 
-        /****************************************************************
-                                INDEXING AND SLICING
-        ****************************************************************/
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            INDEXING AND SLICING
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         /*!
          * \brief Given a set of subscripts referring to a Layout, it returns the index of the corresponding element in the Holor
-         * 
          * \param dims parameters pack containing the subscripts
-         * 
          * \return the index of the subscripted element in the Holor
          */
 
         //TODO: rewrite this function in a better way
         template<typename... Dims>
-        std::enable_if_t<impl::requesting_element<Dims...>(), size_t> index_layout(Dims... dims) const{
+        std::enable_if_t<impl::single_element_indexing<Dims...>(), size_t> index_layout(Dims... dims) const{
             static_assert(sizeof...(Dims)==N, "Layout<N>::operator(): dimension mismatch");
             size_t args[N]{size_t(dims)... }; 
             return offset_ + std::inner_product(args, args+N, strides_.begin(), size_t{0});
@@ -360,25 +343,10 @@ class Layout{
 
 
     private:
-        /*!
-        * number of elements in each dimension
-        */
-        std::array<size_t,N> lengths_;
-
-        /*!
-        * total number of elements of the layout
-        */
-        size_t size_;
-
-        /*!
-        * offset from the beginning of the array of elements of the tensor where the layout starts
-        */
-        size_t offset_;
-
-        /*!
-        * distance between consecutive elements in each dimension
-        */
-        std::array<size_t,N> strides_;
+        std::array<size_t,N> lengths_; /*! number of elements in each dimension */
+        size_t size_; /*! total number of elements of the layout */
+        size_t offset_; /*! offset from the beginning of the array of elements of the tensor where the layout starts */
+        std::array<size_t,N> strides_; /*! distance between consecutive elements in each dimension */
 
 
         /*!
@@ -406,17 +374,19 @@ class Layout{
         auto slice_helper(size_t dim, FirstArg first) {
             return slice_dimension(dim, first);
         }
+
+        friend class Layout<N+1>; //FIXME: this is ugly, needs to be fixed
 };
 
 
 
 
-
-// =====================================================================================================================
-// =====================================================================================================================
-// =====================================================================================================================
-// =====================================================================================================================
-// =====================================================================================================================
+//TODO: Specializations for N = 0, 1, 2, 3
+// ====================================================================================================================
+// ====================================================================================================================
+// ====================================================================================================================
+// ====================================================================================================================
+// ====================================================================================================================
 // =====================================================================================================================
 // =====================================================================================================================
 // =====================================================================================================================

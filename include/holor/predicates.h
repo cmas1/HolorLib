@@ -40,10 +40,10 @@ namespace impl{
     * function used to verify that the subscripts used to access the elements of a tensor are actually <tt>size_t</tt>
     * return \p true if all the arguments can be converted to <tt>size_t</tt>
     */
-    template<typename... Args>
-    constexpr bool requesting_element(){
-        return assert::all(std::is_convertible<Args, size_t>()...);
-    }
+    // template<typename... Args>
+    // constexpr bool requesting_element(){
+    //     return assert::all(std::is_convertible<Args, size_t>()...);
+    // }
 
 
 
