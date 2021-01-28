@@ -291,20 +291,28 @@ class Layout{
                             INDEXING AND SLICING
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         /*!
-         * \brief Given a set of subscripts referring to a Layout, it returns the index of the corresponding element in the Holor
+         * \brief Function for indexing a single element from the Layout
+         * \tparam Dims are the types of the parameter pack. Dims must e a pack of `N` parameters, each indexing a single element along a dimension of the Layout
          * \param dims parameters pack containing the subscripts
          * \return the index of the subscripted element in the Holor
          */
-        // TODO: can the parameter pack be unpacked using views, without helper function?
         template<typename... Dims> requires (impl::single_element_indexing<Dims...>() && (sizeof...(Dims)==N) )
+        // TODO: can the parameter pack be unpacked using views, without helper function?
         size_t operator()(Dims&&... dims) const{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
 
-        //TODO: rewrite this function in a better way
+
+        /*!
+         * \brief Function for indexing a slice from the Layout
+         * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
+         * \param args parameters pack. Each eleemtn of the pack indexes either an element or a range of elements along a dimension of th Layout.
+         * \return the Layout containing the indexed range of elements
+         */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
-        auto operator()(Args... args) const{
-            return slice_helper(0, args...);
+        auto operator()(Args&&... args) const{
+            return slice_helper(0, std::forward<Args>(args)...);
+            //TODO: rewrite this function in a better way. The first argument of slice helper should be a template!
         }
 
 
@@ -340,7 +348,9 @@ class Layout{
         }
 
 
-
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        PRIVATE MEMBERS AND FUNCTIONS
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     private:
         std::array<size_t,N> lengths_; /*! number of elements in each dimension */
         size_t size_; /*! total number of elements of the layout */
