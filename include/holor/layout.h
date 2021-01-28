@@ -252,7 +252,6 @@ class Layout{
             return strides_;
         }
 
-
         //TODO: for the set methods that take a std::array argument, check if they can be generalized using ranges, handling separately the cases of fixed length range and dynamic length range.
         /*!
          * \brief Set the lengths of the layout, wihout updating the strides
@@ -296,24 +295,24 @@ class Layout{
          * \param dims parameters pack containing the subscripts
          * \return the index of the subscripted element in the Holor
          */
-
-        //TODO: rewrite this function in a better way
-        template<typename... Dims>
-        std::enable_if_t<impl::single_element_indexing<Dims...>(), size_t> index_layout(Dims... dims) const{
-            static_assert(sizeof...(Dims)==N, "Layout<N>::operator(): dimension mismatch");
-            size_t args[N]{size_t(dims)... }; 
-            return offset_ + std::inner_product(args, args+N, strides_.begin(), size_t{0});
+        // TODO: can the parameter pack be unpacked using views, without helper function?
+        template<typename... Dims> requires (impl::single_element_indexing<Dims...>() && (sizeof...(Dims)==N) )
+        size_t operator()(Dims&&... dims) const{
+            return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
 
-        template<typename... Args>
-        auto slice(Args... args){
+        //TODO: rewrite this function in a better way
+        template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
+        auto operator()(Args... args) const{
             return slice_helper(0, args...);
         }
 
 
+        //TODO: can we add single element and range indexing functions that take a range of arguments, rather than a variadic template, if we use a base concept IndexingArgument (range and size_t)?
+
         //slices the layout along one single dimension
         //step is not used right now.
-        Layout<N> slice_dimension(size_t dim, range range){
+        Layout<N> slice_dimension(size_t dim, range range) const{
             Layout<N> res = *this;
             res.lengths_[dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
@@ -324,7 +323,7 @@ class Layout{
 
         //TODO: now this requires that Layout<N> is friend to Layout<N+1>. This is not a clean solution
         //slices the layout along one single dimension
-        Layout<N-1> slice_dimension(size_t dim, size_t num){
+        Layout<N-1> slice_dimension(size_t dim, size_t num) const{
             Layout<N-1> res;
             size_t i = 0;
             for(size_t j = 0; j < N; j++){
@@ -360,9 +359,23 @@ class Layout{
             }
         }
 
+
+
+        
+        template<size_t M, typename FirstArg, typename... OtherArgs>
+        size_t single_element_indexing_helper(FirstArg first, OtherArgs&&... other) const{
+            return first * strides_[M] + single_element_indexing_helper<M+1>(std::forward<OtherArgs>(other)...);
+        }
+
+        template<size_t M, typename FirstArg>
+        size_t single_element_indexing_helper(FirstArg first) const{
+            return first * strides_[M];
+        }
+
+
         //TODO: change std_enable_if with requires, maybe creating a concept for the type of arguments allowed
         template<typename FirstArg, typename... OtherArgs>
-        auto slice_helper(size_t dim, FirstArg first, OtherArgs... other) {
+        auto slice_helper(size_t dim, FirstArg first, OtherArgs... other) const{
             if constexpr(std::is_same<FirstArg, range>() || std::is_convertible<FirstArg, range>()){
                 return slice_dimension(dim, first).slice_helper(dim+1, other...);
             }else{
@@ -371,7 +384,7 @@ class Layout{
         }
 
         template<typename FirstArg>
-        auto slice_helper(size_t dim, FirstArg first) {
+        auto slice_helper(size_t dim, FirstArg first) const{
             return slice_dimension(dim, first);
         }
 

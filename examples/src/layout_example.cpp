@@ -38,6 +38,8 @@ int main(){
     std::cout << "strides = [" << A.strides()[0] << ", " << A.strides()[1] << "]\n";
     std::cout << "offset = " << A.offset() << "\n\n";
 
+    std::cout << "A(1,0) = "  << A(1,0) <<"\n\n";
+
     auto B = A.slice_dimension(0, {1,2});
     std::cout << "B:\nlengths = [" << B.lengths()[0] << ", " << B.lengths()[1] << "]\n";
     std::cout << "strides = [" << B.strides()[0] << ", " << B.strides()[1] << "]\n";
@@ -59,11 +61,13 @@ int main(){
     std::cout << "offset = " << E.offset() << "\n\n";
 
 
-    auto F = A.slice(range{0,1}, range{1,2});
+    auto F = A(range{0,1}, range{1,2});
     std::cout << "F:\nlengths = [" << F.lengths()[0] << ", " << F.lengths()[1] << "]\n";
     std::cout << "strides = [" << F.strides()[0] << ", " << F.strides()[1] << "]\n";
     std::cout << "offset = " << F.offset() << "\n";
     std::cout << "dimensions = " << F.dimensions() << "\n\n";
+
+    
 
     // auto G = A.slice_layout(0, 1, range{1,2});
     // std::cout << "G:\nlengths = [" << G.lengths()[0] << "]\n";
