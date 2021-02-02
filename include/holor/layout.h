@@ -306,7 +306,7 @@ class Layout{
         /*!
          * \brief Function for indexing a slice from the Layout
          * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
-         * \param args parameters pack. Each eleemtn of the pack indexes either an element or a range of elements along a dimension of th Layout.
+         * \param args parameters pack. Each element of the pack indexes either an element or a range of elements along a dimension of the Layout.
          * \return the Layout containing the indexed range of elements
          */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
@@ -316,7 +316,7 @@ class Layout{
         }
 
 
-        //TODO: can we add single element and range indexing functions that take a range of arguments, rather than a variadic template, if we use a base concept IndexingArgument (range and size_t)?
+        //TODO: can we add single element and range indexing functions that take a range of arguments, rather than a variadic template, if we use a base concept IndexingArgument (range and size_t)? We can use the heterogeneus container implementation from https://gieseanw.wordpress.com/2017/05/03/a-true-heterogeneous-container-in-c/, using std::variant and std::visit
 
         //slices the layout along one single dimension
         //step is not used right now.
@@ -386,6 +386,7 @@ class Layout{
         //TODO: change std_enable_if with requires, maybe creating a concept for the type of arguments allowed
         template<typename FirstArg, typename... OtherArgs>
         auto slice_helper(size_t dim, FirstArg first, OtherArgs... other) const{
+            //TODO: instead of if constexpr, invoke two helper functions. This could also solve the compilation problem with making dim a template parameter.
             if constexpr(std::is_same<FirstArg, range>() || std::is_convertible<FirstArg, range>()){
                 return slice_dimension(dim, first).slice_helper(dim+1, other...);
             }else{
