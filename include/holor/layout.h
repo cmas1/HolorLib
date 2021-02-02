@@ -213,9 +213,7 @@ class Layout{
          */
         Layout(std::array<size_t,N>&& lengths, std::array<size_t,N>&& strides, size_t offset): offset_{offset}, lengths_{lengths}, strides_{strides} {};
 
-
-        //TODO: think about a constructor from a range of view of lengths. Perhaps using std::span?
-        
+       
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     GET/SET FUNCTIONS
