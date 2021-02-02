@@ -380,12 +380,12 @@ class Layout{
 
 
         
-        template<size_t M, typename FirstArg, typename... OtherArgs>
+        template<size_t M, SingleIndex FirstArg, SingleIndex... OtherArgs>
         size_t single_element_indexing_helper(FirstArg first, OtherArgs&&... other) const{
             return first * strides_[M] + single_element_indexing_helper<M+1>(std::forward<OtherArgs>(other)...);
         }
 
-        template<size_t M, typename FirstArg>
+        template<size_t M, SingleIndex FirstArg>
         size_t single_element_indexing_helper(FirstArg first) const{
             return first * strides_[M];
         }
