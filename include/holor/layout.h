@@ -28,9 +28,10 @@
 #include <array>
 #include <numeric>
 #include <type_traits>
+#include <concepts>
 
-#include "../utils/static_assert.h"
-#include "./predicates.h"
+#include "../common/static_assert.h"
+#include "../common/dynamic_assert.h"
 
 
 
@@ -58,40 +59,47 @@ struct range{
      * \param step step between two elements in the range. Defaults to 1.
      */
     range(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
+        // assert::dynamic_assert<assertion_level(assert::AssertionLevel::internal)>( (end>start)&&(start>=0) EXCEPTION_MESSAGE("Invalid range") );
         // TODO: implement checks using dynamic asserts. it must be end > start, start >=0, end <= length[dim], step >=1
         // TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
     }        
 };
 
 
-
+        
 
 /*================================================================================================
                                     CONCEPTS AND PREDICATES
 ================================================================================================*/
-//TODO: Check predicates and modify them using concepts: a concept for range indexing and a concept for single-element indexing
-    namespace impl{
-        /*! 
-        * \brief predicate used to verify that the arguments of an indexing operation refer to a slice, rather than a single element
-        * \tparam Args parameter pack of template arguments to be verified
-        * \return true if at least one of the arguments is indexing a range in a dimension of the layout
-        */
-        template<typename... Args>
-        constexpr bool single_element_indexing(){
-            return assert::all(std::is_convertible<Args, size_t>()...);
-        }
+/*!
+ * \brief concept that represents a type that can be used to index a single element of a layout
+ */
+template<typename T>
+concept SingleIndex = std::convertible_to<T, size_t>;
 
+/*!
+ * \brief concept that represents a type that can be used to index a range of a layout
+ */
+template<typename T>
+concept RangeIndex = std::convertible_to<T, range>;
 
-        /*! 
-        * \brief predicate used to verify that the arguments of an indexing operation refer to a single element
-        * \tparam Args parameter pack of template arguments to be verified
-        * \return true if all the arguments index a single element along each dimension of the layout
-        */
-        template<typename... Args>
-        constexpr bool range_indexing(){
-            return assert::all((std::is_convertible<Args, size_t>() || std::is_same<Args, range>() || std::is_convertible<Args, range>())...) && assert::some(std::is_same<Args, range>()...);
-        }
+/*!
+ * \brief concept that represents a type that can be used to index a layout
+ */
+template<typename T>
+concept Index = SingleIndex<T> || RangeIndex<T>;
+
+namespace impl{
+    /*! 
+    * \brief predicate used to test that the arguments of an indexing operation are actual indexes and at least one of them is a RangeIndex
+    * \tparam Args pack of indices to be verified
+    * \return true if at least one of the indices is a RangeIndex
+    */
+    template<Index... Args>
+    constexpr bool range_indexing(){
+        return assert::some(RangeIndex<Args>...);
     }
+}
 
 
 
@@ -124,7 +132,7 @@ class Layout{
     
     public:
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                CONSTRUCTORS, ASSIGNEMENTS AND DESTRUCTOR
+                CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/    
         /*!
          * \brief Default constructor that creates an empty layout with no elements
@@ -296,7 +304,7 @@ class Layout{
          * \param dims parameters pack containing the subscripts
          * \return the index of the subscripted element in the Holor
          */
-        template<typename... Dims> requires (impl::single_element_indexing<Dims...>() && (sizeof...(Dims)==N) )
+        template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
         // TODO: can the parameter pack be unpacked using views, without helper function?
         size_t operator()(Dims&&... dims) const{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
@@ -386,7 +394,7 @@ class Layout{
         //TODO: change std_enable_if with requires, maybe creating a concept for the type of arguments allowed
         template<typename FirstArg, typename... OtherArgs>
         auto slice_helper(size_t dim, FirstArg first, OtherArgs... other) const{
-            //TODO: instead of if constexpr, invoke two helper functions. This could also solve the compilation problem with making dim a template parameter.
+            //TODO: instead of if constexpr, invoke two helper functions. This could also solve the compilation problem with making dim a template parameter. This needs concepts first (or else std:enable_if)!
             if constexpr(std::is_same<FirstArg, range>() || std::is_convertible<FirstArg, range>()){
                 return slice_dimension(dim, first).slice_helper(dim+1, other...);
             }else{
@@ -406,14 +414,9 @@ class Layout{
 
 
 //TODO: Specializations for N = 0, 1, 2, 3
-// ====================================================================================================================
-// ====================================================================================================================
-// ====================================================================================================================
-// ====================================================================================================================
-// ====================================================================================================================
-// =====================================================================================================================
-// =====================================================================================================================
-// =====================================================================================================================
+/*================================================================================================
+                                    LAYOUT SPECIALIZATIONS
+================================================================================================*/
 
 
 // create degenerate case for N = 0
