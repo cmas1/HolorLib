@@ -29,6 +29,8 @@
 #include <numeric>
 #include <type_traits>
 #include <concepts>
+#include <ranges>
+#include <algorithm>
 
 #include "../common/static_assert.h"
 #include "../common/dynamic_assert.h"
@@ -100,8 +102,6 @@ namespace impl{
         return assert::some(RangeIndex<Args>...);
     }
 }
-
-
 
 
 /*================================================================================================
@@ -258,9 +258,8 @@ class Layout{
             return strides_;
         }
 
-        //TODO: for the set methods that take a std::array argument, check if they can be generalized using ranges, handling separately the cases of fixed length range and dynamic length range.
         /*!
-         * \brief Set the lengths of the layout, wihout updating the strides
+         * \brief Set the lengths of the layout, without updating the strides
          * \param lengths are the lengths to be set
          */
         void set_lengths_nostrides(std::array<size_t,N> lengths) {
@@ -303,7 +302,6 @@ class Layout{
          * \return the index of the subscripted element in the Holor
          */
         template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
-        // TODO: can the parameter pack be unpacked using views, without helper function?
         size_t operator()(Dims&&... dims) const{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
@@ -317,38 +315,39 @@ class Layout{
          */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
         auto operator()(Args&&... args) const{
-            return slice_helper(0, std::forward<Args>(args)...);
+            return slice_helper<0>(std::forward<Args>(args)...);
             //TODO: rewrite this function in a better way. The first argument of slice helper should be a template!
         }
 
 
-        //TODO: can we add single element and range indexing functions that take a range of arguments, rather than a variadic template, if we use a base concept IndexingArgument (range and size_t)? We can use the heterogeneus container implementation from https://gieseanw.wordpress.com/2017/05/03/a-true-heterogeneous-container-in-c/, using std::variant and std::visit
 
         //slices the layout along one single dimension
         //step is not used right now.
-        Layout<N> slice_dimension(size_t dim, range range) const{
+        template<size_t Dim>
+        Layout<N> slice_dimension(range range) const{
             Layout<N> res = *this;
-            res.lengths_[dim] = range.end_-range.start_+1;
+            res.lengths_[Dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
-            res.offset_ = offset_ + range.start_*strides_[dim];
+            res.offset_ = offset_ + range.start_*strides_[Dim];
             return res;
         }
 
 
         //TODO: now this requires that Layout<N> is friend to Layout<N+1>. This is not a clean solution
         //slices the layout along one single dimension
-        Layout<N-1> slice_dimension(size_t dim, size_t num) const{
+        template<size_t Dim>
+        Layout<N-1> slice_dimension(size_t num) const{
             Layout<N-1> res;
             size_t i = 0;
             for(size_t j = 0; j < N; j++){
                 res.size_ = 1;
-                if (j != dim){
+                if (j != Dim){
                     res.lengths_[i] = lengths_[j];
                     res.strides_[i] = strides_[j];
                     res.size_ *= lengths_[j];
                     i++;
                 }
-                res.offset_ = offset_ + num*strides_[dim];
+                res.offset_ = offset_ + num*strides_[Dim];
             }
             return res;
         }
@@ -390,24 +389,24 @@ class Layout{
 
 
         //TODO: change std_enable_if with requires, maybe creating a concept for the type of arguments allowed
-        template<typename FirstArg, typename... OtherArgs>
-        auto slice_helper(size_t dim, FirstArg first, OtherArgs... other) const{
+        template<size_t Dim, Index FirstArg, typename... OtherArgs>
+        auto slice_helper(FirstArg first, OtherArgs... other) const{
             //TODO: instead of if constexpr, invoke two helper functions. This could also solve the compilation problem with making dim a template parameter. This needs concepts first (or else std:enable_if)!
-            if constexpr(std::is_same<FirstArg, range>() || std::is_convertible<FirstArg, range>()){
-                return slice_dimension(dim, first).slice_helper(dim+1, other...);
+            if constexpr(RangeIndex<FirstArg>){
+                return slice_dimension<Dim>(first).slice_helper<Dim+1>(other...);
             }else{
-                return slice_dimension(dim, first).slice_helper(dim, other...);
+                return slice_dimension<Dim>(first).slice_helper<Dim>(other...);
             }
         }
 
-        template<typename FirstArg>
-        auto slice_helper(size_t dim, FirstArg first) const{
-            return slice_dimension(dim, first);
+
+        template<size_t Dim, typename FirstArg>
+        auto slice_helper(FirstArg first) const{
+            return slice_dimension<Dim>(first);
         }
 
         friend class Layout<N+1>; //FIXME: this is ugly, needs to be fixed
-};
-
+}; //class Layout
 
 
 
