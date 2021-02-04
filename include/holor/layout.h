@@ -104,6 +104,31 @@ namespace impl{
 }
 
 
+
+
+namespace impl{
+    //FIXME: does not compile after making dim a template parameter.
+    //WIP: working on this
+    template<size_t Dim>
+    struct slice_helper{
+        template<typename Lay, Index FirstArg, typename... OtherArgs>
+        auto operator()(Lay layout, FirstArg first, OtherArgs... other){
+            if constexpr(RangeIndex<FirstArg>){
+                return slice_helper<Dim+1>(layout.slice_dimension<Dim>(first), other...);
+            }else{
+                return slice_helper<Dim>(layout.slice_dimension<Dim>(first), other...);
+            }
+        }
+
+
+        template<typename Lay, typename FirstArg>
+        auto operator()(Lay layout, FirstArg first){
+            return layout.slice_dimension<Dim>(first);
+        }
+    };
+}
+
+
 /*================================================================================================
                                     Layout Class
 ================================================================================================*/
@@ -315,8 +340,10 @@ class Layout{
          */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
         auto operator()(Args&&... args) const{
-            return slice_helper<0>(std::forward<Args>(args)...);
+            // return slice_helper<0>(std::forward<Args>(args)...);
+            return impl::slice_helper<0>(*this, std::forward<Args>(args)...);
             //TODO: rewrite this function in a better way. The first argument of slice helper should be a template!
+            //WIP: trying to solve this
         }
 
 
@@ -325,7 +352,7 @@ class Layout{
         //step is not used right now.
         template<size_t Dim>
         Layout<N> slice_dimension(range range) const{
-            Layout<N> res = *this;
+            Layout<N> res = *this; //TODO: this is ugly
             res.lengths_[Dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
             res.offset_ = offset_ + range.start_*strides_[Dim];
@@ -333,7 +360,7 @@ class Layout{
         }
 
 
-        //TODO: now this requires that Layout<N> is friend to Layout<N+1>. This is not a clean solution
+        //FIXME: now this requires that Layout<N> is friend to Layout<N+1>. This is not a clean solution
         //slices the layout along one single dimension
         template<size_t Dim>
         Layout<N-1> slice_dimension(size_t num) const{
@@ -374,9 +401,7 @@ class Layout{
             }
         }
 
-
-
-        
+ 
         template<size_t M, SingleIndex FirstArg, SingleIndex... OtherArgs>
         size_t single_element_indexing_helper(FirstArg first, OtherArgs&&... other) const{
             return first * strides_[M] + single_element_indexing_helper<M+1>(std::forward<OtherArgs>(other)...);
@@ -388,25 +413,30 @@ class Layout{
         }
 
 
-        //TODO: change std_enable_if with requires, maybe creating a concept for the type of arguments allowed
-        template<size_t Dim, Index FirstArg, typename... OtherArgs>
-        auto slice_helper(FirstArg first, OtherArgs... other) const{
-            //TODO: instead of if constexpr, invoke two helper functions. This could also solve the compilation problem with making dim a template parameter. This needs concepts first (or else std:enable_if)!
-            if constexpr(RangeIndex<FirstArg>){
-                return slice_dimension<Dim>(first).slice_helper<Dim+1>(other...);
-            }else{
-                return slice_dimension<Dim>(first).slice_helper<Dim>(other...);
-            }
-        }
+        // //FIXME: does not compile after making dim a template parameter.
+        // //WIP: working on this 
+        // template<size_t Dim, Index FirstArg, typename... OtherArgs>
+        // auto slice_helper(FirstArg first, OtherArgs... other) const{
+        //     if constexpr(RangeIndex<FirstArg>){
+        //         Layout<N> tmp = slice_dimension<Dim>(first);
+        //         return tmp.slice_helper<Dim+1>(other...);
+        //         // return slice_dimension<Dim>(first).slice_helper<Dim+1>(other...);
+        //     }else{
+        //         Layout<N-1> tmp = slice_dimension<Dim>(first);
+        //         return tmp.slice_helper<Dim>(other...);
+        //         // return slice_dimension<Dim>(first).slice_helper<Dim>(other...);
+        //     }
+        // }
 
 
-        template<size_t Dim, typename FirstArg>
-        auto slice_helper(FirstArg first) const{
-            return slice_dimension<Dim>(first);
-        }
+        // template<size_t Dim, typename FirstArg>
+        // auto slice_helper(FirstArg first) const{
+        //     return slice_dimension<Dim>(first);
+        // }
 
         friend class Layout<N+1>; //FIXME: this is ugly, needs to be fixed
 }; //class Layout
+
 
 
 

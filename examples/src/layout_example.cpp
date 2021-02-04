@@ -61,11 +61,11 @@ int main(){
     std::cout << "offset = " << E.offset() << "\n\n";
 
 
-    // auto F = A(range{0,1}, range{1,2});
-    // std::cout << "F:\nlengths = [" << F.lengths()[0] << ", " << F.lengths()[1] << "]\n";
-    // std::cout << "strides = [" << F.strides()[0] << ", " << F.strides()[1] << "]\n";
-    // std::cout << "offset = " << F.offset() << "\n";
-    // std::cout << "dimensions = " << F.dimensions() << "\n\n";
+    auto F = A(range{0,1}, range{1,2});
+    std::cout << "F:\nlengths = [" << F.lengths()[0] << ", " << F.lengths()[1] << "]\n";
+    std::cout << "strides = [" << F.strides()[0] << ", " << F.strides()[1] << "]\n";
+    std::cout << "offset = " << F.offset() << "\n";
+    std::cout << "dimensions = " << F.dimensions() << "\n\n";
 
     
 
