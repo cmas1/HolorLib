@@ -106,29 +106,6 @@ namespace impl{
 
 
 
-namespace impl{
-    //FIXME: does not compile after making dim a template parameter.
-    //WIP: working on this
-    template<size_t Dim>
-    struct slice_helper{
-        template<typename Lay, Index FirstArg, typename... OtherArgs>
-        auto operator()(Lay layout, FirstArg first, OtherArgs... other){
-            if constexpr(RangeIndex<FirstArg>){
-                return slice_helper<Dim+1>(layout.slice_dimension<Dim>(first), other...);
-            }else{
-                return slice_helper<Dim>(layout.slice_dimension<Dim>(first), other...);
-            }
-        }
-
-
-        template<typename Lay, typename FirstArg>
-        auto operator()(Lay layout, FirstArg first){
-            return layout.slice_dimension<Dim>(first);
-        }
-    };
-}
-
-
 /*================================================================================================
                                     Layout Class
 ================================================================================================*/
@@ -331,7 +308,6 @@ class Layout{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
 
-
         /*!
          * \brief Function for indexing a slice from the Layout
          * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
@@ -340,45 +316,57 @@ class Layout{
          */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
         auto operator()(Args&&... args) const{
-            // return slice_helper<0>(std::forward<Args>(args)...);
-            return impl::slice_helper<0>(*this, std::forward<Args>(args)...);
-            //TODO: rewrite this function in a better way. The first argument of slice helper should be a template!
-            //WIP: trying to solve this
+            return slice_helper(0, std::forward<Args>(args)...);
         }
 
-
-
-        //slices the layout along one single dimension
-        //step is not used right now.
-        template<size_t Dim>
-        Layout<N> slice_dimension(range range) const{
-            Layout<N> res = *this; //TODO: this is ugly
-            res.lengths_[Dim] = range.end_-range.start_+1;
+        /*!
+         * \brief Function for indexing a single dimension of the Layout
+         * \param dim dimension to be sliced. `dim` must be a value in the range `[0, N-1]`.
+         * \param range the range of elements to be taken from the dimension `dim`. `range` must indicate a valid range of indices in the dimension `dim`.
+         * \return a new Layout with `N` dimensions, where the dimension `dim` contains only the lements indexed by the `range` argument.
+         * \exception holor::exception::HolorInvalidArgument if `dim` or `range` do not satisfy their constraints. The exception level is `release`.
+         * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
+         */
+        Layout<N> slice_dimension(size_t dim, range range) const{
+            assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid dimension.") );
+            assert::dynamic_assert(range.end_ < lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+            Layout<N> res = *this;
+            res.lengths_[dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
-            res.offset_ = offset_ + range.start_*strides_[Dim];
+            res.offset_ = offset_ + range.start_*strides_[dim];
             return res;
         }
 
 
         //FIXME: now this requires that Layout<N> is friend to Layout<N+1>. This is not a clean solution
-        //slices the layout along one single dimension
-        template<size_t Dim>
-        Layout<N-1> slice_dimension(size_t num) const{
+        /*!
+         * \brief Function for indexing a single dimension of the Layout
+         * \param dim dimension to be sliced
+         * \param num the index of the element to be taken from the dimension `dim`. `dim` must be a value in the range `[0, N-1]`.
+         * \return a new Layout with `N-1` dimensions, where the dimension `dim` is reduced to a single element indexed by the argument `num`. `num` must be a valid value with respect to the number of elements in the dimension `dim`.
+         * \exception holor::exception::HolorInvalidArgument if `dim` or `num` do not satisfy their constraints. The exception level is `release`.
+         * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
+         */
+        Layout<N-1> slice_dimension(size_t dim, size_t num) const{
+            assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid dimension.") );
+            assert::dynamic_assert(num>=0 && num<lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
             Layout<N-1> res;
             size_t i = 0;
             for(size_t j = 0; j < N; j++){
                 res.size_ = 1;
-                if (j != Dim){
-                    res.lengths_[i] = lengths_[j];
+                if (j != dim){
+                    res.lengths_[i] = lengths_[j]; //TODO: in order to use set_length, either we creat the version that takes a single dimension, or we create a version that takes a view.
                     res.strides_[i] = strides_[j];
                     res.size_ *= lengths_[j];
                     i++;
                 }
-                res.offset_ = offset_ + num*strides_[Dim];
+                res.set_offset(offset_ + num*strides_[dim]);
             }
             return res;
         }
 
+
+        //TODO: right now slice_dimension and slice_helper take dim as a parameter. Conceptually, it would make sense to have it as a template parameter, to separate the indexing argument from the dimension. Moreover, in slice_helper it is used to unwind the recursive calls to the function, therefore it would be better set as a template parameter. Using a template parameter would also make it possible to perform translate all the checks on dim as compile time requiurements, rather than dynamic assertions. The problem is that simply changing it to a template parameter makes slice_helper not compile anymore. 
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         PRIVATE MEMBERS AND FUNCTIONS
@@ -413,26 +401,20 @@ class Layout{
         }
 
 
-        // //FIXME: does not compile after making dim a template parameter.
-        // //WIP: working on this 
-        // template<size_t Dim, Index FirstArg, typename... OtherArgs>
-        // auto slice_helper(FirstArg first, OtherArgs... other) const{
-        //     if constexpr(RangeIndex<FirstArg>){
-        //         Layout<N> tmp = slice_dimension<Dim>(first);
-        //         return tmp.slice_helper<Dim+1>(other...);
-        //         // return slice_dimension<Dim>(first).slice_helper<Dim+1>(other...);
-        //     }else{
-        //         Layout<N-1> tmp = slice_dimension<Dim>(first);
-        //         return tmp.slice_helper<Dim>(other...);
-        //         // return slice_dimension<Dim>(first).slice_helper<Dim>(other...);
-        //     }
-        // }
+        template<Index FirstArg, typename... OtherArgs>
+        auto slice_helper(size_t dim, FirstArg first, OtherArgs... other) const{
+            if constexpr(RangeIndex<FirstArg>){
+                return slice_dimension(dim, first).slice_helper(dim+1, other...);
+            }else{
+                return slice_dimension(dim, first).slice_helper(dim, other...);
+            }
+        }
 
 
-        // template<size_t Dim, typename FirstArg>
-        // auto slice_helper(FirstArg first) const{
-        //     return slice_dimension<Dim>(first);
-        // }
+        template<typename FirstArg>
+        auto slice_helper(size_t dim, FirstArg first) const{
+            return slice_dimension(dim, first);
+        }
 
         friend class Layout<N+1>; //FIXME: this is ugly, needs to be fixed
 }; //class Layout

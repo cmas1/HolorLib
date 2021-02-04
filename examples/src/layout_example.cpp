@@ -25,6 +25,7 @@
 #include <iostream>
 #include <vector>
 #include <ranges>
+#include <algorithm>
 
 
 
@@ -40,22 +41,22 @@ int main(){
 
     std::cout << "A(1,0) = "  << A(1,0) <<"\n\n";
 
-    auto B = A.slice_dimension<0>({1,2});
+    auto B = A.slice_dimension(0, {1,2});
     std::cout << "B:\nlengths = [" << B.lengths()[0] << ", " << B.lengths()[1] << "]\n";
     std::cout << "strides = [" << B.strides()[0] << ", " << B.strides()[1] << "]\n";
     std::cout << "offset = " << B.offset() << "\n\n";
 
-    auto C = A.slice_dimension<1>({0,1});
+    auto C = A.slice_dimension(1, {0,1});
     std::cout << "C:\nlengths = [" << C.lengths()[0] << ", " << C.lengths()[1] << "]\n";
     std::cout << "strides = [" << C.strides()[0] << ", " << C.strides()[1] << "]\n";
     std::cout << "offset = " << C.offset() << "\n\n";
 
-    auto D = A.slice_dimension<0>(2);
+    auto D = A.slice_dimension(0, 2);
     std::cout << "D:\nlengths = [" << D.lengths()[0] << "]\n";
     std::cout << "strides = [" << D.strides()[0] << "]\n";
     std::cout << "offset = " << D.offset() << "\n\n";
 
-    auto E = A.slice_dimension<1>(1);
+    auto E = A.slice_dimension(1, 1);
     std::cout << "E:\nlengths = [" << E.lengths()[0] << "]\n";
     std::cout << "strides = [" << E.strides()[0] << "]\n";
     std::cout << "offset = " << E.offset() << "\n\n";
@@ -75,6 +76,16 @@ int main(){
     std::cout << "After setting the length to [5,5]\n";
     A.set_lengths_nostrides({5,5});
     std::cout << "A: lengths = [" << A.lengths()[0] << ", " << A.lengths()[1] << "]\n";
+
+
+    std::array<int, 5> pluto {1,2,3,4,5};
+    auto bluto = std::views::all(pluto);
+    std::array<int, 4> minni;
+    std::ranges::copy(std::ranges::subrange(pluto.begin() + 1, pluto.end()), minni.begin());
+    for(auto&& x : minni){
+        std::cout << x << " ";
+    }
+    std::cout<<"\n\n";
 
 
     // auto G = A.slice_layout(0, 1, range{1,2});

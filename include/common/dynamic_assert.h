@@ -45,16 +45,17 @@ namespace assert{
 
 
 enum AssertionLevel{
-    release = 0,
-    internal = 1,
-    debug = 2,
+    no_checks = 0,
+    release = 1,
+    internal = 2,
+    debug = 3,
 };
 
 
 
 // DEFINE_EXCEPTION_LEVEL comes from -Doption
 constexpr int current_level = DEFINE_ASSERT_LEVEL;
-constexpr int default_level = 0;
+constexpr int default_level = 1;
 
 
 constexpr bool assertion_level(int n){
@@ -62,7 +63,7 @@ constexpr bool assertion_level(int n){
 }
 
 
-template<bool cond = assertion_level(default_level), typename Exception = holor::exception::HolorRuntimeError>
+template<bool cond = assertion_level(default_level), typename Exception = holor::exception::HolorInvalidArgument>
 void dynamic_assert(bool assertion, const std::string& message = "Dynamic assertion failed."){
     if (assertion){
         return;
@@ -83,34 +84,14 @@ void dynamic_assert<false, holor::exception::HolorInvalidArgument>(bool, const s
 
 
 
-//===================================================================================================================
-enum ExceptionPolicy{
-    off = 0,
-    on = 1,
-    on_verbose = 2,
-};
-
-
-// DEFINE_EXCEPTION_LEVEL comes from -Doption
-constexpr int exception_policy = DEFINE_EXCEPTION_POLICY;
-
-
-constexpr bool exceptions_on(){
-    return (ExceptionPolicy::on <= exception_policy);
-}
-
-constexpr bool exceptions_verbose(){
-    return (ExceptionPolicy::on_verbose <= exception_policy);
-}
-
-template<typename Exception = holor::exception::HolorRuntimeError>
-void dynamic_assert(bool assertion, const std::string& message = "Dynamic assertion failed."){
-    if (assertion){
-        return;
-    } else {
-        throw Exception(message);
-    }
-}
+// template<typename Exception = holor::exception::HolorRuntimeError>
+// void dynamic_assert(bool assertion, const std::string& message = "Dynamic assertion failed."){
+//     if (assertion){
+//         return;
+//     } else {
+//         throw Exception(message);
+//     }
+// }
 
 
 
