@@ -71,7 +71,7 @@ struct range{
         
 
 /*================================================================================================
-                                    CONCEPTS AND PREDICATES
+                                INDEX: CONCEPTS AND PREDICATES
 ================================================================================================*/
 /*!
  * \brief concept that represents a type that can be used to index a single element of a layout
@@ -103,6 +103,30 @@ namespace impl{
     }
 }
 
+
+
+
+namespace impl{
+
+    template<size_t Dim>
+    struct slice_helper_prova{
+        // WIP: the else in the if constexpr call slice helper on a Layou<N-1>, but that should be a private function. Something is wrong
+        template<typename Layout, Index FirstArg, typename... OtherArgs>
+        static auto recursion(Layout layout, FirstArg first, OtherArgs... other) {
+            if constexpr(RangeIndex<FirstArg>){
+                return slice_helper_prova<Dim+1>::recursion(layout.slice_dimension<Dim>(first), other...);
+            }else{
+                return slice_helper_prova<Dim>::recursion(layout.slice_dimension<Dim>(first), other...);
+            }
+        }
+
+
+        template<typename Layout, typename FirstArg>
+        static auto recursion(Layout layout, FirstArg first) {
+            return layout.slice_dimension<Dim>(first);
+        }
+    };
+}
 
 
 
@@ -181,7 +205,7 @@ class Layout{
          * \return a Layout
          */
         Layout(const std::array<size_t,N>& lengths, size_t offset=0): offset_{offset}, lengths_{lengths} {
-            compute_strides();
+            update_strides_size();
         };
 
 
@@ -192,7 +216,7 @@ class Layout{
          * \return a Layout
          */
         Layout(std::array<size_t,N>&& lengths, size_t offset): offset_{offset}, lengths_{lengths} {
-            compute_strides();
+            update_strides_size();
         };
 
 
@@ -203,7 +227,9 @@ class Layout{
          * \param offset index of the first element of the layout in the original Holor container (default is 0)
          * \return a Layout
          */
-        Layout(const std::array<size_t,N>& lengths, const std::array<size_t,N>& strides, size_t offset=0): offset_{offset}, lengths_{lengths}, strides_{strides} {};
+        Layout(const std::array<size_t,N>& lengths, const std::array<size_t,N>& strides, size_t offset=0): offset_{offset}, lengths_{lengths}, strides_{strides} {
+            update_size();
+        };
 
 
         /*!
@@ -213,7 +239,9 @@ class Layout{
          * \param offset index of the first element of the layout in the original Holor container
          * \return a Layout
          */
-        Layout(std::array<size_t,N>&& lengths, std::array<size_t,N>&& strides, size_t offset): offset_{offset}, lengths_{lengths}, strides_{strides} {};
+        Layout(std::array<size_t,N>&& lengths, std::array<size_t,N>&& strides, size_t offset): offset_{offset}, lengths_{lengths}, strides_{strides} {
+            update_size();
+        };
 
        
 
@@ -234,6 +262,13 @@ class Layout{
          */
         size_t size() const{
             return size_;
+        }
+
+        /*!
+         * \brief updates the size of the layout. This is only useful when the layout is modified using a set_lengths or set_length function.
+         */
+        void update_size(){
+            size_ = std::accumulate(lengths_.begin(), lengths_.end(), 1, std::multiplies<size_t>());
         }
 
         /*!
@@ -264,7 +299,7 @@ class Layout{
          * \brief Set the lengths of the layout, without updating the strides
          * \param lengths are the lengths to be set
          */
-        void set_lengths_nostrides(std::array<size_t,N> lengths) {
+        void set_lengths(const std::array<size_t,N>& lengths) {
             lengths_ = lengths;
         }
 
@@ -272,9 +307,19 @@ class Layout{
          * \brief Set the lengths of the layout, updating also the strides
          * \param lengths are the lengths to be set
          */
-        void set_lengths(std::array<size_t,N> lengths) {
+        void set_lengths_ss(const std::array<size_t,N>& lengths) {
             lengths_ = lengths;
-            compute_strides();
+            update_strides_size();
+        }
+
+        /*!
+         * \brief Set a single length of the layout, without updating the strides
+         * \param length is the lengths to be set
+         * \param dim is the dimension of the layout where the length is set
+         */
+        void set_length(size_t length, size_t dim) {
+            assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid dimension.") );
+            lengths_[dim] = length;
         }
 
         /*!
@@ -283,6 +328,16 @@ class Layout{
          */
         void set_strides(std::array<size_t,N> strides) {
             strides_ = strides;
+        }
+
+        /*!
+         * \brief Set a single stride of the layout
+         * \param stride is the stride to be set
+         * \param dim is the dimension of the layout where the stride is set
+         */
+        void set_stride(size_t stride, size_t dim) {
+            assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid dimension.") );
+            strides_[dim] = stride;
         }
 
         /*!
@@ -316,52 +371,50 @@ class Layout{
          */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
         auto operator()(Args&&... args) const{
-            return slice_helper(0, std::forward<Args>(args)...);
+            // return slice_helper(0, std::forward<Args>(args)...);
+            return impl::slice_helper_prova<0>::recursion(*this, std::forward<Args>(args)...);
         }
 
         /*!
          * \brief Function for indexing a single dimension of the Layout
-         * \param dim dimension to be sliced. `dim` must be a value in the range `[0, N-1]`.
-         * \param range the range of elements to be taken from the dimension `dim`. `range` must indicate a valid range of indices in the dimension `dim`.
-         * \return a new Layout with `N` dimensions, where the dimension `dim` contains only the lements indexed by the `range` argument.
-         * \exception holor::exception::HolorInvalidArgument if `dim` or `range` do not satisfy their constraints. The exception level is `release`.
+         * \tparam Dim dimension to be sliced. `Dim` must be a value in the range `[0, N-1]`.
+         * \param range the range of elements to be taken from the dimension `Dim`. `range` must indicate a valid range of indices in the dimension `Dim`.
+         * \return a new Layout with `N` dimensions, where the dimension `Dim` contains only the lements indexed by the `range` argument.
+         * \exception holor::exception::HolorInvalidArgument if `range` does not satisfy their constraints. The exception level is `release`.
          * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
          */
-        Layout<N> slice_dimension(size_t dim, range range) const{
-            assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid dimension.") );
-            assert::dynamic_assert(range.end_ < lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+        template<size_t Dim> requires(Dim>=0 && Dim<N)
+        Layout<N> slice_dimension(range range) const{
+            assert::dynamic_assert(range.end_ < lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
             Layout<N> res = *this;
-            res.lengths_[dim] = range.end_-range.start_+1;
+            res.lengths_[Dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
-            res.offset_ = offset_ + range.start_*strides_[dim];
+            res.offset_ = offset_ + range.start_*strides_[Dim];
             return res;
         }
 
-
-        //FIXME: now this requires that Layout<N> is friend to Layout<N+1>. This is not a clean solution
         /*!
          * \brief Function for indexing a single dimension of the Layout
-         * \param dim dimension to be sliced
-         * \param num the index of the element to be taken from the dimension `dim`. `dim` must be a value in the range `[0, N-1]`.
-         * \return a new Layout with `N-1` dimensions, where the dimension `dim` is reduced to a single element indexed by the argument `num`. `num` must be a valid value with respect to the number of elements in the dimension `dim`.
-         * \exception holor::exception::HolorInvalidArgument if `dim` or `num` do not satisfy their constraints. The exception level is `release`.
+         * \tparam Dim dimension to be sliced. `Dim` must be a value in the range `[0, N-1]`.
+         * \param num the index of the element to be taken from the dimension `Dim`.
+         * \return a new Layout with `N-1` dimensions, where the dimension `Dim` is reduced to a single element indexed by the argument `num`. `num` must be a valid value with respect to the number of elements in the dimension `Dim`.
+         * \exception holor::exception::HolorInvalidArgument if `num` does not satisfy their constraints. The exception level is `release`.
          * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
          */
-        Layout<N-1> slice_dimension(size_t dim, size_t num) const{
-            assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid dimension.") );
-            assert::dynamic_assert(num>=0 && num<lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+        template<size_t Dim> requires(Dim>=0 && Dim<N)
+        Layout<N-1> slice_dimension(size_t num) const{
+            assert::dynamic_assert(num>=0 && num<lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
             Layout<N-1> res;
             size_t i = 0;
             for(size_t j = 0; j < N; j++){
-                res.size_ = 1;
-                if (j != dim){
-                    res.lengths_[i] = lengths_[j]; //TODO: in order to use set_length, either we creat the version that takes a single dimension, or we create a version that takes a view.
-                    res.strides_[i] = strides_[j];
-                    res.size_ *= lengths_[j];
+                if (j != Dim){
+                    res.set_length(lengths_[j], i);
+                    res.set_stride(strides_[j], i);
                     i++;
                 }
-                res.set_offset(offset_ + num*strides_[dim]);
             }
+            res.update_size();
+            res.set_offset(offset_ + num*strides_[Dim]);
             return res;
         }
 
@@ -379,9 +432,9 @@ class Layout{
 
 
         /*!
-         * \brief Computes and sets the strides and total size of the Layout given the lengths of the Holor container
+         * \brief Computes and sets the strides and total size of the Layout based on its lengths
          */
-        void compute_strides(){
+        void update_strides_size(){
             size_ = 1;
             for(int i = N-1; i>=0; --i){
                 strides_[i] = size_;
@@ -389,18 +442,33 @@ class Layout{
             }
         }
 
- 
+        /*!
+         * \brief Helper function that is used to index a single element of the layout. It uses a variadic template, where the indices for each dimension of the layout are unwind one at a time
+         * \tparam M dimension to be indexed by the `FirstArg`
+         * \tparam FirstArg first index of the parameter pack
+         * \tparam OtherArgs rest of the indices in the parameter pack
+         * \param first is the index to be considered for the dimension `M`
+         * \param other is the pack with the remaining indices that need to be unwind
+         */
         template<size_t M, SingleIndex FirstArg, SingleIndex... OtherArgs>
         size_t single_element_indexing_helper(FirstArg first, OtherArgs&&... other) const{
             return first * strides_[M] + single_element_indexing_helper<M+1>(std::forward<OtherArgs>(other)...);
         }
 
+        /*!
+         * \brief Helper function that is used to index a single element of the layout. It is the final recursion when unwinding the parameter pack of indices
+         * \tparam M dimension to be indexed by the `FirstArg`
+         * \tparam FirstArg first index of the parameter pack
+         * \param first is the index to be considered for the dimension `M`
+         */
         template<size_t M, SingleIndex FirstArg>
         size_t single_element_indexing_helper(FirstArg first) const{
             return first * strides_[M];
         }
 
 
+
+        // WIP: the else in the if constexpr call slice helper on a Layou<N-1>, but that should be a private function. Something is wrong
         template<Index FirstArg, typename... OtherArgs>
         auto slice_helper(size_t dim, FirstArg first, OtherArgs... other) const{
             if constexpr(RangeIndex<FirstArg>){
@@ -416,7 +484,6 @@ class Layout{
             return slice_dimension(dim, first);
         }
 
-        friend class Layout<N+1>; //FIXME: this is ugly, needs to be fixed
 }; //class Layout
 
 
