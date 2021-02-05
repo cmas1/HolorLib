@@ -105,27 +105,33 @@ namespace impl{
 
 
 
+/*================================================================================================
+                                    HELPER FUNCTIONS FOR SLICING
+================================================================================================*/
+template<size_t N>
+class Layout;
 
 namespace impl{
 
-    template<size_t Dim>
-    struct slice_helper_prova{
-        // WIP: the else in the if constexpr call slice helper on a Layou<N-1>, but that should be a private function. Something is wrong
-        template<typename Layout, Index FirstArg, typename... OtherArgs>
-        static auto recursion(Layout layout, FirstArg first, OtherArgs... other) {
+    // WIP===========================================================================================================================
+
+    struct slice_helper{
+        template<typename Layout, Index FirstArg, typename... OtherArgs> //TODO: should create a concept Layout to be used here
+        auto operator()(size_t dim, Layout layout, FirstArg&& first, OtherArgs&&... other) const{
             if constexpr(RangeIndex<FirstArg>){
-                return slice_helper_prova<Dim+1>::recursion(layout.slice_dimension<Dim>(first), other...);
+                return slice_helper()(dim+1, layout.slice_dimension(dim, std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
             }else{
-                return slice_helper_prova<Dim>::recursion(layout.slice_dimension<Dim>(first), other...);
+                return slice_helper()(dim, layout.slice_dimension(dim, std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
             }
         }
 
-
-        template<typename Layout, typename FirstArg>
-        static auto recursion(Layout layout, FirstArg first) {
-            return layout.slice_dimension<Dim>(first);
+        template<typename Layout, Index FirstArg>
+        auto operator()(size_t dim, Layout layout, FirstArg&& first) const{
+            return layout.slice_dimension(dim, std::forward<FirstArg>(first));
         }
     };
+    
+
 }
 
 
@@ -371,8 +377,7 @@ class Layout{
          */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
         auto operator()(Args&&... args) const{
-            // return slice_helper(0, std::forward<Args>(args)...);
-            return impl::slice_helper_prova<0>::recursion(*this, std::forward<Args>(args)...);
+            return impl::slice_helper()(0, *this, std::forward<Args>(args)...);
         }
 
         /*!
@@ -383,13 +388,13 @@ class Layout{
          * \exception holor::exception::HolorInvalidArgument if `range` does not satisfy their constraints. The exception level is `release`.
          * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
          */
-        template<size_t Dim> requires(Dim>=0 && Dim<N)
-        Layout<N> slice_dimension(range range) const{
-            assert::dynamic_assert(range.end_ < lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+        Layout<N> slice_dimension(size_t dim, range range) const{
+            assert::dynamic_assert(range.end_ < lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+            assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
             Layout<N> res = *this;
-            res.lengths_[Dim] = range.end_-range.start_+1;
+            res.lengths_[dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
-            res.offset_ = offset_ + range.start_*strides_[Dim];
+            res.offset_ = offset_ + range.start_*strides_[dim];
             return res;
         }
 
@@ -401,22 +406,23 @@ class Layout{
          * \exception holor::exception::HolorInvalidArgument if `num` does not satisfy their constraints. The exception level is `release`.
          * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
          */
-        template<size_t Dim> requires(Dim>=0 && Dim<N)
-        Layout<N-1> slice_dimension(size_t num) const{
-            assert::dynamic_assert(num>=0 && num<lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+        Layout<N-1> slice_dimension(size_t dim, size_t num) const{
+            assert::dynamic_assert(num>=0 && num<lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+            assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
             Layout<N-1> res;
             size_t i = 0;
             for(size_t j = 0; j < N; j++){
-                if (j != Dim){
-                    res.set_length(lengths_[j], i);
+                if (j != dim){
+                    res.set_length(lengths_[j], i); 
                     res.set_stride(strides_[j], i);
                     i++;
                 }
             }
             res.update_size();
-            res.set_offset(offset_ + num*strides_[Dim]);
+            res.set_offset(offset_ + num*strides_[dim]);
             return res;
         }
+        //TODO: In this function, perhaps the loop could be removed using ranges, if we find a way to 1) create a std::array from a range and 2) we find a way to create  subrange where the i-th element of another range is removed. This way, we can also remove the two functions set_length and set_stride that were introduced only to be used here and do not really belong to the public interface of the class
 
 
         //TODO: right now slice_dimension and slice_helper take dim as a parameter. Conceptually, it would make sense to have it as a template parameter, to separate the indexing argument from the dimension. Moreover, in slice_helper it is used to unwind the recursive calls to the function, therefore it would be better set as a template parameter. Using a template parameter would also make it possible to perform translate all the checks on dim as compile time requiurements, rather than dynamic assertions. The problem is that simply changing it to a template parameter makes slice_helper not compile anymore. 
