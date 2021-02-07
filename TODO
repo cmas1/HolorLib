@@ -1,10 +1,7 @@
-TENSOR:
-    ☐ implement slice argument (use a struct with one, two or three arguments? a tuple<size_t, size_t>).
-    ☐ implement request_slice
-    ☐ operator(): get subslice<N-1> when argument is size_t
-    ☐ operator(): get subslice<N> when argument is slice (size_t t1, size_t t2) and t1<t2
-    ☐ operator(): get subslice<N> when argument is slice (size_t t1, size_t step, size_t t2) and t1<t2
-    ☐ operator(): get subslice<N-1> when argument is slice (size_t t1, size_t t2) and t1==t2
-    ☐ operator(): get subslice<N-1> when argument is slice (size_t t1, size_t step, size_t t2) and t1==t2
-    ☐ Function to traverse the elements f a TensorRef
-    ☐ Add tensor operations (resize, reshape, (transpose?))
+layout.h:
+    There are several minor things and three main things that should be improved
+    ☐ 1) Templatize `dim`: Right now, the recursive slicing operation on a layout (slice_dimension, slice_helper) take a size_t dim as an argument. Conceptually, it would make sense to have it as a template parameter, to separate the indexing argument from the dimension. Moreover, in slice_helper `dim` is used to unwind the recursive calls to the function, therefore it would be better set as a template parameter. Using a template parameter would also make it possible to perform translate all the checks on dim as compile time requiurements, rather than dynamic assertions. The problem is that simply changing it to a template parameter makes slice_helper not compile anymore
+
+    ☐ 2) Initializing lengths and strides from ranges: right now, we only initialize lengths and strides from std::arrays. However, in the function `Layout<N-1> slice_dimension(size_t dim, size_t num) const` we need to copy lengths and strides (all elements except one) from a `Layout<N>` to a `Layout<N-1>`. To do this, we had to add two functions `set_length` and `set_stride` to the public interface of the class, even though they shouldn't be part of the interface. Perhaps, these functions and the for loop used for the copy could be removed using ranges. For this purpose, we need to 1) create a std::array from a range and, 2) find a way to create  subrange where the i-th element of another range is removed.
+    
+    ☐ 3) When slicing a Layout, each step of the recursion returns a subLayout. Is it possible to make it more efficient, avoiding the creation of all thes intermediate objects? Can coroutines help here?

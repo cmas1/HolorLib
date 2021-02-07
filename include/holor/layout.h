@@ -71,7 +71,7 @@ struct range{
         
 
 /*================================================================================================
-                                INDEX: CONCEPTS AND PREDICATES
+                                CONCEPTS AND PREDICATES
 ================================================================================================*/
 /*!
  * \brief concept that represents a type that can be used to index a single element of a layout
@@ -112,10 +112,18 @@ template<size_t N>
 class Layout;
 
 namespace impl{
-
-    // WIP===========================================================================================================================
-
+    //TODO: replace the template Layout with a proper concept
+    /*!
+     * \brief helper functor that is used by `Layout<N>::operator()(Args&&... args)` to index a slice of a Layout. The functor implements a recursive algorithm that indexes a dimension at a time, until they are all processed. Each iteration produces a new, subLayout.
+     */
     struct slice_helper{
+        /*!
+         * \brief recursive function used in slicing operatios
+         * \tparam Layout is the type of the (sub)Layout the function slices
+         * \tparam FirstArg is the type of the first `Index` in the parameter pack
+         * \tparam OtherArgs are the `Index` type of the other indices besides the first
+         * \param dim is an unsigned int that is used to unwind the recursion, depending on the type of indices.
+         */
         template<typename Layout, Index FirstArg, typename... OtherArgs> //TODO: should create a concept Layout to be used here
         auto operator()(size_t dim, Layout layout, FirstArg&& first, OtherArgs&&... other) const{
             if constexpr(RangeIndex<FirstArg>){
@@ -125,14 +133,20 @@ namespace impl{
             }
         }
 
+        /*!
+         * \brief final step of the recursive function used in slicing operatios
+         * \tparam Layout is the type of the (sub)Layout the function slices
+         * \tparam FirstArg is the type of the first `Index` in the parameter pack
+         * \param dim is an unsigned int that is used to unwind the recursion, depending on the type of indices.
+         */
         template<typename Layout, Index FirstArg>
         auto operator()(size_t dim, Layout layout, FirstArg&& first) const{
             return layout.slice_dimension(dim, std::forward<FirstArg>(first));
         }
     };
-    
-
 }
+// TODO: each setp in the recursion implemented by the functor `slice_helper` creates a new Layout. Can we avoid creating all these intermediate objects, perhaps using coroutines?
+
 
 
 
@@ -472,37 +486,61 @@ class Layout{
             return first * strides_[M];
         }
 
-
-
-        // WIP: the else in the if constexpr call slice helper on a Layou<N-1>, but that should be a private function. Something is wrong
-        template<Index FirstArg, typename... OtherArgs>
-        auto slice_helper(size_t dim, FirstArg first, OtherArgs... other) const{
-            if constexpr(RangeIndex<FirstArg>){
-                return slice_dimension(dim, first).slice_helper(dim+1, other...);
-            }else{
-                return slice_dimension(dim, first).slice_helper(dim, other...);
-            }
-        }
-
-
-        template<typename FirstArg>
-        auto slice_helper(size_t dim, FirstArg first) const{
-            return slice_dimension(dim, first);
-        }
-
 }; //class Layout
 
 
 
 
-//TODO: Specializations for N = 0, 1, 2, 3
+//TODO: Specializations for N = 0, 1, 2, 3, 4
 /*================================================================================================
-                                    LAYOUT SPECIALIZATIONS
+                                    LAYOUT INDEXING SPECIALIZATIONS
 ================================================================================================*/
 
 
 // create degenerate case for N = 0
 
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        N = 1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/*!
+ * \brief Specialization of the function for indexing a single element from Layout with dimension `N=1`
+ * \tparam ID is the type of the Index
+ * \param index is the value of the index
+ * \return the index of the subscripted element in the Holor
+ */
+// template<>
+// template<SingleIndex ID>
+// inline size_t Layout<1>::operator()(ID index) const{
+//     return offset_ + index*strides_[0];
+// }
+
+template<int N>
+class Test{
+    template<typename... Args> requires(sizeof...(Args)==1)
+    int operator()(Args... args) const{
+        return 0;
+    }
+};
+
+template<>
+template<>
+int Test<1>::operator()(int arg) const{
+    return 1;
+};
+
+
+// /*!
+// * \brief Function for indexing a slice from the Layout
+// * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
+// * \param args parameters pack. Each element of the pack indexes either an element or a range of elements along a dimension of the Layout.
+// * \return the Layout containing the indexed range of elements
+// */
+// template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
+// auto operator()(Args&&... args) const{
+// return impl::slice_helper()(0, *this, std::forward<Args>(args)...);
+// }
 
 // /****************************************************************
 // *                   SPECIALIZATIONS FOR N = 1
