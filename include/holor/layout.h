@@ -516,19 +516,26 @@ class Layout{
 //     return offset_ + index*strides_[0];
 // }
 
-template<int N>
-class Test{
-    template<typename... Args> requires(sizeof...(Args)==1)
-    int operator()(Args... args) const{
-        return 0;
-    }
-};
+template<>
+template<>
+inline size_t Layout<1>::operator()(size_t&& index) const{  //TODO: remove && in non specialized method declaration?
+    return offset_ + index*strides_[0];
+}
 
-template<>
-template<>
-int Test<1>::operator()(int arg) const{
-    return 1;
-};
+
+// template<size_t N>
+// class Test{
+//     template<typename... Args> requires(sizeof...(Args)==N)
+//     int operator()(Args... args) const{
+//         return 0;
+//     }
+// };
+
+// template<>
+// template<>
+// int Test<1>::operator()(int arg) const{
+//     return 1;
+// };
 
 
 // /*!
