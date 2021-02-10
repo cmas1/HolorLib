@@ -498,7 +498,7 @@ class Layout{
 
 
 // create degenerate case for N = 0
-
+//WIP: HERE!
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         N = 1
@@ -516,11 +516,11 @@ class Layout{
 //     return offset_ + index*strides_[0];
 // }
 
-template<>
-template<>
-inline size_t Layout<1>::operator()(size_t&& index) const{  //TODO: remove && in non specialized method declaration?
-    return offset_ + index*strides_[0];
-}
+// template<>
+// template<>
+// inline size_t Layout<1>::operator()(size_t&& index) const{  //TODO: remove && in non specialized method declaration?
+//     return offset_ + index*strides_[0];
+// }
 
 
 // template<size_t N>
