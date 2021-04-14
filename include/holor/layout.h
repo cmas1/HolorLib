@@ -383,6 +383,11 @@ class Layout{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
 
+        //WIP====================================
+        template<typename ID>
+        size_t operator()(ID index);
+        //WIP====================================
+
         /*!
          * \brief Function for indexing a slice from the Layout
          * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
@@ -497,8 +502,8 @@ class Layout{
 ================================================================================================*/
 
 
-// create degenerate case for N = 0
-//WIP: HERE!
+//TODO: create degenerate case for N = 0
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         N = 1
@@ -516,12 +521,17 @@ class Layout{
 //     return offset_ + index*strides_[0];
 // }
 
+// template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
+// size_t operator()(Dims&&... dims) const{
+
+//WIP: ============================
 template<>
-template<>
-size_t Layout<1>::operator()(size_t index) const{
+template<typename ID>
+size_t Layout<1>::operator()(ID index){
+    requires {SingleIndex<ID>;};
     return offset_ + index*strides_[0];
 }
-
+//WIP====================================
 
 // template<>
 // template<>
