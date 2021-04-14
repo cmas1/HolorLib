@@ -516,6 +516,13 @@ class Layout{
 //     return offset_ + index*strides_[0];
 // }
 
+template<>
+template<>
+size_t Layout<1>::operator()(size_t index) const{
+    return offset_ + index*strides_[0];
+}
+
+
 // template<>
 // template<>
 // inline size_t Layout<1>::operator()(size_t&& index) const{  //TODO: remove && in non specialized method declaration?
