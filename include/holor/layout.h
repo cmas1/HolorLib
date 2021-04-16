@@ -35,6 +35,7 @@
 #include "../common/static_assert.h"
 #include "../common/dynamic_assert.h"
 
+#include <iostream>
 
 
 namespace holor{
@@ -77,7 +78,7 @@ struct range{
  * \brief concept that represents a type that can be used to index a single element of a layout
  */
 template<typename T>
-concept SingleIndex = std::convertible_to<T, size_t>;
+concept SingleIndex = std::is_integral_v<T> && std::convertible_to<T, size_t>;
 
 /*!
  * \brief concept that represents a type that can be used to index a range of a layout
@@ -235,7 +236,7 @@ class Layout{
          * \param offset index of the first element of the layout in the original Holor container
          * \return a Layout
          */
-        Layout(std::array<size_t,N>&& lengths, size_t offset): offset_{offset}, lengths_{lengths} {
+        Layout(std::array<size_t,N>&& lengths, size_t offset=0): offset_{offset}, lengths_{lengths} {
             update_strides_size();
         };
 
@@ -383,10 +384,10 @@ class Layout{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
 
-        //WIP====================================
-        template<typename ID>
+        // //WIP====================================
+        template<SingleIndex ID>
         size_t operator()(ID index);
-        //WIP====================================
+        // //WIP====================================
 
         /*!
          * \brief Function for indexing a slice from the Layout
@@ -526,9 +527,10 @@ class Layout{
 
 //WIP: ============================
 template<>
-template<typename ID>
+template<SingleIndex ID>
 size_t Layout<1>::operator()(ID index){
-    requires {SingleIndex<ID>;};
+    // requires {SingleIndex<ID>;};
+    std::cout << "\npippo " << index << "\n\n";
     return offset_ + index*strides_[0];
 }
 //WIP====================================
