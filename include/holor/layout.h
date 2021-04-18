@@ -74,6 +74,7 @@ struct range{
 /*================================================================================================
                                 CONCEPTS AND PREDICATES
 ================================================================================================*/
+//CHECK==============================================================================================
 /*!
  * \brief concept that represents a type that can be used to index a single element of a layout
  */
@@ -91,6 +92,9 @@ concept RangeIndex = std::convertible_to<T, range>;
  */
 template<typename T>
 concept Index = SingleIndex<T> || RangeIndex<T>;
+//CHECK==============================================================================================
+
+
 
 namespace impl{
     /*! 
@@ -98,9 +102,9 @@ namespace impl{
     * \tparam Args pack of indices to be verified
     * \return true if at least one of the indices is a RangeIndex
     */
-    template<Index... Args>
+    template<typename... Args>
     constexpr bool range_indexing(){
-        return assert::some(RangeIndex<Args>...);
+        return assert::all(Index<Args>...) && assert::some(RangeIndex<Args>...);
     }
 }
 
@@ -385,7 +389,7 @@ class Layout{
         }
 
         // //WIP====================================
-        template<SingleIndex ID>
+        template<typename ID>
         size_t operator()(ID index);
         // //WIP====================================
 
@@ -527,9 +531,9 @@ class Layout{
 
 //WIP: ============================
 template<>
-template<SingleIndex ID>
+template<typename ID> 
 size_t Layout<1>::operator()(ID index){
-    // requires {SingleIndex<ID>;};
+    requires {SingleIndex<ID>;};
     std::cout << "\npippo " << index << "\n\n";
     return offset_ + index*strides_[0];
 }
