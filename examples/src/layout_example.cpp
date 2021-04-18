@@ -70,9 +70,9 @@ int main(){
 
 
     Layout<1> pluto({5});
-    auto res = pluto(1.5);
+    auto res = pluto(1);
     std::cout << "res = " << res <<"\n\n";
-    std::cout << SingleIndex<float> << "\n";
+
 
 
     // std::cout << "\n\n TEST SET LENGTH \n\n";

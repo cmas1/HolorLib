@@ -35,8 +35,6 @@
 #include "../common/static_assert.h"
 #include "../common/dynamic_assert.h"
 
-#include <iostream>
-
 
 namespace holor{
 
@@ -74,7 +72,6 @@ struct range{
 /*================================================================================================
                                 CONCEPTS AND PREDICATES
 ================================================================================================*/
-//CHECK==============================================================================================
 /*!
  * \brief concept that represents a type that can be used to index a single element of a layout
  */
@@ -92,7 +89,6 @@ concept RangeIndex = std::convertible_to<T, range>;
  */
 template<typename T>
 concept Index = SingleIndex<T> || RangeIndex<T>;
-//CHECK==============================================================================================
 
 
 
@@ -388,10 +384,10 @@ class Layout{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
 
-        // //WIP====================================
-        template<typename ID>
+        //WIP====================================
+        template<SingleIndex ID>
         size_t operator()(ID index);
-        // //WIP====================================
+        //WIP====================================
 
         /*!
          * \brief Function for indexing a slice from the Layout
@@ -529,15 +525,11 @@ class Layout{
 // template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
 // size_t operator()(Dims&&... dims) const{
 
-//WIP: ============================
 template<>
-template<typename ID> 
+template<SingleIndex ID> 
 size_t Layout<1>::operator()(ID index){
-    requires {SingleIndex<ID>;};
-    std::cout << "\npippo " << index << "\n\n";
     return offset_ + index*strides_[0];
 }
-//WIP====================================
 
 // template<>
 // template<>
