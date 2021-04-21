@@ -384,10 +384,30 @@ class Layout{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
 
-        //WIP====================================
-        template<SingleIndex ID>
-        size_t operator()(ID index);
-        //WIP====================================
+
+        /*!
+         * \brief Specialization of the function Layout<N>::operator()(Dims&&... dims) for the case when `N=1`. For the general case
+         * Layout<N> this specialization is not defined.
+         */
+        template<SingleIndex Index>
+        size_t operator()(Index i) const;
+
+
+        /*!
+         * \brief Specialization of the function Layout<N>::operator()(Dims&&... dims) for the case when `N=2`. For the general case
+         * Layout<N> this specialization is not defined.
+         */
+        template<SingleIndex Index>
+        size_t operator()(Index x, Index j) const;
+
+
+        /*!
+         * \brief Specialization of the function Layout<N>::operator()(Dims&&... dims) for the case when `N=3`. For the general case
+         * Layout<N> this specialization is not defined.
+         */
+        template<SingleIndex Index>
+        size_t operator()(Index x, Index j, Index k) const;
+
 
         /*!
          * \brief Function for indexing a slice from the Layout
@@ -399,6 +419,7 @@ class Layout{
         auto operator()(Args&&... args) const{
             return impl::slice_helper()(0, *this, std::forward<Args>(args)...);
         }
+
 
         /*!
          * \brief Function for indexing a single dimension of the Layout
@@ -417,6 +438,7 @@ class Layout{
             res.offset_ = offset_ + range.start_*strides_[dim];
             return res;
         }
+
 
         /*!
          * \brief Function for indexing a single dimension of the Layout
@@ -445,7 +467,8 @@ class Layout{
         //TODO: In this function, perhaps the loop could be removed using ranges, if we find a way to 1) create a std::array from a range and 2) we find a way to create  subrange where the i-th element of another range is removed. This way, we can also remove the two functions set_length and set_stride that were introduced only to be used here and do not really belong to the public interface of the class
 
 
-        //TODO: right now slice_dimension and slice_helper take dim as a parameter. Conceptually, it would make sense to have it as a template parameter, to separate the indexing argument from the dimension. Moreover, in slice_helper it is used to unwind the recursive calls to the function, therefore it would be better set as a template parameter. Using a template parameter would also make it possible to perform translate all the checks on dim as compile time requiurements, rather than dynamic assertions. The problem is that simply changing it to a template parameter makes slice_helper not compile anymore. 
+        //TODO: right now slice_dimension and slice_helper take dim as a parameter. Conceptually, it would make sense to have it as a template parameter, to separate the indexing argument from the dimension. Moreover, in slice_helper it is used to unwind the recursive calls to the function, therefore it would be better set as a template parameter. Using a template parameter would also make it possible to translate all the checks on dim as compile time requiurements, rather than dynamic assertions. The problem is that simply changing it to a template parameter makes slice_helper not compile anymore. 
+
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         PRIVATE MEMBERS AND FUNCTIONS
@@ -468,6 +491,7 @@ class Layout{
             }
         }
 
+
         /*!
          * \brief Helper function that is used to index a single element of the layout. It uses a variadic template, where the indices for each dimension of the layout are unwind one at a time
          * \tparam M dimension to be indexed by the `FirstArg`
@@ -480,6 +504,7 @@ class Layout{
         size_t single_element_indexing_helper(FirstArg first, OtherArgs&&... other) const{
             return first * strides_[M] + single_element_indexing_helper<M+1>(std::forward<OtherArgs>(other)...);
         }
+
 
         /*!
          * \brief Helper function that is used to index a single element of the layout. It is the final recursion when unwinding the parameter pack of indices
@@ -497,253 +522,52 @@ class Layout{
 
 
 
-//TODO: Specializations for N = 0, 1, 2, 3, 4
 /*================================================================================================
                                     LAYOUT INDEXING SPECIALIZATIONS
 ================================================================================================*/
-
-
-//TODO: create degenerate case for N = 0
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        N = 1
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 /*!
  * \brief Specialization of the function for indexing a single element from Layout with dimension `N=1`
- * \tparam ID is the type of the Index
- * \param index is the value of the index
+ * \tparam Index is the type of the index
+ * \param i is the value of the index
  * \return the index of the subscripted element in the Holor
  */
-// template<>
-// template<SingleIndex ID>
-// inline size_t Layout<1>::operator()(ID index) const{
-//     return offset_ + index*strides_[0];
-// }
-
-// template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
-// size_t operator()(Dims&&... dims) const{
-
 template<>
-template<SingleIndex ID> 
-size_t Layout<1>::operator()(ID index){
-    return offset_ + index*strides_[0];
+template<SingleIndex Index> 
+size_t Layout<1>::operator()(Index i) const{
+    return offset_ + i*strides_[0];
 }
 
-// template<>
-// template<>
-// inline size_t Layout<1>::operator()(size_t&& index) const{  //TODO: remove && in non specialized method declaration?
-//     return offset_ + index*strides_[0];
-// }
+
+/*!
+ * \brief Specialization of the function for indexing a single element from Layout with dimension `N=2`
+ * \tparam Index1 is the type of the first index
+ * \tparam Index2 is the type of the second index
+ * \param i is the value of the first index
+ * \param j is the value of the second index
+ * \return the index of the subscripted element in the Holor
+ */
+template<>
+template<SingleIndex Index> 
+size_t Layout<2>::operator()(Index i, Index j) const{
+    return offset_ + i*strides_[0] + j*strides_[1];
+}
 
 
-// template<size_t N>
-// class Test{
-//     template<typename... Args> requires(sizeof...(Args)==N)
-//     int operator()(Args... args) const{
-//         return 0;
-//     }
-// };
-
-// template<>
-// template<>
-// int Test<1>::operator()(int arg) const{
-//     return 1;
-// };
-
-
-// /*!
-// * \brief Function for indexing a slice from the Layout
-// * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
-// * \param args parameters pack. Each element of the pack indexes either an element or a range of elements along a dimension of the Layout.
-// * \return the Layout containing the indexed range of elements
-// */
-// template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
-// auto operator()(Args&&... args) const{
-// return impl::slice_helper()(0, *this, std::forward<Args>(args)...);
-// }
-
-// /****************************************************************
-// *                   SPECIALIZATIONS FOR N = 1
-// ****************************************************************/
-// /*!
-// * Specialization of operator Layout() for <tt>N=1</tt> and for \p int subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<1>::operator()(int i) const{
-//     return offset_ + i*strides_[0];
-// }
-
-// /*!
-// * Specialization of operator Layout() for <tt>N=1</tt> and for <tt>unsigned int</tt> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<1>::operator()(unsigned int i) const{
-//     return offset_ + i*strides_[0];
-// }
-
-// /*!
-// * Specialization of operator Layout() for <tt>N=1</tt> and for \p long subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<1>::operator()(long i) const{
-//     return offset_ + i*strides_[0];
-// }
-
-// /*!
-// * Specialization of operator Layout() for <tt>N=1</tt> and for <tt>unsigned long</tt>> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<1>::operator()(unsigned long i) const{
-//     return offset_ + i*strides_[0];
-// }
-
-
-// /****************************************************************
-// *                   SPECIALIZATIONS FOR N = 2
-// ****************************************************************/
-// /*!
-// * Specialization of operator Layout() for <tt>N=2</tt> and for \p int subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<2>::operator()(int i, int j) const{
-//     return offset_ + i*strides_[0] + j*strides_[1];
-// }
-
-// /*!
-// * Specialization of operator Layout() for <tt>N=2</tt> and for <tt>unsigned int</tt> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<2>::operator()(unsigned int i, unsigned int j) const{
-//     return offset_ + i*strides_[0] + j*strides_[1];
-// }
-
-// /*!
-// * Specialization of operator Layout() for <tt>N=2</tt> and for \p long subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<2>::operator()(long i, long j) const{
-//     return offset_ + i*strides_[0] + j*strides_[1];
-// }
-
-// /*!
-// * Specialization of operator Layout() for <tt>N=2</tt> and for <tt>unsigned long</tt>> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<2>::operator()(unsigned long i, unsigned long j) const{
-//     return offset_ + i*strides_[0] + j*strides_[1];
-// }
-
-
-
-// /****************************************************************
-// *                   SPECIALIZATIONS FOR N = 3
-// ****************************************************************/
-// /*!
-// * Specialization of operator Layout() for <tt>N=3</tt> and for \p int subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * \param k subscript along third dimension (depth)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<3>::operator()(int i, int j, int k) const{
-//     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
-// }
-
-// /*!
-// * Specialization of operator Layout() for <tt>N=3</tt> and for <tt>unsigned int</tt> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * \param k subscript along third dimension (depth)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<3>::operator()(unsigned int i, unsigned int j, unsigned int k) const{
-//     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
-// }
-
-// /*!
-// * Specialization of operator Layout() for <tt>N=3</tt> and for \p long subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * \param k subscript along third dimension (depth)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<3>::operator()(long i, long j, long k) const{
-//     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
-// }
-
-// /*!
-// * Specialization of operator Layout() for <tt>N=3</tt> and for <tt>unsigned long</tt>> subscripts
-// * 
-// * \param i subscript along first dimension (rows)
-// * \param j subscript along second dimension (columns)
-// * \param k subscript along third dimension (depth)
-// * 
-// * \return the index of the subscripted element in the Holor
-// */
-// template<>
-// template<>
-// inline size_t Layout<3>::operator()(unsigned long i, unsigned long j, unsigned long k) const{
-//     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
-// }
-
+/*!
+ * \brief Specialization of the function for indexing a single element from Layout with dimension `N=3`
+ * \tparam Index1 is the type of the first index
+ * \tparam Index2 is the type of the second index
+ * \tparam Index3 is the type of the second index
+ * \param i is the value of the first 
+ * \param j is the value of the second index
+ * \param k is the value of the third index
+ * \return the index of the subscripted element in the Holor
+ */
+template<>
+template<SingleIndex Index> 
+size_t Layout<3>::operator()(Index i, Index j, Index k) const{
+    return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
+}
 
 } //namespace holor
 
