@@ -429,15 +429,25 @@ class Layout{
          * \exception holor::exception::HolorInvalidArgument if `range` does not satisfy their constraints. The exception level is `release`.
          * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
          */
-        Layout<N> slice_dimension(size_t dim, range range) const{
-            assert::dynamic_assert(range.end_ < lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
-            assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+        template<size_t Dim>
+        Layout<N> slice_dimension(range range) const{
+            assert::dynamic_assert(range.end_ < lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+            // assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
             Layout<N> res = *this;
-            res.lengths_[dim] = range.end_-range.start_+1;
+            res.lengths_[Dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
-            res.offset_ = offset_ + range.start_*strides_[dim];
+            res.offset_ = offset_ + range.start_*strides_[Dim];
             return res;
         }
+        // Layout<N> slice_dimension(size_t dim, range range) const{
+        //     assert::dynamic_assert(range.end_ < lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+        //     assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+        //     Layout<N> res = *this;
+        //     res.lengths_[dim] = range.end_-range.start_+1;
+        //     res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
+        //     res.offset_ = offset_ + range.start_*strides_[dim];
+        //     return res;
+        // }
 
 
         /*!
@@ -448,22 +458,40 @@ class Layout{
          * \exception holor::exception::HolorInvalidArgument if `num` does not satisfy their constraints. The exception level is `release`.
          * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
          */
-        Layout<N-1> slice_dimension(size_t dim, size_t num) const{
-            assert::dynamic_assert(num>=0 && num<lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
-            assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+        template<size_t Dim>
+        Layout<N-1> slice_dimension(size_t num) const{
+            assert::dynamic_assert(num>=0 && num<lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+            // assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
             Layout<N-1> res;
             size_t i = 0;
             for(size_t j = 0; j < N; j++){
-                if (j != dim){
+                if (j != Dim){
                     res.set_length(lengths_[j], i); 
                     res.set_stride(strides_[j], i);
                     i++;
                 }
             }
             res.update_size();
-            res.set_offset(offset_ + num*strides_[dim]);
+            res.set_offset(offset_ + num*strides_[Dim]);
             return res;
         }
+        // Layout<N-1> slice_dimension(size_t dim, size_t num) const{
+        //     assert::dynamic_assert(num>=0 && num<lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+        //     assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+        //     Layout<N-1> res;
+        //     size_t i = 0;
+        //     for(size_t j = 0; j < N; j++){
+        //         if (j != dim){
+        //             res.set_length(lengths_[j], i); 
+        //             res.set_stride(strides_[j], i);
+        //             i++;
+        //         }
+        //     }
+        //     res.update_size();
+        //     res.set_offset(offset_ + num*strides_[dim]);
+        //     return res;
+        // }
+
         //TODO: In this function, perhaps the loop could be removed using ranges, if we find a way to 1) create a std::array from a range and 2) we find a way to create  subrange where the i-th element of another range is removed. This way, we can also remove the two functions set_length and set_stride that were introduced only to be used here and do not really belong to the public interface of the class
 
 
