@@ -113,6 +113,10 @@ template<size_t N>
 class Layout;
 
 namespace impl{
+
+    //WIP=================================================
+    //WIP=================================================
+    //WIP=================================================
     //TODO: replace the template Layout with a proper concept
     /*!
      * \brief helper functor that is used by `Layout<N>::operator()(Args&&... args)` to index a slice of a Layout. The functor implements a recursive algorithm that indexes a dimension at a time, until they are all processed. Each iteration produces a new, subLayout.
@@ -145,6 +149,9 @@ namespace impl{
             return layout.slice_dimension(dim, std::forward<FirstArg>(first));
         }
     };
+    //WIP=================================================
+    //WIP=================================================
+    //WIP=================================================
 }
 // TODO: each setp in the recursion implemented by the functor `slice_helper` creates a new Layout. Can we avoid creating all these intermediate objects, perhaps using coroutines?
 
@@ -429,6 +436,9 @@ class Layout{
          * \exception holor::exception::HolorInvalidArgument if `range` does not satisfy their constraints. The exception level is `release`.
          * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
          */
+        //WIP=================================================
+        //WIP=================================================
+        //WIP=================================================
         template<size_t Dim>
         Layout<N> slice_dimension(range range) const{
             assert::dynamic_assert(range.end_ < lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
@@ -491,6 +501,9 @@ class Layout{
         //     res.set_offset(offset_ + num*strides_[dim]);
         //     return res;
         // }
+        //WIP=================================================
+        //WIP=================================================
+        //WIP=================================================
 
         //TODO: In this function, perhaps the loop could be removed using ranges, if we find a way to 1) create a std::array from a range and 2) we find a way to create  subrange where the i-th element of another range is removed. This way, we can also remove the two functions set_length and set_stride that were introduced only to be used here and do not really belong to the public interface of the class
 
