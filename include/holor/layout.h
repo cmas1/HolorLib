@@ -121,6 +121,7 @@ namespace impl{
     /*!
      * \brief helper functor that is used by `Layout<N>::operator()(Args&&... args)` to index a slice of a Layout. The functor implements a recursive algorithm that indexes a dimension at a time, until they are all processed. Each iteration produces a new, subLayout.
      */
+    template<size_t Dim>
     struct slice_helper{
         /*!
          * \brief recursive function used in slicing operatios
@@ -130,11 +131,14 @@ namespace impl{
          * \param dim is an unsigned int that is used to unwind the recursion, depending on the type of indices.
          */
         template<typename Layout, Index FirstArg, typename... OtherArgs> //TODO: should create a concept Layout to be used here
-        auto operator()(size_t dim, Layout layout, FirstArg&& first, OtherArgs&&... other) const{
+        auto operator()(Layout layout, FirstArg&& first, OtherArgs&&... other) const{
             if constexpr(RangeIndex<FirstArg>){
-                return slice_helper()(dim+1, layout.slice_dimension(dim, std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
+                layout.slice_dimension<Dim>(std::forward<FirstArg>(first));
+                return 0;
+                // return slice_helper<Dim+1>()(layout.slice_dimension<Dim>(std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
             }else{
-                return slice_helper()(dim, layout.slice_dimension(dim, std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
+                return 1;
+                // return slice_helper<Dim>()(layout.slice_dimension<Dim>(std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
             }
         }
 
@@ -145,8 +149,9 @@ namespace impl{
          * \param dim is an unsigned int that is used to unwind the recursion, depending on the type of indices.
          */
         template<typename Layout, Index FirstArg>
-        auto operator()(size_t dim, Layout layout, FirstArg&& first) const{
-            return layout.slice_dimension(dim, std::forward<FirstArg>(first));
+        auto operator()(Layout layout, FirstArg&& first) const{
+            return 1;
+            // return layout.slice_dimension<Dim>(std::forward<FirstArg>(first));
         }
     };
     //WIP=================================================
@@ -416,6 +421,7 @@ class Layout{
         size_t operator()(Index x, Index j, Index k) const;
 
 
+        //WIP==============================
         /*!
          * \brief Function for indexing a slice from the Layout
          * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
@@ -424,9 +430,9 @@ class Layout{
          */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
         auto operator()(Args&&... args) const{
-            return impl::slice_helper()(0, *this, std::forward<Args>(args)...);
+            return impl::slice_helper<0>()(*this, std::forward<Args>(args)...);
         }
-
+        
 
         /*!
          * \brief Function for indexing a single dimension of the Layout
