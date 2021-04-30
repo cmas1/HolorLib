@@ -114,9 +114,6 @@ class Layout;
 
 namespace impl{
 
-    //WIP=================================================
-    //WIP=================================================
-    //WIP=================================================
     //TODO: replace the template Layout with a proper concept
     /*!
      * \brief helper functor that is used by `Layout<N>::operator()(Args&&... args)` to index a slice of a Layout. The functor implements a recursive algorithm that indexes a dimension at a time, until they are all processed. Each iteration produces a new, subLayout.
@@ -130,15 +127,12 @@ namespace impl{
          * \tparam OtherArgs are the `Index` type of the other indices besides the first
          * \param dim is an unsigned int that is used to unwind the recursion, depending on the type of indices.
          */
-        template<typename Layout, Index FirstArg, typename... OtherArgs> //TODO: should create a concept Layout to be used here
+        template<typename Layout, Index FirstArg, typename... OtherArgs>
         auto operator()(Layout layout, FirstArg&& first, OtherArgs&&... other) const{
             if constexpr(RangeIndex<FirstArg>){
-                layout.slice_dimension<Dim>(std::forward<FirstArg>(first));
-                return 0;
-                // return slice_helper<Dim+1>()(layout.slice_dimension<Dim>(std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
+                return slice_helper<Dim+1>()(layout.template slice_dimension<Dim>(std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
             }else{
-                return 1;
-                // return slice_helper<Dim>()(layout.slice_dimension<Dim>(std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
+                return slice_helper<Dim>()(layout.template slice_dimension<Dim>(std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
             }
         }
 
@@ -150,13 +144,9 @@ namespace impl{
          */
         template<typename Layout, Index FirstArg>
         auto operator()(Layout layout, FirstArg&& first) const{
-            return 1;
-            // return layout.slice_dimension<Dim>(std::forward<FirstArg>(first));
+            return layout.template slice_dimension<Dim>(std::forward<FirstArg>(first));
         }
     };
-    //WIP=================================================
-    //WIP=================================================
-    //WIP=================================================
 }
 // TODO: each setp in the recursion implemented by the functor `slice_helper` creates a new Layout. Can we avoid creating all these intermediate objects, perhaps using coroutines?
 
@@ -421,7 +411,6 @@ class Layout{
         size_t operator()(Index x, Index j, Index k) const;
 
 
-        //WIP==============================
         /*!
          * \brief Function for indexing a slice from the Layout
          * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
@@ -442,28 +431,16 @@ class Layout{
          * \exception holor::exception::HolorInvalidArgument if `range` does not satisfy their constraints. The exception level is `release`.
          * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
          */
-        //WIP=================================================
-        //WIP=================================================
-        //WIP=================================================
         template<size_t Dim>
         Layout<N> slice_dimension(range range) const{
             assert::dynamic_assert(range.end_ < lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
-            // assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+            // assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") ); //TODO: add requirement on Dim
             Layout<N> res = *this;
             res.lengths_[Dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
             res.offset_ = offset_ + range.start_*strides_[Dim];
             return res;
         }
-        // Layout<N> slice_dimension(size_t dim, range range) const{
-        //     assert::dynamic_assert(range.end_ < lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
-        //     assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
-        //     Layout<N> res = *this;
-        //     res.lengths_[dim] = range.end_-range.start_+1;
-        //     res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
-        //     res.offset_ = offset_ + range.start_*strides_[dim];
-        //     return res;
-        // }
 
 
         /*!
@@ -477,7 +454,7 @@ class Layout{
         template<size_t Dim>
         Layout<N-1> slice_dimension(size_t num) const{
             assert::dynamic_assert(num>=0 && num<lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
-            // assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+            // assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") ); //TODO: add requirement on Dim
             Layout<N-1> res;
             size_t i = 0;
             for(size_t j = 0; j < N; j++){
@@ -491,30 +468,7 @@ class Layout{
             res.set_offset(offset_ + num*strides_[Dim]);
             return res;
         }
-        // Layout<N-1> slice_dimension(size_t dim, size_t num) const{
-        //     assert::dynamic_assert(num>=0 && num<lengths_[dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
-        //     assert::dynamic_assert(dim>=0 && dim<N, EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
-        //     Layout<N-1> res;
-        //     size_t i = 0;
-        //     for(size_t j = 0; j < N; j++){
-        //         if (j != dim){
-        //             res.set_length(lengths_[j], i); 
-        //             res.set_stride(strides_[j], i);
-        //             i++;
-        //         }
-        //     }
-        //     res.update_size();
-        //     res.set_offset(offset_ + num*strides_[dim]);
-        //     return res;
-        // }
-        //WIP=================================================
-        //WIP=================================================
-        //WIP=================================================
-
         //TODO: In this function, perhaps the loop could be removed using ranges, if we find a way to 1) create a std::array from a range and 2) we find a way to create  subrange where the i-th element of another range is removed. This way, we can also remove the two functions set_length and set_stride that were introduced only to be used here and do not really belong to the public interface of the class
-
-
-        //TODO: right now slice_dimension and slice_helper take dim as a parameter. Conceptually, it would make sense to have it as a template parameter, to separate the indexing argument from the dimension. Moreover, in slice_helper it is used to unwind the recursive calls to the function, therefore it would be better set as a template parameter. Using a template parameter would also make it possible to translate all the checks on dim as compile time requiurements, rather than dynamic assertions. The problem is that simply changing it to a template parameter makes slice_helper not compile anymore. 
 
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
