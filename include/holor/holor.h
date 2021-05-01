@@ -22,7 +22,7 @@
 
 
 
-#ifndef HOLOR_H
+#ifndef HOLOR_REF_H
 #define HOLOR_H
 
 #include <cstddef>
