@@ -22,19 +22,14 @@
 
 
 
-#ifndef HOLOR_H
-#define HOLOR_H
+#ifndef HOLOR_REF_H
+#define HOLOR_REF_H
 
 #include <cstddef>
 #include <vector>
 #include <type_traits>
 
-// #include "tensor_ref.h"
-#include "slice.h"
-#include "initializer.h"
-// #include "tensor_predicates.h"
-// #include "tensor_utils.h"
-#include "../utils/static_assert.h"
+#include "layout.h"
 
 
 
@@ -413,33 +408,7 @@ class Holor{
         // }
 
 
-        /****************************************************************
-                                OPERATORS
-        ****************************************************************/
-        // void print_details(std::string title = ""){
-        //     std::cout<< "\n";
-        //     std::cout << "=========================================\n";
-        //     std::cout <<"| " << title << std::endl;
-        //     std::cout << "=========================================\n";
-        //     std::cout << "| LAYOUT:\n";
-        //     std::cout << "|      size = " << layout_.size_ << std::endl;
-        //     std::cout << "|      offset = " << layout_.offset_ << std::endl;
-        //     std::cout << "|      lengths = [ ";
-        //     for(auto x:layout_.lengths_){
-        //         std::cout << x << " ";
-        //     }
-        //     std::cout <<"]\n";
-        //     std::cout << "| DATA:\n";
-        //     std::cout << "|      [ ";
-        //     for(auto x:data_){
-        //         std::cout << x << " ";
-        //     }
-        //     std::cout <<"]\n";
-        //     std::cout << "=========================================\n\n";
-        // }
 
-        // template<typename X, size_t NN>
-        // friend std::ostream& operator<<(std::ostream& os, const Holor<X,NN>& t);
 
     private:
         /*
@@ -454,60 +423,11 @@ class Holor{
          */
         std::vector<T> data_;
 
-
-        // template<typename U, size_t M>
-        // void push_element( const U* ptr, const HolorLayout<M>& ts){
-        //     for (auto i = 0; i<ts.lengths_[0]; i++){
-        //         auto tmp = holor_impl::slice_dim<0>();
-        //         HolorLayout<N-1> row = tmp(i, ts);
-        //         push_element(ptr, row);
-        //     }
-        // }
-
-
-        // template<typename U>
-        // void push_element( const U* ptr, const HolorLayout<1>& ts){
-        //     for (auto i = 0; i<ts.lengths_[0]; i++){
-        //         data_.push_back(*(ptr + ts(i)));
-        //     }
-        // }
 };
 
 
 
 
-/****************************************************************
-                        OPERATORS
-****************************************************************/
-// template<typename T, size_t N>
-// std::ostream& operator<<(std::ostream& os, const Holor<T,N>& t){
-//     // static_assert(is_printable_v<T>, "operator<<: element of the tensor are not printable.");
-//     return print(os, t.data(), t.layout_);
-// }
-
-
-//CMCMCM Work in progress
-namespace impl{
-    template<size_t M, typename Type, typename FirstArg, typename... Args>
-    auto get_slice(Slice<M, Type> ref_container, FirstArg first, Args... args){
-        if constexpr (){
-
-        }else{
-
-        }
-    }
-
-    template<size_t M, typename Type, typename FirstArg>
-    auto get_slice(Slice<M, Type> ref_container, FirstArg first){
-        if constexpr (){
-            return;
-        }else{
-            return;
-        }
-    }
-}
-
-
 } //namespace holor
 
-#endif // HOLOR_H
+#endif // HOLOR_REF_H

@@ -22,26 +22,28 @@
 
 
 
-#ifndef HOLOR_REF_H
+#ifndef HOLOR_H
 #define HOLOR_H
 
 #include <cstddef>
 #include <vector>
 #include <type_traits>
 
-// #include "tensor_ref.h"
-#include "slice.h"
+// #include "holor_ref.h"
 #include "initializer.h"
+
 // #include "tensor_predicates.h"
 // #include "tensor_utils.h"
-#include "../utils/static_assert.h"
+// #include "../common/static_assert.h"
 
 
 
 namespace holor{
 
 
-
+/*================================================================================================
+                                    Holor Class
+================================================================================================*/
 /// Holor class
 /*!
  * Class providing a dense implementation of a general n-dimensional tensor container.
@@ -55,27 +57,27 @@ template<typename T, size_t N>
 class Holor{   
 
     public:
-        /****************************************************************
-                                ALIASES
-        ****************************************************************/
-        // number of dimensions
-        static constexpr size_t order = N;
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                    ALIASES
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        static constexpr size_t order = N; ///! \brief number of dimensions in the container 
 
-        using value_type = T;
-        using iterator = typename std::vector<T>::iterator;
-        using const_iterator = typename std::vector<T>::const_iterator;
-
+        using value_type = T; ///! type of the values in the container
+        using iterator = typename std::vector<T>::iterator; ///! iterator type for the underlying data storage
+        using const_iterator = typename std::vector<T>::const_iterator; ///! iterator type for the underlying data storage
 
 
-        /****************************************************************
-                CONSTRUCTORS, ASSIGNEMENTS AND DESTRUCTOR
-        ****************************************************************/
+
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         /*!
          * \brief Default constructor.
          * 
          * \return A Holor with zero elements on each dimension
          */
         Holor() = default;
+
 
         /*!
          * \brief Default move constructor.
@@ -84,12 +86,14 @@ class Holor{
          */
         Holor(Holor&&) = default;
 
+
         /*!
          * \brief Default copy constructor.
          * 
          * \return A Holor equal to the argument
          */
         Holor(const Holor&) = default;
+
 
         /*!
          * \brief Default move assignement.
@@ -98,6 +102,7 @@ class Holor{
          */
         Holor& operator=(Holor&&) = default;
 
+
         /*!
          * \brief Default copy assignement.
          * 
@@ -105,15 +110,14 @@ class Holor{
          */
         Holor& operator=(const Holor&) = default;
 
+
         /*!
          *  \brief Default destructor.
          */
         ~Holor() = default;
 
 
-
-//======>>>>
-        //TODO:  Do we need this constructor? Improve it. Do we need a constructor from an array of lengths?
+        //TODO:  Do we need a constructor from lengths, perhaps with default initialization? Can we implement it using ranges?
         /*!
          * \brief Constructor that creates a Holor by specifying the length of each dimension of the Holor
          * 
@@ -121,12 +125,9 @@ class Holor{
          */
         // template<typename... Lengths>
         // Holor(Lengths... lengths): layout_{lengths...}, data_(layout_.size_) {}
-//======>>>>
 
 
-
-
-
+        //TODO: Constructor from HolorRef
         // /*!
         // * Constructor from a Slice object
         // *
@@ -147,6 +148,7 @@ class Holor{
         // }
 
 
+        //TODO: assignment from HolorRef
         // /*!
         // * Assignment operator from a Slice object
         // * 
@@ -164,19 +166,19 @@ class Holor{
         // }
 
         
-        /*
-         * /brief Constructor from a nested list of elements
+        /*!
+         * \brief Constructor from a nested list of elements
          * 
-         * /param init nested list of the elements to be inserted in the container
+         * \param init nested list of the elements to be inserted in the container
          *
-         * /return a Holor containing the elements in the list
+         * \return a Holor containing the elements in the list
          */
         Holor(holor::nested_list<T,N> init){
             layout_.set_offset(0);
             layout_.set_lengths(impl::derive_lengths<N>(init));
             data_.reserve(layout_.size());
             impl::insert_flat(init, data_);
-            // TODO: dynamic check that the  number of elements in the cotnainer matches the extents?
+            // TODO: dynamic check that the  number of elements in the container matches the extents?
         }
 
 
@@ -191,43 +193,43 @@ class Holor{
         // }
 
 
-        /*
-        * Remove constructor from a list
-        */
+        /*!
+         * \brief Remove the constructor from a std::initializer_list, in order to allow using the constructor from holor::nested_list
+         */
         template<typename U>
         Holor(std::initializer_list<U>) = delete;
 
-        /*
-        * Remove assignment from a list
-        */
+        
+        /*!
+         * \brief Remove the assignment from a std::initializer_list, in order to allow using the assignment from holor::nested_list
+         */
         template<typename U>
         Holor& operator=(std::initializer_list<U>) = delete;
 
         
 
-        // /****************************************************************
-        //                     GET AND SET
-        // ****************************************************************/
-
-        /*
-         * \brief Function that returns the Layout containing the description of the indexing for the full Holor
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            GET/SET FUNCTIONS
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        /*!
+         * \brief Function that returns the Layout used by the Holor to store and index the data
          * 
-         * \return Layout defining subscripting
+         * \return Layout
          */
         const Layout<N>& descriptor() const{
             return layout_;
         }
 
-        /*
-         * \brief Function that returns the number of elements along the \p n dimension
+        /*!
+         * \brief Function that returns the number of elements along each of the container's dimensions
          * 
-         * \return the lengths of the dimensions of the Holor container 
+         * \return the lengths of each dimension of the Holor container 
          */
         auto lengths() const{
             return layout_.lengths();
         }
 
-        /*
+        /*!
          * \brief Function that returns the total number of elements in the container
          * 
          * \return the total number of elements in the container
@@ -236,7 +238,7 @@ class Holor{
             return layout_.size();
         }
 
-        /*
+        /*!
          * \brief Function that provides a flat access to the data contained in the container
          * 
          * \return a pointer to the data stored in the container
@@ -245,7 +247,7 @@ class Holor{
             return data_.data();
         }
         
-        /*
+        /*!
          * \brief Function that provides a flat access to the data contained in the container
          * 
          * \return a const pointer to the data stored in the container
@@ -264,9 +266,9 @@ class Holor{
         }
 
 
-        /****************************************************************
-                                    ACCESS
-        ****************************************************************/
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            ACCESS FUNCTIONS
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         /*
         * Access tensor element subscripting with integers without range check
         */
@@ -441,6 +443,10 @@ class Holor{
         // template<typename X, size_t NN>
         // friend std::ostream& operator<<(std::ostream& os, const Holor<X,NN>& t);
 
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        PRIVATE MEMBERS AND FUNCTIONS
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     private:
         /*
          * \brief Layout that describes the memory layout of the container, i.e. the number of elements along each dimension,
@@ -476,36 +482,15 @@ class Holor{
 
 
 
-/****************************************************************
-                        OPERATORS
-****************************************************************/
+/*================================================================================================
+                            Holor Out-of-Class Functions
+================================================================================================*/
 // template<typename T, size_t N>
 // std::ostream& operator<<(std::ostream& os, const Holor<T,N>& t){
 //     // static_assert(is_printable_v<T>, "operator<<: element of the tensor are not printable.");
 //     return print(os, t.data(), t.layout_);
 // }
 
-
-//CMCMCM Work in progress
-namespace impl{
-    template<size_t M, typename Type, typename FirstArg, typename... Args>
-    auto get_slice(Slice<M, Type> ref_container, FirstArg first, Args... args){
-        if constexpr (){
-
-        }else{
-
-        }
-    }
-
-    template<size_t M, typename Type, typename FirstArg>
-    auto get_slice(Slice<M, Type> ref_container, FirstArg first){
-        if constexpr (){
-            return;
-        }else{
-            return;
-        }
-    }
-}
 
 
 } //namespace holor
