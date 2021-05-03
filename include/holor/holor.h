@@ -127,43 +127,35 @@ class Holor{
         // Holor(Lengths... lengths): layout_{lengths...}, data_(layout_.size_) {}
 
 
-        //TODO: Constructor from HolorRef
-        // /*!
-        // * Constructor from a Slice object
-        // *
-        // * /return a Holor
-        // */
-        // // template<typename U>
-        // // Holor(const Slice<U,N>& x): layout_{x.layout_}, data_{x.begin(), x.end()} {
-        // //     static_assert(std::is_convertible<U,T>(), "Holor constructor: incompatible element types");
-        // // }
-        // template<typename U>
-        // Holor(const Slice<U,N>& x) {
-        //     static_assert(std::is_convertible<U,T>(), "Holor constructor: incompatible element types");
-        //     layout_.lengths_ = x.layout_.lengths_;
-        //     layout_.offset_ = 0;
-        //     layout_.compute_strides();
-        //     data_.reserve(x.layout_.size());
-        //     this->push_element(x.dataptr_, x.layout_);
-        // }
+        /*!
+         * \brief Constructor from a HolorRef object
+         * \param ref a HolorRef object
+         * \return a Holor
+         */
+        template<typename U> requires (std::convertible_to<U, T>)
+        Holor(const HolorRef<U,N>& ref) {
+            layout_.lengths_ = ref.layout_.lengths_;
+            layout_.offset_ = 0;
+            layout_.compute_strides();
+            data_.reserve(layout_.size());
+            this->push_ref_elements(x.dataptr_, x.layout_);
+        }
 
 
-        //TODO: assignment from HolorRef
-        // /*!
-        // * Assignment operator from a Slice object
-        // * 
-        // * /return a reference to Holor
-        // */
-        // template<typename U>
-        // Holor& operator=(const Slice<U,N>& x){
-        //     static_assert(std::is_convertible<U,T>(), "Holor constructor: incompatible element types");
-        //     layout_.lengths_ = x.layout_.lengths_;
-        //     layout_.offset_ = 0;
-        //     layout_.compute_strides();
-        //     data_.reserve(x.layout_.size());
-        //     this->push_element(x.dataptr_, x.layout_);
-        //     return *this;
-        // }
+        /*!
+         * \brief Assignment from a HolorRef object
+         * \param ref a HolorRef object
+         * \return a Holor
+         */
+        template<typename U> requires (std::convertible_to<U, T>)
+        Holor& operator=(const HolorRef<U,N>& ref){
+            layout_.lengths_ = ref.layout_.lengths_;
+            layout_.offset_ = 0;
+            layout_.compute_strides();
+            data_.reserve(ref.layout_.size());
+            this->push_ref_elements(ref.dataptr_, ref.layout_);
+            return *this;
+        }
 
         
         /*!
@@ -216,7 +208,7 @@ class Holor{
          * 
          * \return Layout
          */
-        const Layout<N>& descriptor() const{
+        const Layout<N>& layout() const{
             return layout_;
         }
 
@@ -461,22 +453,28 @@ class Holor{
         std::vector<T> data_;
 
 
-        // template<typename U, size_t M>
-        // void push_element( const U* ptr, const HolorLayout<M>& ts){
-        //     for (auto i = 0; i<ts.lengths_[0]; i++){
-        //         auto tmp = holor_impl::slice_dim<0>();
-        //         HolorLayout<N-1> row = tmp(i, ts);
-        //         push_element(ptr, row);
-        //     }
-        // }
+        //WIP:================================================================
+        /*!
+         * \brief helper function that copies the valid data from a HolorRef to a Holor
+         */
+        template<typename U, size_t M>
+        void push_ref_elements( const U* data_ptr, const Layout<M>& ref_layout){
+            for (auto i = 0; i<ref_layout.lengths_[0]; i++){
+                push_ref_elements(data_ptr, ref_layout.slice_dimension<0>(i));
+            }
+        }
 
 
-        // template<typename U>
-        // void push_element( const U* ptr, const HolorLayout<1>& ts){
-        //     for (auto i = 0; i<ts.lengths_[0]; i++){
-        //         data_.push_back(*(ptr + ts(i)));
-        //     }
-        // }
+        /*!
+         * \brief helper function that copies the valid data from a HolorRef to a Holor
+         */
+        template<typename U>
+        void push_ref_elements( const U* data_ptr, const Layout<1>& ref_layout){
+            for (auto i = 0; i<ref_layout.lengths_[0]; i++){
+                data_.push_back(*(data_ptr + ref_layout(i)));
+            }
+        }
+        //WIP:================================================================
 };
 
 
