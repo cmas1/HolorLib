@@ -32,12 +32,49 @@
 namespace holor{
 
 
-//WIP:=====================================================
+/*!
+ * \brief operator to print the content of a Holor on a ostream
+ * \tparam `T` is the type of the data contained in the Holor.
+ * \b Note: `T` is required to be a printable data type
+ * \tparam `N` is the number of dimensions of the container
+ * \param os is the reference to the ostream
+ * \param h is container to be printed
+ * \return a reference to the ostream
+ */
 template<typename T, size_t N> //TODO: requires printable T
-std::ostream& operator<<(std::ostream& os, const Holor<T,N>& t){
-    return print(os, t.data(), t.layout_);
+std::ostream& operator<<(std::ostream& os, const Holor<T,N>& h){
+    return print(os, h.data(), h.layout_);
 }
-//WIP:=====================================================
+
+
+/*!
+ * \brief operator to print the content of a Holor on a ostream
+ * \tparam `T` is the type of the data contained in the Holor.
+ * \b Note: `T` is required to be a printable data type
+ * \tparam `N` is the number of dimensions of the container
+ * \param os is the reference to the ostream
+ * \param h is container to be printed
+ * \return a reference to the ostream
+ */
+template<typename T, size_t N> //TODO: requires printable T
+std::ostream& operator<<(std::ostream& os, const HolorRef<T,N>& h){
+    return print(os, h.data(), h.layout_);
+}
+
+
+
+
+template<typename HolorType> //TODO: requires printable T
+struct holor_printer{
+    std::ostream& print(std::ostream& os, const HolorType& h){
+        if constexpr(HolorType::N == 1){
+
+        }else{
+
+        }
+    }
+}
+
 
 //printer<0>(Holor h){
 //  os<<"[ ;

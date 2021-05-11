@@ -1,4 +1,4 @@
-// This file is part of Holor, a C++ template library for multi-dimensional containers
+// This file is part of HolorRef, a C++ template library for multi-dimensional containers
 
 // Copyright 2020 Carlo Masone
 
@@ -37,7 +37,7 @@ namespace holor{
 
 
 
-/// Holor class
+/// HolorRef class
 /*!
  * Class providing a dense implementation of a general n-dimensional tensor container.
  * Since the purpose of this class is to provide a container object, tensor arithmetic operations are not supported.
@@ -47,7 +47,7 @@ namespace holor{
  * //TODO: explain better what is a tensor (number of dimensions, extensions, slicing, access)
  */
 template<typename T, size_t N>
-class Holor{   
+class HolorRef{   
 
     public:
         /****************************************************************
@@ -68,54 +68,54 @@ class Holor{
         /*!
          * \brief Default constructor.
          * 
-         * \return A Holor with zero elements on each dimension
+         * \return A HolorRef with zero elements on each dimension
          */
-        Holor() = default;
+        HolorRef() = default;
 
         /*!
          * \brief Default move constructor.
          * 
-         * \return A Holor equal to the argument
+         * \return A HolorRef equal to the argument
          */
-        Holor(Holor&&) = default;
+        HolorRef(HolorRef&&) = default;
 
         /*!
          * \brief Default copy constructor.
          * 
-         * \return A Holor equal to the argument
+         * \return A HolorRef equal to the argument
          */
-        Holor(const Holor&) = default;
+        HolorRef(const HolorRef&) = default;
 
         /*!
          * \brief Default move assignement.
          * 
-         * \return A Holor equal to the argument
+         * \return A HolorRef equal to the argument
          */
-        Holor& operator=(Holor&&) = default;
+        HolorRef& operator=(HolorRef&&) = default;
 
         /*!
          * \brief Default copy assignement.
          * 
-         * \return A Holor equal to the argument
+         * \return A HolorRef equal to the argument
          */
-        Holor& operator=(const Holor&) = default;
+        HolorRef& operator=(const HolorRef&) = default;
 
         /*!
          *  \brief Default destructor.
          */
-        ~Holor() = default;
+        ~HolorRef() = default;
 
 
 
 //======>>>>
         //TODO:  Do we need this constructor? Improve it. Do we need a constructor from an array of lengths?
         /*!
-         * \brief Constructor that creates a Holor by specifying the length of each dimension of the Holor
+         * \brief Constructor that creates a HolorRef by specifying the length of each dimension of the HolorRef
          * 
-         * \return a Holor
+         * \return a HolorRef
          */
         // template<typename... Lengths>
-        // Holor(Lengths... lengths): layout_{lengths...}, data_(layout_.size_) {}
+        // HolorRef(Lengths... lengths): layout_{lengths...}, data_(layout_.size_) {}
 //======>>>>
 
 
@@ -125,15 +125,15 @@ class Holor{
         // /*!
         // * Constructor from a Slice object
         // *
-        // * /return a Holor
+        // * /return a HolorRef
         // */
         // // template<typename U>
-        // // Holor(const Slice<U,N>& x): layout_{x.layout_}, data_{x.begin(), x.end()} {
-        // //     static_assert(std::is_convertible<U,T>(), "Holor constructor: incompatible element types");
+        // // HolorRef(const Slice<U,N>& x): layout_{x.layout_}, data_{x.begin(), x.end()} {
+        // //     static_assert(std::is_convertible<U,T>(), "HolorRef constructor: incompatible element types");
         // // }
         // template<typename U>
-        // Holor(const Slice<U,N>& x) {
-        //     static_assert(std::is_convertible<U,T>(), "Holor constructor: incompatible element types");
+        // HolorRef(const Slice<U,N>& x) {
+        //     static_assert(std::is_convertible<U,T>(), "HolorRef constructor: incompatible element types");
         //     layout_.lengths_ = x.layout_.lengths_;
         //     layout_.offset_ = 0;
         //     layout_.compute_strides();
@@ -145,11 +145,11 @@ class Holor{
         // /*!
         // * Assignment operator from a Slice object
         // * 
-        // * /return a reference to Holor
+        // * /return a reference to HolorRef
         // */
         // template<typename U>
-        // Holor& operator=(const Slice<U,N>& x){
-        //     static_assert(std::is_convertible<U,T>(), "Holor constructor: incompatible element types");
+        // HolorRef& operator=(const Slice<U,N>& x){
+        //     static_assert(std::is_convertible<U,T>(), "HolorRef constructor: incompatible element types");
         //     layout_.lengths_ = x.layout_.lengths_;
         //     layout_.offset_ = 0;
         //     layout_.compute_strides();
@@ -164,9 +164,9 @@ class Holor{
          * 
          * /param init nested list of the elements to be inserted in the container
          *
-         * /return a Holor containing the elements in the list
+         * /return a HolorRef containing the elements in the list
          */
-        Holor(holor::nested_list<T,N> init){
+        HolorRef(holor::nested_list<T,N> init){
             layout_.set_offset(0);
             layout_.set_lengths(impl::derive_lengths<N>(init));
             data_.reserve(layout_.size());
@@ -178,9 +178,9 @@ class Holor{
         // /*
         // * Assign from a list
         // *
-        // * /return a reference to Holor
+        // * /return a reference to HolorRef
         // */
-        // Holor& operator=(Holor_initializer<T,N> init){
+        // HolorRef& operator=(HolorRef_initializer<T,N> init){
         //     // TODO: to implement
         //     return *this;
         // }
@@ -190,13 +190,13 @@ class Holor{
         * Remove constructor from a list
         */
         template<typename U>
-        Holor(std::initializer_list<U>) = delete;
+        HolorRef(std::initializer_list<U>) = delete;
 
         /*
         * Remove assignment from a list
         */
         template<typename U>
-        Holor& operator=(std::initializer_list<U>) = delete;
+        HolorRef& operator=(std::initializer_list<U>) = delete;
 
         
 
@@ -205,7 +205,7 @@ class Holor{
         // ****************************************************************/
 
         /*
-         * \brief Function that returns the Layout containing the description of the indexing for the full Holor
+         * \brief Function that returns the Layout containing the description of the indexing for the full HolorRef
          * 
          * \return Layout defining subscripting
          */
@@ -216,7 +216,7 @@ class Holor{
         /*
          * \brief Function that returns the number of elements along the \p n dimension
          * 
-         * \return the lengths of the dimensions of the Holor container 
+         * \return the lengths of the dimensions of the HolorRef container 
          */
         auto lengths() const{
             return layout_.lengths();
@@ -356,7 +356,7 @@ class Holor{
         //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
         //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
         //     auto myslice = holor_impl::slice_dim<0>();
-        //     HolorLayout<N-1> row = myslice(n, layout_);
+        //     HolorRefLayout<N-1> row = myslice(n, layout_);
         //     return {row, data()};
         // }
 
@@ -368,7 +368,7 @@ class Holor{
         //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
         //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
         //     auto myslice = holor_impl::slice_dim<0>();
-        //     HolorLayout<N-1> row = myslice(n, layout_);
+        //     HolorRefLayout<N-1> row = myslice(n, layout_);
         //     return {row, data()};
         // }
 
@@ -380,7 +380,7 @@ class Holor{
         //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
         //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
         //     auto myslice = holor_impl::slice_dim<1>();
-        //     HolorLayout<N-1> col = myslice(n, layout_);
+        //     HolorRefLayout<N-1> col = myslice(n, layout_);
         //     return {col, data()};
         // }
 
@@ -392,7 +392,7 @@ class Holor{
         //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
         //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
         //     auto myslice = holor_impl::slice_dim<1>();
-        //     HolorLayout<N-1> col = myslice(n, layout_);
+        //     HolorRefLayout<N-1> col = myslice(n, layout_);
         //     return {col, data()};
         // }
 
@@ -403,7 +403,7 @@ class Holor{
         //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
         //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
         //     auto myslice = holor_impl::slice_dim<M>();
-        //     HolorLayout<N-1> slice = myslice(n, layout_);
+        //     HolorRefLayout<N-1> slice = myslice(n, layout_);
         //     return {slice, data()};
         // }
 
