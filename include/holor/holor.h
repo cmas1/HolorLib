@@ -56,7 +56,7 @@ class Holor{
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     ALIASES
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        static constexpr size_t order = N; ///! \brief number of dimensions in the container 
+        static constexpr size_t dimensions = N; ///! \brief number of dimensions in the container 
 
         using value_type = T; ///! type of the values in the container
         using iterator = typename std::vector<T>::iterator; ///! iterator type for the underlying data storage

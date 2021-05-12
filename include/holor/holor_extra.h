@@ -32,18 +32,39 @@
 namespace holor{
 
 
+namespace impl{
+    template<typename HolorType> //TODO: requires concept HolorType
+    struct holor_printer{
+        std::ostream& operator()(std::ostream& os, const HolorType& h){
+            os << "["
+            if constexpr(HolorType::dimensions == 1){
+                for (auto i = 0; i<h.size()-1; i++){
+                    os << h(i) << ", ";
+                }
+                os << h(h.size()-1);
+            }else{
+                for (auto i = 0; i<h.size(); i++){
+                    holor_printer()(os, h.row(i));
+                }
+            }
+            os << "]";
+        }
+    };
+}
+
+
 /*!
  * \brief operator to print the content of a Holor on a ostream
  * \tparam `T` is the type of the data contained in the Holor.
  * \b Note: `T` is required to be a printable data type
  * \tparam `N` is the number of dimensions of the container
  * \param os is the reference to the ostream
- * \param h is container to be printed
+ * \param h is the container to be printed
  * \return a reference to the ostream
  */
 template<typename T, size_t N> //TODO: requires printable T
 std::ostream& operator<<(std::ostream& os, const Holor<T,N>& h){
-    return print(os, h.data(), h.layout_);
+    return impl::holor_printer()(os, h);
 }
 
 
@@ -58,49 +79,8 @@ std::ostream& operator<<(std::ostream& os, const Holor<T,N>& h){
  */
 template<typename T, size_t N> //TODO: requires printable T
 std::ostream& operator<<(std::ostream& os, const HolorRef<T,N>& h){
-    return print(os, h.data(), h.layout_);
+    return impl::holor_printer()(os, h);
 }
-
-
-
-
-template<typename HolorType> //TODO: requires printable T
-struct holor_printer{
-    std::ostream& print(std::ostream& os, const HolorType& h){
-        if constexpr(HolorType::N == 1){
-
-        }else{
-
-        }
-    }
-}
-
-
-//printer<0>(Holor h){
-//  os<<"[ ;
-//  for cnt = 0:lengths[0]{
-//      tmp = h.slice_dimension<0>(cnt)
-//        printer<1>(tmp);
-//  }
-//  os << "]";
-//}
-
-//printer<0>(HolorRef h){
-//  os<<"[ ;
-//  for cnt = 0:lengths[0]{
-//      tmp = h.slice_dimension<0>(cnt)
-//        printer<1>(tmp);
-//  }
-//  os << "]";
-//}
-
-//printer<N-1>(HolorRef hr){
-//  os<<"[ ;
-//  for cnt = 0:lengths[N-1]{
-//      os << hr(cnt) << ", ";
-//  }
-//  os <<"]";
-//}
 
 } //namespace holor
 
