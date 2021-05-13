@@ -30,13 +30,16 @@
 #include <type_traits>
 
 #include "layout.h"
+#include "initializer.h"
 
 
 
 namespace holor{
 
 
-
+/*================================================================================================
+                                    HolorRef Class
+================================================================================================*/
 /// HolorRef class
 /*!
  * Class providing a dense implementation of a general n-dimensional tensor container.
@@ -50,27 +53,27 @@ template<typename T, size_t N>
 class HolorRef{   
 
     public:
-        /****************************************************************
-                                ALIASES
-        ****************************************************************/
-        // number of dimensions
-        static constexpr size_t order = N;
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                    ALIASES
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        static constexpr size_t dimensions = N; ///! \brief number of dimensions in the container 
 
-        using value_type = T;
-        using iterator = typename std::vector<T>::iterator;
-        using const_iterator = typename std::vector<T>::const_iterator;
-
+        using value_type = T; ///! type of the values in the container
+        using iterator = typename std::vector<T>::iterator; ///! iterator type for the underlying data storage
+        using const_iterator = typename std::vector<T>::const_iterator; ///! iterator type for the underlying data storage
 
 
-        /****************************************************************
-                CONSTRUCTORS, ASSIGNEMENTS AND DESTRUCTOR
-        ****************************************************************/
+
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         /*!
          * \brief Default constructor.
          * 
          * \return A HolorRef with zero elements on each dimension
          */
         HolorRef() = default;
+
 
         /*!
          * \brief Default move constructor.
@@ -79,12 +82,14 @@ class HolorRef{
          */
         HolorRef(HolorRef&&) = default;
 
+
         /*!
          * \brief Default copy constructor.
          * 
          * \return A HolorRef equal to the argument
          */
         HolorRef(const HolorRef&) = default;
+
 
         /*!
          * \brief Default move assignement.
@@ -93,6 +98,7 @@ class HolorRef{
          */
         HolorRef& operator=(HolorRef&&) = default;
 
+
         /*!
          * \brief Default copy assignement.
          * 
@@ -100,129 +106,58 @@ class HolorRef{
          */
         HolorRef& operator=(const HolorRef&) = default;
 
+
         /*!
          *  \brief Default destructor.
          */
         ~HolorRef() = default;
 
 
-
-//======>>>>
-        //TODO:  Do we need this constructor? Improve it. Do we need a constructor from an array of lengths?
         /*!
-         * \brief Constructor that creates a HolorRef by specifying the length of each dimension of the HolorRef
-         * 
+         * \brief Constructor that creates a HolorRef by specifying a data pointer and a layout
+         * \param dataptr pointer to the location where the data is hosted
+         * \param layout layout that indicates how the elements stored in the location pointer by dataptr can be indexed
          * \return a HolorRef
          */
-        // template<typename... Lengths>
-        // HolorRef(Lengths... lengths): layout_{lengths...}, data_(layout_.size_) {}
-//======>>>>
+        HolorRef(T* dataptr, Layout<N> layout): layout_{layout}, dataptr_{dataptr}{}
 
 
-
-
-
-        // /*!
-        // * Constructor from a Slice object
-        // *
-        // * /return a HolorRef
-        // */
-        // // template<typename U>
-        // // HolorRef(const Slice<U,N>& x): layout_{x.layout_}, data_{x.begin(), x.end()} {
-        // //     static_assert(std::is_convertible<U,T>(), "HolorRef constructor: incompatible element types");
-        // // }
-        // template<typename U>
-        // HolorRef(const Slice<U,N>& x) {
-        //     static_assert(std::is_convertible<U,T>(), "HolorRef constructor: incompatible element types");
-        //     layout_.lengths_ = x.layout_.lengths_;
-        //     layout_.offset_ = 0;
-        //     layout_.compute_strides();
-        //     data_.reserve(x.layout_.size());
-        //     this->push_element(x.dataptr_, x.layout_);
-        // }
-
-
-        // /*!
-        // * Assignment operator from a Slice object
-        // * 
-        // * /return a reference to HolorRef
-        // */
-        // template<typename U>
-        // HolorRef& operator=(const Slice<U,N>& x){
-        //     static_assert(std::is_convertible<U,T>(), "HolorRef constructor: incompatible element types");
-        //     layout_.lengths_ = x.layout_.lengths_;
-        //     layout_.offset_ = 0;
-        //     layout_.compute_strides();
-        //     data_.reserve(x.layout_.size());
-        //     this->push_element(x.dataptr_, x.layout_);
-        //     return *this;
-        // }
-
-        
-        /*
-         * /brief Constructor from a nested list of elements
-         * 
-         * /param init nested list of the elements to be inserted in the container
-         *
-         * /return a HolorRef containing the elements in the list
+        /*!
+         * \brief Constructor that creates a HolorRef by specifying a data pointer and a layout
+         * \param dataptr pointer to the location where the data is hosted
+         * \param layout layout that indicates how the elements stored in the location pointer by dataptr can be indexed
+         * \return a HolorRef
          */
-        HolorRef(holor::nested_list<T,N> init){
-            layout_.set_offset(0);
-            layout_.set_lengths(impl::derive_lengths<N>(init));
-            data_.reserve(layout_.size());
-            impl::insert_flat(init, data_);
-            // TODO: dynamic check that the  number of elements in the cotnainer matches the extents?
-        }
+        HolorRef(T* dataptr, const Layout<N>& layout): layout_{layout}, dataptr_{dataptr}{}
 
 
-        // /*
-        // * Assign from a list
-        // *
-        // * /return a reference to HolorRef
-        // */
-        // HolorRef& operator=(HolorRef_initializer<T,N> init){
-        //     // TODO: to implement
-        //     return *this;
-        // }
 
-
-        /*
-        * Remove constructor from a list
-        */
-        template<typename U>
-        HolorRef(std::initializer_list<U>) = delete;
-
-        /*
-        * Remove assignment from a list
-        */
-        template<typename U>
-        HolorRef& operator=(std::initializer_list<U>) = delete;
-
+        //TODO:  Should add a constructor from a datapointer plus lengths. Can we implement it using ranges?
+        
         
 
-        // /****************************************************************
-        //                     GET AND SET
-        // ****************************************************************/
-
-        /*
-         * \brief Function that returns the Layout containing the description of the indexing for the full HolorRef
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            GET/SET FUNCTIONS
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        /*!
+         * \brief Function that returns the Layout used by the HolorRef to store and index the data
          * 
-         * \return Layout defining subscripting
+         * \return Layout
          */
-        const Layout<N>& descriptor() const{
+        const Layout<N>& layout() const{
             return layout_;
         }
 
-        /*
-         * \brief Function that returns the number of elements along the \p n dimension
+        /*!
+         * \brief Function that returns the number of elements along each of the container's dimensions
          * 
-         * \return the lengths of the dimensions of the HolorRef container 
+         * \return the lengths of each dimension of the HolorRef container 
          */
         auto lengths() const{
             return layout_.lengths();
         }
 
-        /*
+        /*!
          * \brief Function that returns the total number of elements in the container
          * 
          * \return the total number of elements in the container
@@ -231,7 +166,7 @@ class HolorRef{
             return layout_.size();
         }
 
-        /*
+        /*!
          * \brief Function that provides a flat access to the data contained in the container
          * 
          * \return a pointer to the data stored in the container
@@ -240,7 +175,7 @@ class HolorRef{
             return data_.data();
         }
         
-        /*
+        /*!
          * \brief Function that provides a flat access to the data contained in the container
          * 
          * \return a const pointer to the data stored in the container
@@ -249,183 +184,108 @@ class HolorRef{
             return data_.data();
         }
 
-        /*
-         * \brief Function that returns copy of the container's data vector
-         * 
-         * \return a const vector of data
+
+
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            ACCESS FUNCTIONS
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        /*!
+         * \brief Access tensor element subscripting with integers without range check
+         * \param dims pack of indices, one per dimension of the HolorRef container
+         * \return the value of the HolorRef stored at the position indexed by the indices
          */
-        auto data_vector() const{
-            return data_;
+        template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
+        T& operator()(Dims... dims){
+            return *(data() + layout_(dims...));
         }
 
 
-        /****************************************************************
-                                    ACCESS
-        ****************************************************************/
-        /*
-        * Access tensor element subscripting with integers without range check
-        */
-        template<typename... Args>
-        std::enable_if_t<impl::requesting_element<Args...>(), T&> operator()(Args... args){
-            return *(data() + layout_(args...));
+        /*!
+         * \brief Access tensor element subscripting with integers without range check
+         * \param dims pack of indices, one per dimension of the HolorRef container
+         * \return the value of the HolorRef stored at the position indexed by the indices
+         */
+        template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
+        const T operator()(Dims... dims) const{
+            return data_[layout_(dims...)];
         }
 
 
-        //TODO: implement const version
-        // /*
-        // * Access tensor element subscripting with integers without range check
-        // */
-        template<typename... Args>
-        std::enable_if_t<impl::requesting_element<Args...>(), const T> operator()(Args... args) const{
-            return data_[layout_(args...)];
-        }
-
-
-        /*
-        * Access tensor element subscripting with integers with range check
-        */
-        // template<typename... Args>
-        // std::enable_if_t<holor_impl::requesting_element<Args...>(), T&> at(Args... args){
-        //     dynamic_assert<assertion_level(AssertionLevel::release), holor::exception::BstRuntimeError>( holor_impl::check_bounds(layout_, args...), \
-        //         EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
-        //     return *(data() + layout_(args...));
-        // }
-
-
-        // TODO implement const version
-        // /*
-        // * Access tensor element subscripting with integers with range check
-        // */
-        // template<typename... Args>
-        // std::enable_if_t<holor_impl::requesting_element<Args...>(), const T> at(Args... args){
-        //     dynamic_assert<assertion_level(AssertionLevel::release), holor::exception::BstRuntimeError>( holor_impl::check_bounds(layout_, args...), \
-        //         EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
-        //     return data_[layout_(args...)];
-        // }
-
-        
-        /*
-        * 
-        */
-        template<typename... Args>
-        auto operator()(Args... args) -> std::enable_if_t<holor_impl::requesting_slice<Args...>(), int> {
-            // Slice<T,n_slices> res;
+        /*!
+         * \brief Access tensor slice by subscripting with integers without range check
+         * \param dims pack of indices, one per dimension of the HolorRef container
+         * \return the value of the HolorRef stored at the position indexed by the indices
+         */
+        template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
+        auto operator()(Args... args) {
+            //TODO: the size of the HolorRefRef depends on the size of the Layout. We need to extract the size of the layout
+            auto sliced_layout = layout_(args...);
+            return HolorRefRef<decltype(sliced_layout)::order>(data_.data(), sliced_layout);
         };
 
 
-
-
-
-
-        
-        // /*
-        // * 
-        // */
-        // template<typename... Args>
-        // enable_if_t<holor_impl::Requesting_slice<Args...>(), Slice<const T,N>> operator()(const Args&... args) const;
+        /*!
+         * \brief function that returns the `i-th` row of the tensor
+         * \param i index of the row to be indexed
+         * \return a reference container to the row 
+         */
+        HolorRefRef<T, N-1> row(size_t i){
+            return HolorRefRef(data_.data(), layout_.slice_dimension<0>());
+        }
 
         
-        /*
-        * Access \f$i$-th\f row
-        * 
-        * \param index of the row to be accessed
-        * 
-        * \return the \a i-th row of the tensor
-        */
-        // Slice<T, N-1> operator[](size_t i){
-        //     return row(i);
-        // }
+        /*!
+         * \brief function that returns the `i-th` column of the tensor
+         * \param i index of the column to be indexed
+         * \return a reference container to the column 
+         */
+        HolorRefRef<T, N-1> col(size_t i){
+            return HolorRefRef(data_.data(), layout_.slice_dimension<1>());
+        }
 
 
-        /*
-        * Access \f$i$-th\f row
-        * 
-        * \param index of the row to be accessed
-        * 
-        * \return the \a i-th row of the tensor
-        */
-        // Slice<const T, N-1> operator[](size_t i) const{
-        //     return row(i);
-        // }
+        /*!
+         * \brief function that returns the `i-th` slice of a single dimension
+         * \tparam M is the dimension to be sliced. 0 is a row, 1 is a column, ...
+         * \param i index of the slice alonge the `M-th` dimension
+         * \return a reference container to the slice 
+         */
+        template<size_t M>
+        HolorRefRef<T, N-1> slice(size_t i){
+            return HolorRefRef(data_.data(), layout_.slice_dimension<M>());
+        }
 
 
-        /*
-        *
-        */
-        // Slice<T, N-1> row(size_t n){
-        //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
-        //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
-        //     auto myslice = holor_impl::slice_dim<0>();
-        //     HolorRefLayout<N-1> row = myslice(n, layout_);
-        //     return {row, data()};
-        // }
-
-
-        /*
-        *
-        */
-        // Slice<const T, N-1> row(size_t n) const{
-        //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
-        //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
-        //     auto myslice = holor_impl::slice_dim<0>();
-        //     HolorRefLayout<N-1> row = myslice(n, layout_);
-        //     return {row, data()};
-        // }
-
-
-        /*
-        *
-        */
-        // Slice<T, N-1> col(size_t n){
-        //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
-        //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
-        //     auto myslice = holor_impl::slice_dim<1>();
-        //     HolorRefLayout<N-1> col = myslice(n, layout_);
-        //     return {col, data()};
-        // }
-
-
-        /*
-        *
-        */
-        // Slice<const T, N-1> col(size_t n) const{
-        //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
-        //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
-        //     auto myslice = holor_impl::slice_dim<1>();
-        //     HolorRefLayout<N-1> col = myslice(n, layout_);
-        //     return {col, data()};
-        // }
-
-
-        // // TODO add a general function, like row and col, to get the n-th dimension slice
-        // template<size_t M>
-        // Slice<const T, N-1> dim_slice(size_t n) const{
-        //     // dynamic_assert<assertion_level(AssertionLevel::internal), holor::exception::BstInvalidArgument>(n<rows(), \
-        //     //     EXCEPTION_MESSAGE("The number of elements in the tensor does not match the extents of the tensor") );
-        //     auto myslice = holor_impl::slice_dim<M>();
-        //     HolorRefLayout<N-1> slice = myslice(n, layout_);
-        //     return {slice, data()};
-        // }
-
-
-
-
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        PRIVATE MEMBERS AND FUNCTIONS
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     private:
-        /*
-         * \brief Layout that describes the memory layout of the container, i.e. the number of elements along each dimension,
-         * the total number of elements, the offset and the strides for iterating through the vector containing the actual data
-         */
-        Layout<N> layout_;
+        Layout<N> layout_; ///\brief The Layout of how the elements of the container are stored in memory
+        T* dataptr_; ///! \brief Pointer to the memory location where the data is stored
 
 
-        /*
-         * \brief Vector storing the actual data
+        /*!
+         * \brief helper function that copies the valid data from a HolorRefRef to a HolorRef
          */
-        std::vector<T> data_;
+        template<typename U, size_t M>
+        void push_ref_elements( const U* data_ptr, const Layout<M>& ref_layout){
+            for (auto i = 0; i<ref_layout.lengths_[0]; i++){
+                push_ref_elements(data_ptr, ref_layout.slice_dimension<0>(i));
+            }
+        }
+
+
+        /*!
+         * \brief helper function that copies the valid data from a HolorRefRef to a HolorRef
+         */
+        template<typename U>
+        void push_ref_elements( const U* data_ptr, const Layout<1>& ref_layout){
+            for (auto i = 0; i<ref_layout.lengths_[0]; i++){
+                data_.push_back(*(data_ptr + ref_layout(i)));
+            }
+        }
 
 };
-
-
 
 
 } //namespace holor
