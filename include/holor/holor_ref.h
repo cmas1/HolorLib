@@ -122,16 +122,6 @@ class HolorRef{
         HolorRef(T* dataptr, Layout<N> layout): layout_{layout}, dataptr_{dataptr}{}
 
 
-        /*!
-         * \brief Constructor that creates a HolorRef by specifying a data pointer and a layout
-         * \param dataptr pointer to the location where the data is hosted
-         * \param layout layout that indicates how the elements stored in the location pointer by dataptr can be indexed
-         * \return a HolorRef
-         */
-        HolorRef(T* dataptr, const Layout<N>& layout): layout_{layout}, dataptr_{dataptr}{}
-
-
-
         //TODO:  Should add a constructor from a datapointer plus lengths. Can we implement it using ranges?
         
         
@@ -171,8 +161,8 @@ class HolorRef{
          * 
          * \return a pointer to the data stored in the container
          */
-        T* data(){
-            return data_.data();
+        T* dataptr(){
+            return dataptr_;
         }
         
         /*!
@@ -180,8 +170,8 @@ class HolorRef{
          * 
          * \return a const pointer to the data stored in the container
          */
-        const T* data() const{
-            return data_.data();
+        const T* dataptr() const{
+            return dataptr_;
         }
 
 
@@ -196,7 +186,7 @@ class HolorRef{
          */
         template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
         T& operator()(Dims... dims){
-            return *(data() + layout_(dims...));
+            return *(dataptr_ + layout_(dims...));
         }
 
 
@@ -207,7 +197,7 @@ class HolorRef{
          */
         template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
         const T operator()(Dims... dims) const{
-            return data_[layout_(dims...)];
+            return *(dataptr_ + layout_(dims...));
         }
 
 
@@ -218,9 +208,9 @@ class HolorRef{
          */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
         auto operator()(Args... args) {
-            //TODO: the size of the HolorRefRef depends on the size of the Layout. We need to extract the size of the layout
+            //TODO: the size of the HolorRef depends on the size of the Layout. We need to extract the size of the layout
             auto sliced_layout = layout_(args...);
-            return HolorRefRef<decltype(sliced_layout)::order>(data_.data(), sliced_layout);
+            return HolorRef<T, decltype(sliced_layout)::order>(dataptr_, sliced_layout);
         };
 
 
@@ -229,8 +219,18 @@ class HolorRef{
          * \param i index of the row to be indexed
          * \return a reference container to the row 
          */
-        HolorRefRef<T, N-1> row(size_t i){
-            return HolorRefRef(data_.data(), layout_.slice_dimension<0>());
+        HolorRef<T, N-1> row(size_t i){
+            return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<0>(i));
+        }
+
+
+        /*!
+         * \brief function that returns the `i-th` row of the tensor
+         * \param i index of the row to be indexed
+         * \return a reference container to the row 
+         */
+        const HolorRef<T, N-1> row(size_t i) const{
+            return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<0>(i));
         }
 
         
@@ -239,8 +239,18 @@ class HolorRef{
          * \param i index of the column to be indexed
          * \return a reference container to the column 
          */
-        HolorRefRef<T, N-1> col(size_t i){
-            return HolorRefRef(data_.data(), layout_.slice_dimension<1>());
+        HolorRef<T, N-1> col(size_t i){
+            return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<1>(i));
+        }
+
+      
+        /*!
+         * \brief function that returns the `i-th` column of the tensor
+         * \param i index of the column to be indexed
+         * \return a reference container to the column 
+         */
+        const HolorRef<T, N-1> col(size_t i) const{
+            return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<1>(i));
         }
 
 
@@ -251,8 +261,20 @@ class HolorRef{
          * \return a reference container to the slice 
          */
         template<size_t M>
-        HolorRefRef<T, N-1> slice(size_t i){
-            return HolorRefRef(data_.data(), layout_.slice_dimension<M>());
+        HolorRef<T, N-1> slice(size_t i){
+            return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<M>(i));
+        }
+
+     
+        /*!
+         * \brief function that returns the `i-th` slice of a single dimension
+         * \tparam M is the dimension to be sliced. 0 is a row, 1 is a column, ...
+         * \param i index of the slice alonge the `M-th` dimension
+         * \return a reference container to the slice 
+         */
+        template<size_t M>
+        const HolorRef<T, N-1> slice(size_t i) const{
+            return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<M>(i));
         }
 
 
@@ -262,28 +284,6 @@ class HolorRef{
     private:
         Layout<N> layout_; ///\brief The Layout of how the elements of the container are stored in memory
         T* dataptr_; ///! \brief Pointer to the memory location where the data is stored
-
-
-        /*!
-         * \brief helper function that copies the valid data from a HolorRefRef to a HolorRef
-         */
-        template<typename U, size_t M>
-        void push_ref_elements( const U* data_ptr, const Layout<M>& ref_layout){
-            for (auto i = 0; i<ref_layout.lengths_[0]; i++){
-                push_ref_elements(data_ptr, ref_layout.slice_dimension<0>(i));
-            }
-        }
-
-
-        /*!
-         * \brief helper function that copies the valid data from a HolorRefRef to a HolorRef
-         */
-        template<typename U>
-        void push_ref_elements( const U* data_ptr, const Layout<1>& ref_layout){
-            for (auto i = 0; i<ref_layout.lengths_[0]; i++){
-                data_.push_back(*(data_ptr + ref_layout(i)));
-            }
-        }
 
 };
 

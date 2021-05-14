@@ -29,7 +29,7 @@
 #include <vector>
 #include <type_traits>
 
-// #include "holor_ref.h"
+#include "holor_ref.h"
 #include "layout.h"
 #include "initializer.h"
 
@@ -120,7 +120,7 @@ class Holor{
          * \param lengths array of `N` lengths
          * \return a Holor
          */
-        Holor(const std::array<size_t,N>& lengths): layout_{lengths...}{
+        Holor(const std::array<size_t,N>& lengths): layout_{lengths}{
             data_.reserve(layout_.size_);
         }
 
@@ -129,7 +129,7 @@ class Holor{
          * \param lengths array of `N` lengths
          * \return a Holor
          */
-        Holor(std::array<size_t,N>&& lengths): layout_{lengths...}{
+        Holor(std::array<size_t,N>&& lengths): layout_{lengths}{
             data_.reserve(layout_.size_);
         }
 
@@ -145,7 +145,7 @@ class Holor{
             layout_.offset_ = 0;
             layout_.compute_strides();
             data_.reserve(layout_.size());
-            this->push_ref_elements(x.dataptr_, x.layout_);
+            this->push_ref_elements(ref.dataptr_, ref.layout_);
         }
 
 
@@ -184,7 +184,7 @@ class Holor{
          * \param init nested list of the elements to be inserted in the container
          * \return a reference to Holor
          */
-        Holor& operator=(Holor_initializer<T,N> init){
+        Holor& operator=(holor::nested_list<T,N> init){
             layout_.set_offset(0);
             layout_.set_lengths(impl::derive_lengths<N>(init));
             data_.reserve(layout_.size());
@@ -301,7 +301,7 @@ class Holor{
         auto operator()(Args... args) {
             //TODO: the size of the HolorRef depends on the size of the Layout. We need to extract the size of the layout
             auto sliced_layout = layout_(args...);
-            return HolorRef<decltype(sliced_layout)::order>(data_.data(), sliced_layout);
+            return HolorRef<T, decltype(sliced_layout)::order>(data_.data(), sliced_layout);
         };
 
 
@@ -311,7 +311,16 @@ class Holor{
          * \return a reference container to the row 
          */
         HolorRef<T, N-1> row(size_t i){
-            return HolorRef(data_.data(), layout_.slice_dimension<0>());
+            return HolorRef<T, N-1>(data_.data(), layout_.template slice_dimension<0>(i));
+        }
+
+        /*!
+         * \brief function that returns the `i-th` row of the tensor
+         * \param i index of the row to be indexed
+         * \return a reference container to the row 
+         */
+        const HolorRef<T, N-1> row(size_t i) const{
+            return HolorRef<T, N-1>(data_.data(), layout_.template slice_dimension<0>(i));
         }
 
         
@@ -321,7 +330,16 @@ class Holor{
          * \return a reference container to the column 
          */
         HolorRef<T, N-1> col(size_t i){
-            return HolorRef(data_.data(), layout_.slice_dimension<1>());
+            return HolorRef<T, N-1>(data_.data(), layout_.template slice_dimension<1>(i));
+        }
+
+        /*!
+         * \brief function that returns the `i-th` column of the tensor
+         * \param i index of the column to be indexed
+         * \return a reference container to the column 
+         */
+        const HolorRef<T, N-1> col(size_t i) const{
+            return HolorRef<T, N-1>(data_.data(), layout_.template slice_dimension<1>(i));
         }
 
 
@@ -333,7 +351,18 @@ class Holor{
          */
         template<size_t M>
         HolorRef<T, N-1> slice(size_t i){
-            return HolorRef(data_.data(), layout_.slice_dimension<M>());
+            return HolorRef<T, N-1>(data_.data(), layout_.template slice_dimension<M>(i));
+        }
+
+        /*!
+         * \brief function that returns the `i-th` slice of a single dimension
+         * \tparam M is the dimension to be sliced. 0 is a row, 1 is a column, ...
+         * \param i index of the slice alonge the `M-th` dimension
+         * \return a reference container to the slice 
+         */
+        template<size_t M>
+        const HolorRef<T, N-1> slice(size_t i) const{
+            return HolorRef<T, N-1>(data_.data(), layout_.template slice_dimension<M>(i));
         }
 
 
@@ -350,7 +379,7 @@ class Holor{
          */
         template<typename U, size_t M>
         void push_ref_elements( const U* data_ptr, const Layout<M>& ref_layout){
-            for (auto i = 0; i<ref_layout.lengths_[0]; i++){
+            for (auto i = 0; i<ref_layout.lengths()[0]; i++){
                 push_ref_elements(data_ptr, ref_layout.slice_dimension<0>(i));
             }
         }
@@ -361,7 +390,7 @@ class Holor{
          */
         template<typename U>
         void push_ref_elements( const U* data_ptr, const Layout<1>& ref_layout){
-            for (auto i = 0; i<ref_layout.lengths_[0]; i++){
+            for (auto i = 0; i<ref_layout.lengths()[0]; i++){
                 data_.push_back(*(data_ptr + ref_layout(i)));
             }
         }

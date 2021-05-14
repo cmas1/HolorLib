@@ -28,6 +28,8 @@
 #include "holor.h"
 #include "holor_ref.h"
 
+#include <type_traits>
+#include <iostream>
 
 namespace holor{
 
@@ -35,19 +37,23 @@ namespace holor{
 namespace impl{
     template<typename HolorType> //TODO: requires concept HolorType
     struct holor_printer{
-        std::ostream& operator()(std::ostream& os, const HolorType& h){
-            os << "["
+        std::ostream& operator()(std::ostream& os, HolorType h){
+            os << "[";
             if constexpr(HolorType::dimensions == 1){
-                for (auto i = 0; i<h.size()-1; i++){
+                std::cout<< "W\n";
+                std::cout << "h.lengths()[0] = " << h.lengths()[0] << "\n";
+                for (auto i = 0; i<h.lengths()[0]-1; i++){
                     os << h(i) << ", ";
                 }
                 os << h(h.size()-1);
             }else{
-                for (auto i = 0; i<h.size(); i++){
-                    holor_printer()(os, h.row(i));
+                std::cout<< "Z\n";
+                for (auto i = 0; i<h.lengths()[0]; i++){
+                    holor_printer<std::remove_cvref_t<decltype(h.row(i))>>()(os, h.row(i));
                 }
             }
             os << "]";
+            return os;
         }
     };
 }
@@ -63,8 +69,9 @@ namespace impl{
  * \return a reference to the ostream
  */
 template<typename T, size_t N> //TODO: requires printable T
-std::ostream& operator<<(std::ostream& os, const Holor<T,N>& h){
-    return impl::holor_printer()(os, h);
+std::ostream& operator<<(std::ostream& os, Holor<T,N>& h){
+    std::cout<<"A\n";
+    return impl::holor_printer<std::remove_cvref_t<decltype(h)>>()(os, h);
 }
 
 
@@ -78,8 +85,9 @@ std::ostream& operator<<(std::ostream& os, const Holor<T,N>& h){
  * \return a reference to the ostream
  */
 template<typename T, size_t N> //TODO: requires printable T
-std::ostream& operator<<(std::ostream& os, const HolorRef<T,N>& h){
-    return impl::holor_printer()(os, h);
+std::ostream& operator<<(std::ostream& os, HolorRef<T,N>& h){
+    std::cout<<"B\n";
+    return impl::holor_printer<std::remove_cvref_t<decltype(h)>>()(os, h);
 }
 
 } //namespace holor

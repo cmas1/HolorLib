@@ -22,8 +22,7 @@
 
 
 #include "../../include/holor/holor.h"
-#include "../../include/holor/holor_ref.h"
-#include "../../include/holor/slice.h"
+#include "../../include/holor/holor_extra.h"
 #include <iostream>
 #include <vector>
 #include <ranges>
@@ -34,55 +33,23 @@ using namespace holor;
 
 
 int main(){
-    Slice<5> pippo({4, 2, 3, 1, 6}, 5);
-    std::cout << "N = " << pippo.dimensions() << "\n";
-    std::cout << "lengths = ";
-    for (auto x : pippo.lengths()){
-        std::cout << x << "   ";
-    }
-    std::cout <<"\n";
-    std::cout << "strides = ";
-    for (auto x : pippo.strides()){
-        std::cout << x << "   ";
-    }
-
-    std::cout << "\nsize = " << pippo.size();
-    std::cout << "\noffset = " << pippo.offset();
-    std::cout << "\n\n";
-
-
+    
     Holor<int, 2> pluto{{1, 2, 3}, {4, 5, 6}};
-    // std::cout << "N = " << pluto.descriptor().dimensions() << "\n";
-    std::cout << "lengths = ";
-    for (auto x : pluto.lengths()){
-        std::cout << x << "   ";
-    }
-    std::cout <<"\n";
-    for (auto x : pluto.data_vector()){
-        std::cout << x << ",  ";
-    }
-    std::cout << "\n\n";
 
-    std::cout << "pluto(0,2) = " << pluto(0,2) << "\n";
-    std::cout << "pluto(1,1) = " << pluto(1,1) << "\n";
-    const int topolino = pluto(0,1);
-    std::cout << "pluto(0,1) = " << topolino << "\n\n";
+    std::cout << "pluto.row(0)[0] = " << pluto.row(0)(0) << "\n";
+    std::cout << "pluto.row(0)[1] = " << pluto.row(0)(1) << "\n";
+    std::cout << "pluto.row(0)[2] = " << pluto.row(0)(2) << "\n";
+    
+    std::cout << "pluto.lengths()[0] = " << pluto.lengths()[0] << "\n";
+    std::cout << "pluto.lengths()[1] = " << pluto.lengths()[1] << "\n";
 
-
-
-
-    auto my_slice = pluto.descriptor();
-    auto bubu = impl::slice_dim<0>();
-    Slice<1> row = bubu(0,my_slice);
-    std::cout << "pluto.col(0) = " << pluto.data()[row(0)] << ", " << pluto.data()[row(1)]  << "\n";
-
-
-    HolorRef<int,2> pluto_ref(pluto.descriptor(), pluto.data());
-    std::cout << "pluto_ref(0,2) = " << pluto_ref(0,2) << "\n";
-    std::cout << "pluto_ref(1,1) = " << pluto_ref(1,1) << "\n";
-
-    pluto_ref(0,2) = 11;
-    std::cout << "pluto(0,2) = " << pluto(0,2) << "\n";
-
-    return 0;
+    // std::cout << "pluto = " << pluto << "\n\n";
+    
+    // auto pippo = pluto.data_vector();
+    // std::cout << "[";
+    // for (auto& x:pippo ){
+    //     std::cout << x << ", ";
+    // }
+    // std::cout << "]\n\n";
+    // return 0;
 }
