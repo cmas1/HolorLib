@@ -36,20 +36,13 @@ int main(){
     
     Holor<int, 2> pluto{{1, 2, 3}, {4, 5, 6}};
 
-    std::cout << "pluto.row(0)[0] = " << pluto.row(0)(0) << "\n";
-    std::cout << "pluto.row(0)[1] = " << pluto.row(0)(1) << "\n";
-    std::cout << "pluto.row(0)[2] = " << pluto.row(0)(2) << "\n";
+    std::cout << "pluto = " << pluto << "\n\n";
     
-    std::cout << "pluto.lengths()[0] = " << pluto.lengths()[0] << "\n";
-    std::cout << "pluto.lengths()[1] = " << pluto.lengths()[1] << "\n";
-
-    // std::cout << "pluto = " << pluto << "\n\n";
-    
-    // auto pippo = pluto.data_vector();
-    // std::cout << "[";
-    // for (auto& x:pippo ){
-    //     std::cout << x << ", ";
-    // }
-    // std::cout << "]\n\n";
-    // return 0;
+    auto pippo = pluto.data_vector();
+    std::cout << "[";
+    for (auto& x:pippo ){
+        std::cout << x << ", ";
+    }
+    std::cout << "]\n\n";
+    return 0;
 }

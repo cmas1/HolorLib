@@ -38,21 +38,18 @@ namespace impl{
     template<typename HolorType> //TODO: requires concept HolorType
     struct holor_printer{
         std::ostream& operator()(std::ostream& os, HolorType h){
-            os << "[";
+            os << " [";
             if constexpr(HolorType::dimensions == 1){
-                std::cout<< "W\n";
-                std::cout << "h.lengths()[0] = " << h.lengths()[0] << "\n";
                 for (auto i = 0; i<h.lengths()[0]-1; i++){
                     os << h(i) << ", ";
                 }
                 os << h(h.size()-1);
             }else{
-                std::cout<< "Z\n";
                 for (auto i = 0; i<h.lengths()[0]; i++){
                     holor_printer<std::remove_cvref_t<decltype(h.row(i))>>()(os, h.row(i));
                 }
             }
-            os << "]";
+            os << "] ";
             return os;
         }
     };
@@ -70,7 +67,6 @@ namespace impl{
  */
 template<typename T, size_t N> //TODO: requires printable T
 std::ostream& operator<<(std::ostream& os, Holor<T,N>& h){
-    std::cout<<"A\n";
     return impl::holor_printer<std::remove_cvref_t<decltype(h)>>()(os, h);
 }
 
@@ -86,7 +82,6 @@ std::ostream& operator<<(std::ostream& os, Holor<T,N>& h){
  */
 template<typename T, size_t N> //TODO: requires printable T
 std::ostream& operator<<(std::ostream& os, HolorRef<T,N>& h){
-    std::cout<<"B\n";
     return impl::holor_printer<std::remove_cvref_t<decltype(h)>>()(os, h);
 }
 

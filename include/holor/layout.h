@@ -324,19 +324,19 @@ class Layout{
             return strides_;
         }
 
-        /*!
-         * \brief Set the lengths of the layout, without updating the strides
-         * \param lengths are the lengths to be set
-         */
-        void set_lengths(const std::array<size_t,N>& lengths) {
-            lengths_ = lengths;
-        }
+        // /*!
+        //  * \brief Set the lengths of the layout, without updating the strides
+        //  * \param lengths are the lengths to be set
+        //  */
+        // void set_lengths(const std::array<size_t,N>& lengths) {
+        //     lengths_ = lengths;
+        // }
 
         /*!
          * \brief Set the lengths of the layout, updating also the strides
          * \param lengths are the lengths to be set
          */
-        void set_lengths_ss(const std::array<size_t,N>& lengths) {
+        void set_lengths(const std::array<size_t,N>& lengths) {
             lengths_ = lengths;
             update_strides_size();
         }

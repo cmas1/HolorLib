@@ -1,3 +1,5 @@
+☐ Now the slicing functions (including row, col, etc.) reduce the dimension of the container. It could be useful to have also a version that retains the dimensions of the container (so that a column has lenghts [1, c] rather than [c])
+
 layout.h:
     There are several minor things and few main things that should be improved
     ✔ Templatize `dim`: Right now, the recursive slicing operation on a layout (slice_dimension, slice_helper) take a size_t dim as an argument. Conceptually, it would make sense to have it as a template parameter, to separate the indexing argument from the dimension. Moreover, in slice_helper `dim` is used to unwind the recursive calls to the function, therefore it would be better set as a template parameter. Using a template parameter would also make it possible to translate all the checks on dim as compile time requiurements, rather than dynamic assertions. The problem is that simply changing it to a template parameter makes slice_helper not compile anymore @done(21-04-30 11:18)
