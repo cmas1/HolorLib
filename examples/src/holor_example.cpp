@@ -38,11 +38,14 @@ int main(){
 
     std::cout << "pluto = " << pluto << "\n\n";
     
-    auto pippo = pluto.data_vector();
-    std::cout << "[";
-    for (auto& x:pippo ){
-        std::cout << x << ", ";
-    }
-    std::cout << "]\n\n";
+    std::cout << "row0 = " << pluto.row(0) << "\n";
+    std::cout << "row1 = " << pluto.row(1) << "\n";
+    std::cout << "col0 = " << pluto.col(0) << "\n";
+    std::cout << "col1 = " << pluto.col(1) << "\n\n";
+
+    std::cout << "pluto(1,2) = " << pluto(1,2) << "\n";
+    std::cout << "pluto(1,{1,2}) = " << pluto(1,range(1,2)) << "\n\n";
+    std::cout << "pluto({0,1},{1,2}) = " << pluto(range{0,1}, range(1,2)) << "\n\n";
+
     return 0;
 }

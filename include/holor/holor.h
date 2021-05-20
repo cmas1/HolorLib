@@ -298,9 +298,9 @@ class Holor{
          * \return the value of the Holor stored at the position indexed by the indices
          */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
-        auto operator()(Args... args) {
+        auto operator()(Args&&... args) {
             //TODO: the size of the HolorRef depends on the size of the Layout. We need to extract the size of the layout
-            auto sliced_layout = layout_(args...);
+            auto sliced_layout = layout_(std::forward<Args>(args)...);
             return HolorRef<T, decltype(sliced_layout)::order>(data_.data(), sliced_layout);
         };
 

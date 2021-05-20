@@ -81,7 +81,7 @@ std::ostream& operator<<(std::ostream& os, Holor<T,N>& h){
  * \return a reference to the ostream
  */
 template<typename T, size_t N> //TODO: requires printable T
-std::ostream& operator<<(std::ostream& os, HolorRef<T,N>& h){
+std::ostream& operator<<(std::ostream& os, HolorRef<T,N> h){
     return impl::holor_printer<std::remove_cvref_t<decltype(h)>>()(os, h);
 }
 

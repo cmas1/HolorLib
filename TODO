@@ -1,4 +1,7 @@
 ☐ Now the slicing functions (including row, col, etc.) reduce the dimension of the container. It could be useful to have also a version that retains the dimensions of the container (so that a column has lenghts [1, c] rather than [c])
+☐ The HolorRef assignments (or should we use a different function called set?) should set the elements, copying them to replace the original elements
+    ☐ We need a nested_initializer assignment for the HolorRef, e.g. to do A.row(0) = {1,2,3};
+    ☐ We also need to be able to assign a Holor content to a HolorRef, e.g., to do A.row(0) = B.
 
 layout.h:
     There are several minor things and few main things that should be improved
@@ -12,3 +15,9 @@ layout.h:
 
 holor.h:
     ☐ Finish implementing constructors and assignment operators
+
+holor_concepts.h:
+    ☐ Need a concept HolorContainer
+
+
+
