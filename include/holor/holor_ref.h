@@ -28,6 +28,7 @@
 #include <cstddef>
 #include <vector>
 #include <type_traits>
+#include <iterator>
 
 #include "layout.h"
 #include "initializer.h"
@@ -35,6 +36,35 @@
 
 
 namespace holor{
+
+/*================================================================================================
+                                    HolorRef Iterator
+================================================================================================*/
+template<typename T, size_t N>
+class HolorRef_Iterator {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type   = std::ptrdiff_t;
+        using value_type        = T;
+        using pointer           = T*;
+        using reference         = T&;
+
+        HolorRef_Iterator(pointer ptr) : iter_ptr(ptr) {}
+
+        reference operator*() const { return *m_ptr; }
+        pointer operator->() { return m_ptr; }
+        HolorRef_Iterator& operator++() { m_ptr++; return *this; }  
+        HolorRef_Iterator operator++(int) { HolorRef_Iterator tmp = *this; ++(*this); return tmp; }
+        friend bool operator== (const HolorRef_Iterator& a, const HolorRef_Iterator& b) { return a.m_ptr == b.m_ptr; };
+        friend bool operator!= (const HolorRef_Iterator& a, const HolorRef_Iterator& b) { return a.m_ptr != b.m_ptr; };  
+
+    private:
+        pointer iter_ptr;
+        Layout<N> iter_layout
+};
+
+
+
 
 
 /*================================================================================================
@@ -61,7 +91,6 @@ class HolorRef{
         using value_type = T; ///! type of the values in the container
         using iterator = typename std::vector<T>::iterator; ///! iterator type for the underlying data storage
         using const_iterator = typename std::vector<T>::const_iterator; ///! iterator type for the underlying data storage
-
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

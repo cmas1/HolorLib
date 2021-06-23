@@ -1,5 +1,6 @@
+☐ Add ITERATORS to Holor and write a custom Iterator for HolorRef (this is also neede for the HolorREf assignment operations)
 ☐ Now the slicing functions (including row, col, etc.) reduce the dimension of the container. It could be useful to have also a version that retains the dimensions of the container (so that a column has lenghts [1, c] rather than [c])
-☐ The HolorRef assignments (or should we use a different function called set?) should set the elements, copying them to replace the original elements
+☐ The HolorRef assignments (or should we use a different function called set?) should set the elements, copying them to replace the original elements. This requires a copy_flat function that copies the elements fron a HolorType (Holor, HolorRef, nested_initializer_list) to the memory pointed by the HolorRef
     ☐ We need a nested_initializer assignment for the HolorRef, e.g. to do A.row(0) = {1,2,3};
     ☐ We also need to be able to assign a Holor content to a HolorRef, e.g., to do A.row(0) = B.
 
