@@ -43,24 +43,59 @@ namespace holor{
 template<typename T, size_t N>
 class HolorRef_Iterator {
     public:
-        using iterator_category = std::forward_iterator_tag;
-        using difference_type   = std::ptrdiff_t;
-        using value_type        = T;
-        using pointer           = T*;
-        using reference         = T&;
+        using iterator_concept = std::random_access_iterator;
+        using iterator_category = std::random_access_iterator_tag;
+        using difference_type = std::ptrdiff_t;
+        using value_type = T;
+        using pointer = T*;
+        using reference = T&;
 
-        HolorRef_Iterator(pointer ptr) : iter_ptr(ptr) {}
+        //constructor
+        HolorRef_Iterator(pointer ptr, layout lt) : iter_ptr(ptr), iter_layout(lt) {}; //WIP: probably it also needs to have the current value of the coordinates
 
-        reference operator*() const { return *m_ptr; }
-        pointer operator->() { return m_ptr; }
-        HolorRef_Iterator& operator++() { m_ptr++; return *this; }  
-        HolorRef_Iterator operator++(int) { HolorRef_Iterator tmp = *this; ++(*this); return tmp; }
-        friend bool operator== (const HolorRef_Iterator& a, const HolorRef_Iterator& b) { return a.m_ptr == b.m_ptr; };
-        friend bool operator!= (const HolorRef_Iterator& a, const HolorRef_Iterator& b) { return a.m_ptr != b.m_ptr; };  
+        //reference/dereference operators
+        reference operator*(){return *iter_ptr;};
+        reference operator*() const {return *iter_ptr;};
+        pointer operator->() { return iter_ptr; }; //TODO: is a non-const version needed?
+        pointer operator->() const { return iter_ptr; }; //WIP: is this correct? or should it be { return &(operator*());}
+        reference operator[](difference_type n){return *(iter_ptr + n)}; //WIP: the increment must be done according to the layout
+
+        //increment operators
+        HolorRef_Iterator& HolorRef_Iterator::operator++();
+        HolorRef_Iterator HolorRef_Iterator::operator++(int); // May return `void`
+        HolorRef_Iterator& HolorRef_Iterator::operator--();
+        HolorRef_Iterator HolorRef_Iterator::operator--(int);
+        HolorRef_Iterator& HolorRef_Iterator::operator+=(difference_type);
+        HolorRef_Iterator& HolorRef_Iterator::operator-=(difference_type);
+        HolorRef_Iterator HolorRef_Iterator::operator+(HolorRef_Iterator, difference_type);
+        HolorRef_Iterator HolorRef_Iterator::operator+(difference_type, HolorRef_Iterator);
+        HolorRef_Iterator HolorRef_Iterator::operator-(HolorRef_Iterator, difference_type);
+        difference_type HolorRef_Iterator::operator-(HolorRef_Iterator, HolorRef_Iterator);
+
+        //equality operators  //TODO: requires the comparisons of layouts? Probably not
+        bool operator==(HolorRef_Iterator, HolorRef_Iterator);  // required
+        bool operator!=(HolorRef_Iterator, HolorRef_Iterator);  // [note]
+        bool operator<(HolorRef_Iterator, HolorRef_Iterator);   // [note]
+        bool operator<=(HolorRef_Iterator, HolorRef_Iterator);  // [note]
+        bool operator>(HolorRef_Iterator, HolorRef_Iterator);   // [note]
+        bool operator>=(HolorRef_Iterator, HolorRef_Iterator);  // [note]
+
+        //sentinel operators
+        bool operator==(HolorRef_Iterator, sentinel);
+        bool operator!=(HolorRef_Iterator, sentinel);
+        bool operator==(sentinel, HolorRef_Iterator);
+        bool operator!=(sentinel, HolorRef_Iterator);
+        difference_type operator-(sentinel, HolorRef_Iterator); // Not required, but useful
+
+        // HolorRef_Iterator& operator++() { m_ptr++; return *this; } 
+        // HolorRef_Iterator operator++(int) { HolorRef_Iterator tmp = *this; ++(*this); return tmp; }
+        // friend bool operator== (const HolorRef_Iterator& a, const HolorRef_Iterator& b) { return a.m_ptr == b.m_ptr; };
+        // friend bool operator!= (const HolorRef_Iterator& a, const HolorRef_Iterator& b) { return a.m_ptr != b.m_ptr; };  //TODO: requires the comparisons of layouts as well, which is not implemented
 
     private:
         pointer iter_ptr;
-        Layout<N> iter_layout
+        Layout<N> iter_layout;
+        //WIP: do we need a std::array<difference_type, N> coordinates, to use it for the increment operations?? 
 };
 
 
