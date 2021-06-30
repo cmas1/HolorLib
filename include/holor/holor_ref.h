@@ -41,7 +41,7 @@ namespace holor{
                                     HolorRef Iterator
 ================================================================================================*/
 template<typename T, size_t N>
-class HolorRef_Iterator {
+class HRef_iterator {
     public:
         using iterator_concept = std::random_access_iterator;
         using iterator_category = std::random_access_iterator_tag;
@@ -50,47 +50,58 @@ class HolorRef_Iterator {
         using pointer = T*;
         using reference = T&;
 
-        //constructor
-        HolorRef_Iterator(pointer ptr, layout lt) : iter_ptr(ptr), iter_layout(lt) {}; //WIP: probably it also needs to have the current value of the coordinates
+        //constructors/destructors/assignments //TODO: after implementing the increment/decrement operations, to see what is needed beside the pointer
+        explicit HRef_iterator(pointer ptr, layout lt) : iter_ptr(ptr), iter_layout(lt) {}; 
+        HRef_iterator();
+        HRef_iterator(const HRef_iterator& a);
+        HRef_iterator& operator=(const HRef_iterator& a);
+        ~HRef_iterator();
 
-        //reference/dereference operators
-        reference operator*(){return *iter_ptr;};
+        //reference/dereference operators //TODO
+        //NOTE: probably the const should be dropped and used for the const_iterator??? or is it the value type that shouuld be const??
         reference operator*() const {return *iter_ptr;};
-        pointer operator->() { return iter_ptr; }; //TODO: is a non-const version needed?
         pointer operator->() const { return iter_ptr; }; //WIP: is this correct? or should it be { return &(operator*());}
-        reference operator[](difference_type n){return *(iter_ptr + n)}; //WIP: the increment must be done according to the layout
+        reference operator[](difference_type n) const{return *(iter_ptr + n)}; //WIP: the increment must be done according to the layout
 
-        //increment operators
-        HolorRef_Iterator& HolorRef_Iterator::operator++();
-        HolorRef_Iterator HolorRef_Iterator::operator++(int); // May return `void`
-        HolorRef_Iterator& HolorRef_Iterator::operator--();
-        HolorRef_Iterator HolorRef_Iterator::operator--(int);
-        HolorRef_Iterator& HolorRef_Iterator::operator+=(difference_type);
-        HolorRef_Iterator& HolorRef_Iterator::operator-=(difference_type);
-        HolorRef_Iterator HolorRef_Iterator::operator+(HolorRef_Iterator, difference_type);
-        HolorRef_Iterator HolorRef_Iterator::operator+(difference_type, HolorRef_Iterator);
-        HolorRef_Iterator HolorRef_Iterator::operator-(HolorRef_Iterator, difference_type);
-        difference_type HolorRef_Iterator::operator-(HolorRef_Iterator, HolorRef_Iterator);
+        //increment operators //WIP: start from this
+        HRef_iterator& HRef_iterator::operator++(){};
+        HRef_iterator HRef_iterator::operator++(int); // May return `void`
+        HRef_iterator& HRef_iterator::operator--();
+        HRef_iterator HRef_iterator::operator--(int);
+        HRef_iterator& HRef_iterator::operator+=(difference_type);
+        HRef_iterator& HRef_iterator::operator-=(difference_type);
+        HRef_iterator HRef_iterator::operator+(difference_type);
+        friend HRef_iterator HRef_iterator::operator+(difference_type, const HRef_iterator&); const
+        HRef_iterator HRef_iterator::operator-(difference_type) const;
+        difference_type HRef_iterator::operator-(const HRef_iterator&) const;
 
         //equality operators  //TODO: requires the comparisons of layouts? Probably not
-        bool operator==(HolorRef_Iterator, HolorRef_Iterator);  // required
-        bool operator!=(HolorRef_Iterator, HolorRef_Iterator);  // [note]
-        bool operator<(HolorRef_Iterator, HolorRef_Iterator);   // [note]
-        bool operator<=(HolorRef_Iterator, HolorRef_Iterator);  // [note]
-        bool operator>(HolorRef_Iterator, HolorRef_Iterator);   // [note]
-        bool operator>=(HolorRef_Iterator, HolorRef_Iterator);  // [note]
+        friend bool operator==(HRef_iterator, HRef_iterator);  // required
+        friend bool operator!=(HRef_iterator, HRef_iterator);  // [note]
+        friend bool operator<(HRef_iterator, HRef_iterator);   // [note]
+        friend bool operator<=(HRef_iterator, HRef_iterator);  // [note]
+        friend bool operator>(HRef_iterator, HRef_iterator);   // [note]
+        friend bool operator>=(HRef_iterator, HRef_iterator);  // [note]
 
-        //sentinel operators
-        bool operator==(HolorRef_Iterator, sentinel);
-        bool operator!=(HolorRef_Iterator, sentinel);
-        bool operator==(sentinel, HolorRef_Iterator);
-        bool operator!=(sentinel, HolorRef_Iterator);
-        difference_type operator-(sentinel, HolorRef_Iterator); // Not required, but useful
+        bool operator==(const iterator&) const;
+        bool operator!=(const iterator&) const;
+        bool operator<(const iterator&) const; //optional
+        bool operator>(const iterator&) const; //optional
+        bool operator<=(const iterator&) const; //optional
+        bool operator>=(const iterator&) const; //optional
 
-        // HolorRef_Iterator& operator++() { m_ptr++; return *this; } 
-        // HolorRef_Iterator operator++(int) { HolorRef_Iterator tmp = *this; ++(*this); return tmp; }
-        // friend bool operator== (const HolorRef_Iterator& a, const HolorRef_Iterator& b) { return a.m_ptr == b.m_ptr; };
-        // friend bool operator!= (const HolorRef_Iterator& a, const HolorRef_Iterator& b) { return a.m_ptr != b.m_ptr; };  //TODO: requires the comparisons of layouts as well, which is not implemented
+
+        //sentinel operators //TODO: let's keep this for last
+        bool operator==(HRef_iterator, sentinel);
+        bool operator!=(HRef_iterator, sentinel);
+        bool operator==(sentinel, HRef_iterator);
+        bool operator!=(sentinel, HRef_iterator);
+        difference_type operator-(sentinel, HRef_iterator); // Not required, but useful
+
+        // HRef_iterator& operator++() { m_ptr++; return *this; } 
+        // HRef_iterator operator++(int) { HRef_iterator tmp = *this; ++(*this); return tmp; }
+        // friend bool operator== (const HRef_iterator& a, const HRef_iterator& b) { return a.m_ptr == b.m_ptr; };
+        // friend bool operator!= (const HRef_iterator& a, const HRef_iterator& b) { return a.m_ptr != b.m_ptr; };  //TODO: requires the comparisons of layouts as well, which is not implemented
 
     private:
         pointer iter_ptr;
@@ -98,6 +109,44 @@ class HolorRef_Iterator {
         //WIP: do we need a std::array<difference_type, N> coordinates, to use it for the increment operations?? 
 };
 
+
+// template<typename T, size_t N>
+// class HolorRef_const_iterator {
+// public:
+//     typedef typename A::difference_type difference_type;
+//     typedef typename A::value_type value_type;
+//     typedef typename const A::reference reference;
+//     typedef typename const A::pointer pointer;
+//     typedef std::random_access_iterator_tag iterator_category; //or another tag
+
+//     const_iterator ();
+//     const_iterator (const const_iterator&);
+//     const_iterator (const iterator&);
+//     ~const_iterator();
+
+//     const_iterator& operator=(const const_iterator&);
+//     bool operator==(const const_iterator&) const;
+//     bool operator!=(const const_iterator&) const;
+//     bool operator<(const const_iterator&) const; //optional
+//     bool operator>(const const_iterator&) const; //optional
+//     bool operator<=(const const_iterator&) const; //optional
+//     bool operator>=(const const_iterator&) const; //optional
+
+//     const_iterator& operator++();
+//     const_iterator operator++(int); //optional
+//     const_iterator& operator--(); //optional
+//     const_iterator operator--(int); //optional
+//     const_iterator& operator+=(size_type); //optional
+//     const_iterator operator+(size_type) const; //optional
+//     friend const_iterator operator+(size_type, const const_iterator&); //optional
+//     const_iterator& operator-=(size_type); //optional            
+//     const_iterator operator-(size_type) const; //optional
+//     difference_type operator-(const_iterator) const; //optional
+
+//     reference operator*() const;
+//     pointer operator->() const;
+//     reference operator[](size_type) const; //optional
+// };
 
 
 
