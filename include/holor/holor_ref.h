@@ -50,24 +50,42 @@ class HRef_iterator {
         using pointer = T*;
         using reference = T&;
 
-        //constructors/destructors/assignments //TODO: after implementing the increment/decrement operations, to see what is needed beside the pointer
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        constructors/destructors/assignments
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ //TODO: after implementing the increment/decrement operations, to see what is needed beside the pointer
         explicit HRef_iterator(pointer ptr, layout lt) : iter_ptr(ptr), iter_layout(lt) {}; 
         HRef_iterator();
         HRef_iterator(const HRef_iterator& a);
         HRef_iterator& operator=(const HRef_iterator& a);
         ~HRef_iterator();
 
-        //reference/dereference operators //TODO
-        //NOTE: probably the const should be dropped and used for the const_iterator??? or is it the value type that shouuld be const??
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        reference/dereference operators
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ //TODO
+        //NOTE: should the const be dropped and used only for the const_iterator??? or is it the value type that shouuld be const??
         reference operator*() const {return *iter_ptr;};
-        pointer operator->() const { return iter_ptr; }; //WIP: is this correct? or should it be { return &(operator*());}
-        reference operator[](difference_type n) const{return *(iter_ptr + n)}; //WIP: the increment must be done according to the layout
+        pointer operator->() const {return iter_ptr;}; //NOTE: is this correct? or should it be { return &(operator*());}
+        reference operator[](difference_type n) const{return *(iter_ptr + n)}; //NOTE: the increment must be done according to the layout
 
-        //increment operators //WIP: start from this
-        HRef_iterator& HRef_iterator::operator++(){};
-        HRef_iterator HRef_iterator::operator++(int); // May return `void`
-        HRef_iterator& HRef_iterator::operator--();
-        HRef_iterator HRef_iterator::operator--(int);
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        increment operators 
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ //WIP: start from this
+        HRef_iterator& HRef_iterator::operator++(){ //NOTE: this may return nullptr if reaches the end
+            iter_ptr_ = start_ptr_ + layout_(increment(coordinates_))
+        };
+
+        HRef_iterator HRef_iterator::operator++(int n){ //NOTE: this may return nullptr if reaches the end
+            iter_ptr_ = start_ptr_ + layout_(increment(coordinates_, n)) 
+        };
+
+        HRef_iterator& HRef_iterator::operator--(){ //NOTE: this may return nullptr if reaches the end
+            iter_ptr_ = start_ptr_ + layout_(decrement(coordinates_))
+        };
+
+        HRef_iterator HRef_iterator::operator--(int n){ //NOTE: this may return nullptr if reaches the end
+            iter_ptr_ = start_ptr_ + layout_(decrement(coordinates_, n))
+        };
+
         HRef_iterator& HRef_iterator::operator+=(difference_type);
         HRef_iterator& HRef_iterator::operator-=(difference_type);
         HRef_iterator HRef_iterator::operator+(difference_type);
@@ -75,7 +93,9 @@ class HRef_iterator {
         HRef_iterator HRef_iterator::operator-(difference_type) const;
         difference_type HRef_iterator::operator-(const HRef_iterator&) const;
 
-        //equality operators  //TODO: requires the comparisons of layouts? Probably not
+        /*~~~~~~~~~~~~~~~~~~~~~~~~
+        equality operators
+        ~~~~~~~~~~~~~~~~~~~~~~~*/  //TODO: requires the comparisons of layouts? Probably not
         friend bool operator==(HRef_iterator, HRef_iterator);  // required
         friend bool operator!=(HRef_iterator, HRef_iterator);  // [note]
         friend bool operator<(HRef_iterator, HRef_iterator);   // [note]
@@ -90,8 +110,9 @@ class HRef_iterator {
         bool operator<=(const iterator&) const; //optional
         bool operator>=(const iterator&) const; //optional
 
-
-        //sentinel operators //TODO: let's keep this for last
+        /*~~~~~~~~~~~~~~~~~
+        sentinel operators
+        ~~~~~~~~~~~~~~~~~*/ //TODO: let's keep this for last
         bool operator==(HRef_iterator, sentinel);
         bool operator!=(HRef_iterator, sentinel);
         bool operator==(sentinel, HRef_iterator);
@@ -104,9 +125,27 @@ class HRef_iterator {
         // friend bool operator!= (const HRef_iterator& a, const HRef_iterator& b) { return a.m_ptr != b.m_ptr; };  //TODO: requires the comparisons of layouts as well, which is not implemented
 
     private:
-        pointer iter_ptr;
-        Layout<N> iter_layout;
-        //WIP: do we need a std::array<difference_type, N> coordinates, to use it for the increment operations?? 
+        pointer start_ptr_;
+        pointer iter_ptr_;
+        Layout<N> iter_layout_;
+        std::array<difference_type, N> coordinates_;
+
+
+        void increment_coordinates(){
+            
+        }
+
+        void increment_coordinates(int n){
+            
+        }
+
+        void decrement_coordinates(){
+
+        }
+
+        void decrement_coordinates(int n){
+
+        }
 };
 
 
