@@ -317,6 +317,14 @@ class Layout{
         }
 
         /*!
+         * \brief Get a length of a dimension of the layout. This is a const function.
+         * \return the length along a dimension (number of elements in that dimension)
+         */
+        std::array<size_t,N> lengths(size_t dim) const{
+            return lengths_[dim];
+        }
+
+        /*!
          * \brief Get the strides of the layout. This is a const function.
          * \return the strides of the layout
          */
