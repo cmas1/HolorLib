@@ -36,6 +36,9 @@ namespace holor{
 
 namespace impl{
 
+//NOTE: for reverse iterators look at the following ( https://stackoverflow.com/questions/7758580/writing-your-own-stl-container/7759622# )
+// typedef std::reverse_iterator<iterator> reverse_iterator; //optional
+// typedef std::reverse_iterator<const_iterator> const_reverse_iterator; //optional
 
 /*================================================================================================
                                     HolorRef Iterator
