@@ -320,7 +320,7 @@ class Layout{
          * \brief Get a length of a dimension of the layout. This is a const function.
          * \return the length along a dimension (number of elements in that dimension)
          */
-        std::array<size_t,N> lengths(size_t dim) const{
+        auto length(size_t dim) const{
             return lengths_[dim];
         }
 
@@ -400,6 +400,15 @@ class Layout{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
 
+        //TODO: description
+        template<SingleIndex ID>
+        size_t operator()(std::array<ID,N> dims) const{
+            auto result = offset_;
+            for (auto cnt = 0; cnt<N; cnt++){
+                result += dims[cnt]*strides_[cnt];
+            }
+            return result;
+        }
 
         /*!
          * \brief Specialization of the function Layout<N>::operator()(Dims&&... dims) for the case when `N=1`. For the general case
