@@ -149,12 +149,20 @@ class HRef_iterator {
          */
         HRef_iterator HRef_iterator::operator+(difference_type n){
             HRef_iterator retval = *this;
-            retval = n;
+            retval -= n;
+            return retval;
+        }
+
+        /*!
+         * \brief increases the iterator by n positions
+         */
+        friend HRef_iterator operator+(difference_type n, const HRef_iterator& a) const {
+            HRef_iterator retval = a;
+            retval += n;
             return retval;
         }
 
 
-        friend HRef_iterator operator+(difference_type, const HRef_iterator&); const
         HRef_iterator HRef_iterator::operator-(difference_type) const;
         difference_type HRef_iterator::operator-(const HRef_iterator&) const;
 
