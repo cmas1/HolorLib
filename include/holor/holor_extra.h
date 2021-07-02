@@ -35,7 +35,7 @@ namespace holor{
 
 
 namespace impl{
-    template<typename HolorType> //TODO: requires concept HolorType
+    template<typename HolorType> //TODO: requires concepts HolorType and PrintableType
     struct holor_printer{
         std::ostream& operator()(std::ostream& os, HolorType h){
             os << " [";
