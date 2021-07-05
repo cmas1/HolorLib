@@ -64,9 +64,9 @@ class HRef_iterator {
         template<typename Container> //TODO: this should be a concept of a Holor_Ref. Or else, the whole iterator class may be moved inside of Holor_Ref
         explicit HRef_iterator(Container& container){
             start_ptr_ = container.dataptr();
-            iter_ptr_ = container.dataptr();
             layout_ptr_ = &(container.layout());
             coordinates_.fill(0);
+            iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
         }
 
 

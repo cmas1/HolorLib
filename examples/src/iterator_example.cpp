@@ -34,23 +34,21 @@ using namespace holor;
 int main(){
     
     Holor<int, 2> pluto{{1, 2, 3}, {4, 5, 6}};
-
     std::cout << "pluto = " << pluto << "\n\n";
     
+    std::vector<int> temp_vec{11,22};
 
-    auto paperino = pluto.row(0);
+    auto paperino = pluto.col(1);
+    HolorRef<int,1> topolino{temp_vec.data(), Layout<1>{{2}} };
 
-    impl::HRef_iterator<int,1> minni(paperino);
-    std::cout<< "\n\nTEST Iterator:\n";
-    std::cout<< *minni << "\n";
-    std::cout<< *(1+minni) << "\n";
+    impl::HRef_iterator<int,1> paperino_begin{paperino};
+    impl::HRef_iterator<int,1> paperino_end{paperino,true};
+    impl::HRef_iterator<int,1> topolino_begin{topolino};
+    impl::HRef_iterator<int,1> topolino_end{topolino,true};
 
-    minni+=2;
-    impl::HRef_iterator<int,1> pippo(paperino, true);
-    std::cout << "minni>pippo? " <<  int(minni>pippo) << "\n";
-    std::cout << "minni-pippo? " <<  minni-pippo << "\n";
+    std::copy(topolino_begin, topolino_end, paperino_begin);
 
-    *minni = 101;
-    std::cout << "pluto = " << pluto << "\n";
+    std::cout << "pluto = " << pluto << "\n\n";
+
     return 0;
 }
