@@ -30,20 +30,28 @@
 
 #include "layout.h"
 
-
+#include <iostream>
 
 namespace holor{
+
+namespace impl{
+
+//NOTE: for reverse iterators look at the following ( https://stackoverflow.com/questions/7758580/writing-your-own-stl-container/7759622# )
+// typedef std::reverse_iterator<iterator> reverse_iterator; //optional
+// typedef std::reverse_iterator<const_iterator> const_reverse_iterator; //optional
 
 /*================================================================================================
                                     HolorRef Iterator
 ================================================================================================*/
 /*!
- * \brief class that implements an iterator for the Holor_Ref view container.
+ * \brief class that implements a random-acces iterator for the Holor_Ref view container.
+ * For a brief description of the properties of random-access iterators refer to https://www.cplusplus.com/reference/iterator/RandomAccessIterator/
+ * or to https://en.cppreference.com/w/cpp/iterator/random_access_iterator
  */
 template<typename T, size_t N>
 class HRef_iterator {
     public:
-        using iterator_concept = std::random_access_iterator;
+        // using iterator_concept = std::random_access_iterator; //NOTE: this does not compile...
         using iterator_category = std::random_access_iterator_tag;
         using difference_type = std::ptrdiff_t;
         using value_type = T;
@@ -52,44 +60,80 @@ class HRef_iterator {
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         constructors/destructors/assignments
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ //TODO: after implementing the increment/decrement operations, to see what is needed beside the pointer
-        explicit HRef_iterator(pointer ptr, layout lt) : iter_ptr(ptr), iter_layout(lt) {}; 
-        HRef_iterator();
-        HRef_iterator(const HRef_iterator& a);
-        HRef_iterator& operator=(const HRef_iterator& a);
-        ~HRef_iterator();
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        template<typename Container> //TODO: this should be a concept of a Holor_Ref. Or else, the whole iterator class may be moved inside of Holor_Ref
+        explicit HRef_iterator(Container& container){
+            start_ptr_ = container.dataptr();
+            iter_ptr_ = container.dataptr();
+            layout_ptr_ = &(container.layout());
+            coordinates_.fill(0);
+        }
+
+
+        // Function used for geeting the end iterator.
+        template<typename Container> //TODO: this should be a concept of a Holor_Ref. Or else, the whole iterator class may be moved inside of Holor_Ref
+        explicit HRef_iterator(Container& container, bool is_end){
+            start_ptr_ = container.dataptr();
+            layout_ptr_ = &(container.layout());
+            for (auto cnt = 0; cnt < (N-1) ; cnt++){
+                coordinates_[cnt] = layout_ptr_->length(cnt) -1;
+            }
+            coordinates_[N-1] = layout_ptr_->length(N-1); //coordinates to one past the last element of the container
+            iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
+        }
+
+        // default constructible
+        HRef_iterator() = default;
+
+        //copy constructible
+        HRef_iterator(const HRef_iterator& a) = default;
+
+        //copy-assignable
+        HRef_iterator& operator=(const HRef_iterator& a) = default;
+
+        //destructile
+        ~HRef_iterator() = default;
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         reference/dereference operators
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ //TODO
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        /*!
+         * \brief dereference operator as an rvalue or lvalue (if in a dereferenceable state)
+         */
         reference operator*() const {
-            return *iter_ptr;
+            return *iter_ptr_;
         } 
 
+        /*!
+         * \brief dereference operator as an rvalue (if in a dereferenceable state)
+         */
         pointer operator->() const {
-            return &(*iter_ptr);
+            return &(*iter_ptr_);
         }
 
-        reference operator[](difference_type n) const{
-            return *(iter_ptr + n); //NOTE: the increment must be done according to the layout
+        /*!
+         * \brief offset dereference operator
+         */
+        reference operator[](difference_type n) const {
+            return *((this + n)->iter_ptr_);
         } 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         increment operators 
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ //WIP: start from this
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         /*!
          * \brief prefix ++
          */
-        HRef_iterator& HRef_iterator::operator++(){
+        HRef_iterator& operator++(){
             step_forward<N>();
-            iter_ptr_ = start_ptr_ + layout_(coordinates_);
+            iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
             return *this;
         }
 
         /*!
          * \brief postfix ++
          */
-        HRef_iterator HRef_iterator::operator++(int){
+        HRef_iterator operator++(int){
             HRef_iterator retval = *this;
             ++(*this);
             return retval;
@@ -98,16 +142,16 @@ class HRef_iterator {
         /*!
          * \brief prefix --
          */
-        HRef_iterator& HRef_iterator::operator--(){
+        HRef_iterator& operator--(){
             step_back<N>();
-            iter_ptr_ = start_ptr_ + layout_(coordinates_);
+            iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
             return *this;
         }
 
         /*!
          * \brief postfix --
          */
-        HRef_iterator HRef_iterator::operator--(int){
+        HRef_iterator operator--(int){
             HRef_iterator retval = *this;
             --(*this);
             return retval;
@@ -116,103 +160,119 @@ class HRef_iterator {
         /*!
          * \brief advances the iterator by n positions
          */
-        HRef_iterator& HRef_iterator::operator+=(difference_type n){
+        HRef_iterator& operator+=(difference_type n){
             for (auto cnt = 0; cnt < n; cnt++){
                 step_forward<N>();
             }
-            iter_ptr_ = start_ptr_ + layout_(coordinates_);
+            iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
             return *this;
         }
         
         /*!
          * \brief decreases the iterator by n positions
          */
-        HRef_iterator& HRef_iterator::operator-=(difference_type n){
+        HRef_iterator& operator-=(difference_type n){
             for (auto cnt = 0; cnt < n; cnt++){
                 step_back<N>();
             }
-            iter_ptr_ = start_ptr_ + layout_(coordinates_);
+            iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
             return *this;
         }
 
         /*!
-         * \brief advances the iterator by n positions
+         * \brief given the iterator a, it implements the operation a + n
          */
-        HRef_iterator HRef_iterator::operator+(difference_type n){
+        HRef_iterator operator+(difference_type n) const{
             HRef_iterator retval = *this;
             retval += n;
             return retval;
         }
 
         /*!
-         * \brief decreases the iterator by n positions
+         * \brief given the iterator a, it implements the operation a - n
          */
-        HRef_iterator HRef_iterator::operator+(difference_type n){
+        HRef_iterator operator-(difference_type n) const{
             HRef_iterator retval = *this;
             retval -= n;
             return retval;
         }
 
+
         /*!
-         * \brief increases the iterator by n positions
+         * \brief implements the operation n + a
          */
-        friend HRef_iterator operator+(difference_type n, const HRef_iterator& a) const {
+        friend HRef_iterator operator+(difference_type n, const HRef_iterator& a) {
             HRef_iterator retval = a;
             retval += n;
             return retval;
         }
 
 
-        HRef_iterator HRef_iterator::operator-(difference_type) const;
-        difference_type HRef_iterator::operator-(const HRef_iterator&) const;
+        /*!
+         * \brief given two iterators a and b, it implements the difference a - b
+         */
+        friend difference_type operator-(const HRef_iterator& a, const HRef_iterator&b) {
+            difference_type result = 0;
+            for (auto cnt = 0; cnt<N; cnt++){
+                result += a.coordinates_[cnt]*a.layout_ptr_->strides()[cnt] - b.coordinates_[cnt]*b.layout_ptr_->strides()[cnt];
+            }
+            return result;
+        }
+
+
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~
         equality operators
-        ~~~~~~~~~~~~~~~~~~~~~~~*/  //TODO: requires the comparisons of layouts? Probably not
-        friend bool operator==(HRef_iterator, HRef_iterator);  // required
-        friend bool operator!=(HRef_iterator, HRef_iterator);  // [note]
-        friend bool operator<(HRef_iterator, HRef_iterator);   // [note]
-        friend bool operator<=(HRef_iterator, HRef_iterator);  // [note]
-        friend bool operator>(HRef_iterator, HRef_iterator);   // [note]
-        friend bool operator>=(HRef_iterator, HRef_iterator);  // [note]
+        ~~~~~~~~~~~~~~~~~~~~~~~*/
+        /*!
+         * \brief equality operations to compare two iterators. For example, needed to test iter == end()
+         */
+        bool operator==(const HRef_iterator& rhs) const{
+            return iter_ptr_ == rhs.iter_ptr_;
+        }  
 
-        bool operator==(const iterator&) const;
-        bool operator!=(const iterator&) const;
-        bool operator<(const iterator&) const; //optional
-        bool operator>(const iterator&) const; //optional
-        bool operator<=(const iterator&) const; //optional
-        bool operator>=(const iterator&) const; //optional
+        /*!
+         * \brief equality operations to compare two iterators. For example, needed to test iter != end()
+         */
+        bool operator!=(const HRef_iterator& rhs) const{
+            return iter_ptr_ != rhs.iter_ptr_;
+        }
 
-        /*~~~~~~~~~~~~~~~~~
-        sentinel operators
-        ~~~~~~~~~~~~~~~~~*/ //TODO: let's keep this for last
-        bool operator==(HRef_iterator, sentinel);
-        bool operator!=(HRef_iterator, sentinel);
-        bool operator==(sentinel, HRef_iterator);
-        bool operator!=(sentinel, HRef_iterator);
-        difference_type operator-(sentinel, HRef_iterator); // Not required, but useful
+        /*!
+         * \brief defualt three-way comparison operator
+         */
+        friend auto operator<=>(HRef_iterator, HRef_iterator) = default;
 
-        // HRef_iterator& operator++() { m_ptr++; return *this; } 
-        // HRef_iterator operator++(int) { HRef_iterator tmp = *this; ++(*this); return tmp; }
-        // friend bool operator== (const HRef_iterator& a, const HRef_iterator& b) { return a.m_ptr == b.m_ptr; };
-        // friend bool operator!= (const HRef_iterator& a, const HRef_iterator& b) { return a.m_ptr != b.m_ptr; };  //TODO: requires the comparisons of layouts as well, which is not implemented
+
+        //TODO: we should consider implementing sentinel operations to support c++20 ranges functions (https://en.cppreference.com/w/cpp/ranges). First, I should study better ranges... !See https://www.foonathan.net/2020/03/iterator-sentinel/ for more info on how to implement these sentinels
+        // 
+        // //sentinel operators
+        // 
+        // bool operator==(HRef_iterator, Href_sentinel);
+        // bool operator!=(HRef_iterator, Href_sentinel);
+        // friend bool operator==(Href_sentinel, HRef_iterator);
+        // friend bool operator!=(Href_sentinel, HRef_iterator);
+        // friend difference_type operator-(Href_sentinel, HRef_iterator); // Not required, but useful
 
     private:
-        pointer start_ptr_;
-        pointer iter_ptr_;
-        Layout<N> iter_layout_; //NOTE: should this be a pointer rather than a copy of the layout? perhaps using a smart pointer
-        std::array<difference_type, N> coordinates_;
+        pointer start_ptr_; //<-! \brief pointer to initial memory location addressed by the Holor_Ref that the iterator refers to. This is needed because the elements are not stored contiguously in memory
+        
+        pointer iter_ptr_; //<-! \brief pointer to current memory location addressed by the iterator
+        
+        const Layout<N>* layout_ptr_; //<-! \brief pointer to the layout of the Holor_Ref container that the iterator refers to. This is needed because the elements are not stored contiguously in memory
+        
+        std::array<difference_type, N> coordinates_; //<-! \brief coordinates of the current iterator from the starting pointer. This is needed because the elements are not stored contiguously in memory
 
         /*!
          * \brief helper function to implement the ++ operator
          */
         template<size_t Coord>
         void step_forward(){
-            if ( coordinates_[Coord] < (iter_layout_.length(Coord) -1) ){
+            if ( coordinates_[Coord] < (layout_ptr_->length(Coord) -1) ){
                 coordinates_[Coord] += 1;
             } else{
                 coordinates_[Coord] = 0;
-                step_forward<Coord-1>()
+                step_forward<Coord-1>();
             }
         }
 
@@ -220,14 +280,14 @@ class HRef_iterator {
          * \brief helper function to implement the ++ operator
          */
         template<>
-        void step_forward<0>(){
-            if ( coordinates_[0] < (iter_layout_.length(0) -1) ){
+        void step_forward<1>(){
+            if ( coordinates_[0] < (layout_ptr_->length(0) -1) ){
                 coordinates_[0] += 1;
             } else{ //end of the container
                 for (auto cnt = 0; cnt < (N-1) ; cnt++){
-                    coordinates_ = iter_layout_.length(cnt) -1;
+                    coordinates_[cnt] = layout_ptr_->length(cnt) -1;
                 }
-                coordinates_(N-1) = iter_layout_.length(N-1); //coordinates to one past the last element of the container
+                coordinates_[N-1] = layout_ptr_->length(N-1); //coordinates to one past the last element of the container
             }
         }
 
@@ -239,8 +299,8 @@ class HRef_iterator {
             if ( coordinates_[Coord] > 0 ){
                 coordinates_[Coord] -= 1;
             } else{
-                coordinates_[Coord] = iter_layout_.length(Coord) -1;
-                step_back<Coord-1>()
+                coordinates_[Coord] = layout_ptr_->length(Coord) -1;
+                step_back<Coord-1>();
             }
         }
 
@@ -248,7 +308,7 @@ class HRef_iterator {
          * \brief helper function to implement the -- operator
          */
         template<>
-        void step_back<0>(){
+        void step_back<1>(){
             if ( coordinates_[0] > 0 ){
                 coordinates_[0] -= 1;
             } else{ //beginning of the container
@@ -260,6 +320,8 @@ class HRef_iterator {
 };
 
 
+
+//TODO: just a reminder, but the implementation of the iterator and const_iterator should be done without code duplication
 // template<typename T, size_t N>
 // class HolorRef_const_iterator {
 // public:
@@ -301,6 +363,7 @@ class HRef_iterator {
 
 
 
+} //namespace impl
 
 } //namespace holor
 
