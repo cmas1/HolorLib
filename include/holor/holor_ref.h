@@ -78,7 +78,7 @@ class HolorRef{
         struct choose<false, IsTrue, IsFalse> {
             using type = IsFalse;
         };
-        
+
 
 
         /*!
@@ -278,14 +278,6 @@ class HolorRef{
 
 
                 //TODO: we should consider implementing sentinel operations to support c++20 ranges functions (https://en.cppreference.com/w/cpp/ranges). First, I should study better ranges... !See https://www.foonathan.net/2020/03/iterator-sentinel/ for more info on how to implement these sentinels
-                // 
-                // //sentinel operators
-                // 
-                // bool operator==(Iterator, Href_sentinel);
-                // bool operator!=(Iterator, Href_sentinel);
-                // friend bool operator==(Href_sentinel, Iterator);
-                // friend bool operator!=(Href_sentinel, Iterator);
-                // friend difference_type operator-(Href_sentinel, Iterator); // Not required, but useful
 
             private:
                 pointer start_ptr_; //<-! \brief pointer to initial memory location addressed by the Holor_Ref that the iterator refers to. This is needed because the elements are not stored contiguously in memory                
@@ -365,6 +357,8 @@ class HolorRef{
         using value_type = T; ///! type of the values in the container
         using iterator = typename HolorRef<T,N>::Iterator<false>; ///! iterator type for the underlying data storage
         using const_iterator = typename HolorRef<T,N>::Iterator<true>; ///! iterator type for the underlying data storage
+        using reverse_iterator = std::reverse_iterator<iterator>;
+        using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -482,19 +476,35 @@ class HolorRef{
                             ITERATORS
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         auto begin(){
-            return iterator(this, begin_iterator_tag{}); //FIXME: we should only pass the pointer this, rather than the object *this
+            return iterator(this, begin_iterator_tag{});
         }
 
         auto end(){
-            return iterator(this, end_iterator_tag{}); //FIXME: we should only pass the pointer this, rather than the object *this
+            return iterator(this, end_iterator_tag{});
         }
 
         auto cbegin() const{
-            return const_iterator(this, begin_iterator_tag{}); //FIXME: we should only pass the pointer this, rather than the object *this
+            return const_iterator(this, begin_iterator_tag{});
         }
 
         auto cend() const{
-            return const_iterator(this, end_iterator_tag{}); //FIXME: we should only pass the pointer this, rather than the object *this
+            return const_iterator(this, end_iterator_tag{});
+        }
+
+        auto rbegin(){
+            return reverse_iterator(end());
+        }
+
+        auto rend(){
+            return reverse_iterator(begin());
+        }
+
+        auto crbegin(){
+            return reverse_iterator(cend());
+        }
+
+        auto crend(){
+            return reverse_iterator(cbegin());
         }
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

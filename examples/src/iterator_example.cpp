@@ -25,6 +25,7 @@
 #include "../../include/holor/holor_extra.h"
 #include <iostream>
 #include <vector>
+#include <ranges>
 
 // #include "../../include/holor/holor_ref_iterator.h"
 
@@ -36,22 +37,14 @@ int main(){
     Holor<int, 2> pluto{{1, 2, 3}, {4, 5, 6}};
     std::cout << "pluto = " << pluto << "\n\n";
     
-    std::vector<int> temp_vec{11,22};
+    
 
     auto paperino = pluto.col(1);
-    HolorRef<int,1> topolino{temp_vec.data(), Layout<1>{{2}} };
 
-    // impl::HRef_iterator<int,1, false> paperino_begin(paperino, impl::begin_iterator_tag{});
-    // impl::HRef_iterator<int,1, false> paperino_end(paperino, impl::end_iterator_tag{});
-    // impl::HRef_iterator<int,1, false> topolino_begin{topolino, impl::begin_iterator_tag{}};
-    // impl::HRef_iterator<int,1, false> topolino_end{topolino, impl::end_iterator_tag{}};
 
-    // HolorRef<int,1>::const_iterator paperino_begin(paperino, HolorRef<int,1>::begin_iterator_tag{});
-    // HolorRef<int,1>::iterator paperino_end(paperino, HolorRef<int,1>::end_iterator_tag{});
-    // HolorRef<int,1>::const_iterator topolino_begin{topolino, HolorRef<int,1>::begin_iterator_tag{}};
-    // HolorRef<int,1>::const_iterator topolino_end{topolino, HolorRef<int,1>::end_iterator_tag{}};
+    std::vector<int> temp_vec{11,22};
+    std::copy(temp_vec.begin(), temp_vec.end(), paperino.rbegin());
 
-    std::copy(topolino.cbegin(), topolino.cend(), paperino.begin());
 
     std::cout << "pluto = " << pluto << "\n\n";
 
