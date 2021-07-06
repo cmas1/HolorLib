@@ -62,7 +62,8 @@ class Holor{
         using value_type = T; ///! type of the values in the container
         using iterator = typename std::vector<T>::iterator; ///! iterator type for the underlying data storage
         using const_iterator = typename std::vector<T>::const_iterator; ///! iterator type for the underlying data storage
-
+        using reverse_iterator = typename std::vector<T>::reverse_iterator;
+        using const_reverse_iterator = typename std::vector<T>::const_reverse_iterator;
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -207,7 +208,44 @@ class Holor{
         template<typename U>
         Holor& operator=(std::initializer_list<U>) = delete;
 
+
         
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            ITERATORS
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        auto begin(){
+            return data_.begin();
+        }
+
+        auto end(){
+            return data_.end();
+        }
+
+        auto cbegin() const{
+            return data_.cbegin();
+        }
+
+        auto cend() const{
+            return data_.cend();
+        }
+
+        auto rbegin(){
+            return data_.rbegin();
+        }
+
+        auto rend(){
+            return data_.rend();
+        }
+
+        auto crbegin(){
+            return data_.crbegin();
+        }
+
+        auto crend(){
+            return data_.crend();
+        }
+
+
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             GET/SET FUNCTIONS

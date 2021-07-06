@@ -32,7 +32,7 @@
 
 #include "layout.h"
 #include "initializer.h"
-
+#include "../common/predicates.h"
 
 
 namespace holor{
@@ -64,23 +64,6 @@ class HolorRef{
         struct begin_iterator_tag{};
         struct end_iterator_tag{};
 
-
-        //TODO: move this to predicates.h
-        template <bool flag, class IsTrue, class IsFalse>
-        struct choose;
-
-        template <class IsTrue, class IsFalse>
-        struct choose<true, IsTrue, IsFalse> {
-            using type =  IsTrue;
-        };
-
-        template <class IsTrue, class IsFalse>
-        struct choose<false, IsTrue, IsFalse> {
-            using type = IsFalse;
-        };
-
-
-
         /*!
         * \brief class that implements a random-acces iterator for the Holor_Ref view container.
         * For a brief description of the properties of random-access iterators refer to https://www.cplusplus.com/reference/iterator/RandomAccessIterator/
@@ -92,10 +75,9 @@ class HolorRef{
                 using iterator_category = std::random_access_iterator_tag;
                 using difference_type = std::ptrdiff_t;
                 using value_type = T;
-                using pointer = typename choose<IsConst, const T*, T*>::type;
-                using reference = typename choose<IsConst, const T&, T&>::type;
-                
-                using holor_pointer = typename choose<IsConst, const HolorRef<T,N>*, HolorRef<T,N>*>::type;
+                using pointer = typename impl::choose<IsConst, const T*, T*>::type;
+                using reference = typename impl::choose<IsConst, const T&, T&>::type;
+                using holor_pointer = typename impl::choose<IsConst, const HolorRef<T,N>*, HolorRef<T,N>*>::type;
 
                 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 constructors/destructors/assignments

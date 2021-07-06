@@ -10,7 +10,7 @@
 // furnished to do so, subject to the following conditions:
 
 // The above copyright notice and this permission notice shall be included in
-// all copies or suholorantial portions of the Software.
+// all copies or substantial portions of the Software.
 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -21,33 +21,40 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include "../../include/holor/holor.h"
-#include "../../include/holor/holor_extra.h"
-#include <iostream>
-#include <vector>
-#include <ranges>
 
-// #include "../../include/holor/holor_ref_iterator.h"
-
-using namespace holor;
+#ifndef PREDICATES_H
+#define PREDICATES_H
 
 
-int main(){
-    
-    Holor<int, 2> pluto{{1, 2, 3}, {4, 5, 6}};
-    std::cout << "pluto = " << pluto << "\n\n";
-    
-    
-
-    auto paperino = pluto.col(1);
+#include <type_traits>
 
 
-    std::vector<int> temp_vec{11,22};
-    std::copy(temp_vec.begin(), temp_vec.end(), paperino.rbegin());
-    std::cout << "pluto = " << pluto << "\n\n";
+/** \file tensor_initializer.h
+ * \brief predicates used the implementation of tensors, in static assertions, compile time conditions and runtime assertions
+ */
+
+namespace holor{
+namespace impl{
 
 
+    /*!
+    * \brief function to select among two different types based on a boolean flag.
+    */
+    template <bool flag, class IsTrue, class IsFalse>
+    struct choose;
+
+    template <class IsTrue, class IsFalse>
+    struct choose<true, IsTrue, IsFalse> {
+        using type =  IsTrue;
+    };
+
+    template <class IsTrue, class IsFalse>
+    struct choose<false, IsTrue, IsFalse> {
+        using type = IsFalse;
+    };
 
 
-    return 0;
-}
+} //namespace impl
+} //namespace holor
+
+#endif // PREDICATES_H
