@@ -51,9 +51,10 @@ int main(){
     // HolorRef<int,1>::const_iterator topolino_begin{topolino, HolorRef<int,1>::begin_iterator_tag{}};
     // HolorRef<int,1>::const_iterator topolino_end{topolino, HolorRef<int,1>::end_iterator_tag{}};
 
-    std::copy(topolino.begin(), topolino.end(), paperino.begin());
+    std::copy(topolino.cbegin(), topolino.cend(), paperino.begin());
 
     std::cout << "pluto = " << pluto << "\n\n";
+
 
     return 0;
 }
