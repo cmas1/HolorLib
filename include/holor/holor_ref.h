@@ -53,14 +53,298 @@ template<typename T, size_t N>
 class HolorRef{   
 
     public:
+
+
+        /*============================================================
+                            CUSTOM ITERATOR
+        =============================================================*/
+        template<bool IsConst>
+        friend class Iterator;
+
+        struct begin_iterator_tag{};
+        struct end_iterator_tag{};
+
+        /*!
+        * \brief class that implements a random-acces iterator for the Holor_Ref view container.
+        * For a brief description of the properties of random-access iterators refer to https://www.cplusplus.com/reference/iterator/RandomAccessIterator/
+        * or to https://en.cppreference.com/w/cpp/iterator/random_access_iterator
+        */
+        template<bool IsConst>
+        class Iterator {
+            public:
+                using iterator_category = std::random_access_iterator_tag;
+                using difference_type = std::ptrdiff_t;
+                using value_type = T;
+                using pointer = T*;
+                using reference = T&;
+
+                /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                constructors/destructors/assignments
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+                explicit Iterator(HolorRef<T,N>* holor, begin_iterator_tag){
+                    start_ptr_ = holor->dataptr_;
+                    layout_ptr_ = &(holor->layout_);
+                    coordinates_.fill(0);
+                    iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
+                }
+
+
+                // Function used for geeting the end iterator.
+                explicit Iterator(HolorRef<T,N>* holor, end_iterator_tag){
+                    start_ptr_ = holor->dataptr_;
+                    layout_ptr_ = &(holor->layout_);
+                    for (auto cnt = 0; cnt < (N-1) ; cnt++){
+                        coordinates_[cnt] = layout_ptr_->length(cnt) -1;
+                    }
+                    coordinates_[N-1] = layout_ptr_->length(N-1); //coordinates to one past the last element of the container
+                    iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
+                }
+
+                //copy constructor of  const_iterator from iterator
+                template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_>>
+                Iterator(const Iterator<false>& rhs): start_ptr_(rhs.start_ptr_), iter_ptr_(rhs.iter_ptr_), layout_ptr_(rhs.layout_ptr_), coordinates_(rhs.coordinates_){};
+
+                Iterator() = default; // default constructible
+                Iterator(const Iterator&) = default; //copy constructible
+                Iterator& operator=(const Iterator&) = default; //copy-assignable
+                ~Iterator() = default; //destructible
+
+                /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                reference/dereference operators
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+                /*!
+                * \brief dereference operator as an rvalue or lvalue (if in a dereferenceable state)
+                */
+                reference operator*() const {
+                    return *iter_ptr_;
+                } 
+
+                /*!
+                * \brief dereference operator as an rvalue (if in a dereferenceable state)
+                */
+                pointer operator->() const {
+                    return &(*iter_ptr_);
+                }
+
+                /*!
+                * \brief offset dereference operator
+                */
+                reference operator[](difference_type n) const {
+                    return *((this + n)->iter_ptr_);
+                } 
+
+                /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                increment operators 
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+                /*!
+                * \brief prefix ++
+                */
+                Iterator& operator++(){
+                    step_forward<N>();
+                    iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
+                    return *this;
+                }
+
+                /*!
+                * \brief postfix ++
+                */
+                Iterator operator++(int){
+                    Iterator retval = *this;
+                    ++(*this);
+                    return retval;
+                }
+
+                /*!
+                * \brief prefix --
+                */
+                Iterator& operator--(){
+                    step_back<N>();
+                    iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
+                    return *this;
+                }
+
+                /*!
+                * \brief postfix --
+                */
+                Iterator operator--(int){
+                    Iterator retval = *this;
+                    --(*this);
+                    return retval;
+                }
+
+                /*!
+                * \brief advances the iterator by n positions
+                */
+                Iterator& operator+=(difference_type n){
+                    for (auto cnt = 0; cnt < n; cnt++){
+                        step_forward<N>();
+                    }
+                    iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
+                    return *this;
+                }
+                
+                /*!
+                * \brief decreases the iterator by n positions
+                */
+                Iterator& operator-=(difference_type n){
+                    for (auto cnt = 0; cnt < n; cnt++){
+                        step_back<N>();
+                    }
+                    iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
+                    return *this;
+                }
+
+                /*!
+                * \brief given the iterator a, it implements the operation a + n
+                */
+                Iterator operator+(difference_type n) const{
+                    Iterator retval = *this;
+                    retval += n;
+                    return retval;
+                }
+
+                /*!
+                * \brief given the iterator a, it implements the operation a - n
+                */
+                Iterator operator-(difference_type n) const{
+                    Iterator retval = *this;
+                    retval -= n;
+                    return retval;
+                }
+
+
+                /*!
+                * \brief implements the operation n + a
+                */
+                friend Iterator operator+(difference_type n, const Iterator& a) {
+                    Iterator retval = a;
+                    retval += n;
+                    return retval;
+                }
+
+
+                /*!
+                * \brief given two iterators a and b, it implements the difference a - b
+                */
+                friend difference_type operator-(const Iterator& a, const Iterator&b) {
+                    difference_type result = 0;
+                    for (auto cnt = 0; cnt<N; cnt++){
+                        result += a.coordinates_[cnt]*a.layout_ptr_->strides()[cnt] - b.coordinates_[cnt]*b.layout_ptr_->strides()[cnt];
+                    }
+                    return result;
+                }
+
+                /*~~~~~~~~~~~~~~~~~~~~~~~~
+                equality operators
+                ~~~~~~~~~~~~~~~~~~~~~~~*/
+                /*!
+                * \brief equality operations to compare two iterators. For example, needed to test iter == end()
+                */
+                bool operator==(const Iterator& rhs) const{
+                    return iter_ptr_ == rhs.iter_ptr_;
+                }  
+
+                /*!
+                * \brief equality operations to compare two iterators. For example, needed to test iter != end()
+                */
+                bool operator!=(const Iterator& rhs) const{
+                    return iter_ptr_ != rhs.iter_ptr_;
+                }
+
+                /*!
+                * \brief defualt three-way comparison operator
+                */
+                friend auto operator<=>(Iterator, Iterator) = default;
+
+
+                //TODO: we should consider implementing sentinel operations to support c++20 ranges functions (https://en.cppreference.com/w/cpp/ranges). First, I should study better ranges... !See https://www.foonathan.net/2020/03/iterator-sentinel/ for more info on how to implement these sentinels
+                // 
+                // //sentinel operators
+                // 
+                // bool operator==(Iterator, Href_sentinel);
+                // bool operator!=(Iterator, Href_sentinel);
+                // friend bool operator==(Href_sentinel, Iterator);
+                // friend bool operator!=(Href_sentinel, Iterator);
+                // friend difference_type operator-(Href_sentinel, Iterator); // Not required, but useful
+
+            private:
+                pointer start_ptr_; //<-! \brief pointer to initial memory location addressed by the Holor_Ref that the iterator refers to. This is needed because the elements are not stored contiguously in memory                
+                pointer iter_ptr_; //<-! \brief pointer to current memory location addressed by the iterator
+                const Layout<N>* layout_ptr_; //<-! \brief pointer to the layout of the Holor_Ref container that the iterator refers to. This is needed because the elements are not stored contiguously in memory
+                std::array<difference_type, N> coordinates_; //<-! \brief coordinates of the current iterator from the starting pointer. This is needed because the elements are not stored contiguously in memory
+
+                /*!
+                * \brief helper function to implement the ++ operator
+                */
+                template<size_t Coord>
+                void step_forward(){
+                    if ( coordinates_[Coord] < (layout_ptr_->length(Coord) -1) ){
+                        coordinates_[Coord] += 1;
+                    } else{
+                        coordinates_[Coord] = 0;
+                        step_forward<Coord-1>();
+                    }
+                }
+
+                /*!
+                * \brief helper function to implement the ++ operator
+                */
+                template<>
+                void step_forward<1>(){
+                    if ( coordinates_[0] < (layout_ptr_->length(0) -1) ){
+                        coordinates_[0] += 1;
+                    } else{ //end of the container
+                        for (auto cnt = 0; cnt < (N-1) ; cnt++){
+                            coordinates_[cnt] = layout_ptr_->length(cnt) -1;
+                        }
+                        coordinates_[N-1] = layout_ptr_->length(N-1); //coordinates to one past the last element of the container
+                    }
+                }
+
+                /*!
+                * \brief helper function to implement the -- operator
+                */
+                template<size_t Coord>
+                void step_back(){
+                    if ( coordinates_[Coord] > 0 ){
+                        coordinates_[Coord] -= 1;
+                    } else{
+                        coordinates_[Coord] = layout_ptr_->length(Coord) -1;
+                        step_back<Coord-1>();
+                    }
+                }
+
+                /*!
+                * \brief helper function to implement the -- operator
+                */
+                template<>
+                void step_back<1>(){
+                    if ( coordinates_[0] > 0 ){
+                        coordinates_[0] -= 1;
+                    } else{ //beginning of the container
+                        for (auto& coord : coordinates_){
+                            coord = 0;
+                        }
+                    }
+                }
+        };
+        /*==================================================================================================================
+                                            End of custom iterator
+        ==================================================================================================================*/
+
+
+
+        
+
+
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     ALIASES
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         static constexpr size_t dimensions = N; ///! \brief number of dimensions in the container 
 
         using value_type = T; ///! type of the values in the container
-        using iterator = typename std::vector<T>::iterator; ///! iterator type for the underlying data storage
-        using const_iterator = typename std::vector<T>::const_iterator; ///! iterator type for the underlying data storage
+        using iterator = typename HolorRef<T,N>::Iterator<false>; ///! iterator type for the underlying data storage
+        using const_iterator = typename HolorRef<T,N>::Iterator<true>; ///! iterator type for the underlying data storage
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -174,6 +458,24 @@ class HolorRef{
         }
 
 
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            ITERATORS
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        auto begin(){
+            return iterator(this, begin_iterator_tag{}); //FIXME: we should only pass the pointer this, rather than the object *this
+        }
+
+        auto end(){
+            return iterator(this, end_iterator_tag{}); //FIXME: we should only pass the pointer this, rather than the object *this
+        }
+
+        auto cbegin() const{
+            return const_iterator(this, begin_iterator_tag{}); //FIXME: we should only pass the pointer this, rather than the object *this
+        }
+
+        auto cend() const{
+            return const_iterator(this, end_iterator_tag{}); //FIXME: we should only pass the pointer this, rather than the object *this
+        }
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             ACCESS FUNCTIONS

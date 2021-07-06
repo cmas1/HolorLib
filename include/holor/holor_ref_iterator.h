@@ -51,7 +51,7 @@ struct end_iterator_tag{};
  * For a brief description of the properties of random-access iterators refer to https://www.cplusplus.com/reference/iterator/RandomAccessIterator/
  * or to https://en.cppreference.com/w/cpp/iterator/random_access_iterator
  */
-template<typename T, size_t N>
+template<typename T, size_t N, bool IsConst>
 class HRef_iterator {
     public:
         // using iterator_concept = std::random_access_iterator; //NOTE: this does not compile...
@@ -85,14 +85,17 @@ class HRef_iterator {
             iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
         }
 
+        template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_>>
+        HRef_iterator(const HRef_iterator<T, N, false>& rhs): start_ptr_(rhs.start_ptr_), iter_ptr_(rhs.iter_ptr_), layout_ptr_(rhs.layout_ptr_), coordinates_(rhs.coordinates_){};
+
         // default constructible
         HRef_iterator() = default;
 
         //copy constructible
-        HRef_iterator(const HRef_iterator& a) = default;
+        HRef_iterator(const HRef_iterator&) = default;
 
         //copy-assignable
-        HRef_iterator& operator=(const HRef_iterator& a) = default;
+        HRef_iterator& operator=(const HRef_iterator&) = default;
 
         //destructile
         ~HRef_iterator() = default;
@@ -324,7 +327,8 @@ class HRef_iterator {
 
 
 
-//TODO: just a reminder, but the implementation of the iterator and const_iterator should be done without code duplication
+
+//NOTE: just a reminder, but the implementation of the iterator and const_iterator should be done without code duplication ass shown in https://quuxplusone.github.io/blog/2018/12/01/const-iterator-antipatterns/
 // template<typename T, size_t N>
 // class HolorRef_const_iterator {
 // public:
