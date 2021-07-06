@@ -41,10 +41,10 @@ int main(){
     auto paperino = pluto.col(1);
     HolorRef<int,1> topolino{temp_vec.data(), Layout<1>{{2}} };
 
-    impl::HRef_iterator<int,1> paperino_begin{paperino};
-    impl::HRef_iterator<int,1> paperino_end{paperino,true};
-    impl::HRef_iterator<int,1> topolino_begin{topolino};
-    impl::HRef_iterator<int,1> topolino_end{topolino,true};
+    impl::HRef_iterator<int,1> paperino_begin(paperino, impl::begin_iterator_tag{});
+    impl::HRef_iterator<int,1> paperino_end(paperino, impl::end_iterator_tag{});
+    impl::HRef_iterator<int,1> topolino_begin{topolino, impl::begin_iterator_tag{}};
+    impl::HRef_iterator<int,1> topolino_end{topolino, impl::end_iterator_tag{}};
 
     std::copy(topolino_begin, topolino_end, paperino_begin);
 

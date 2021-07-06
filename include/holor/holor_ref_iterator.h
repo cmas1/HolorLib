@@ -40,6 +40,9 @@ namespace impl{
 // typedef std::reverse_iterator<iterator> reverse_iterator; //optional
 // typedef std::reverse_iterator<const_iterator> const_reverse_iterator; //optional
 
+struct begin_iterator_tag{};
+struct end_iterator_tag{};
+
 /*================================================================================================
                                     HolorRef Iterator
 ================================================================================================*/
@@ -62,7 +65,7 @@ class HRef_iterator {
         constructors/destructors/assignments
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         template<typename Container> //TODO: this should be a concept of a Holor_Ref. Or else, the whole iterator class may be moved inside of Holor_Ref
-        explicit HRef_iterator(Container& container){
+        explicit HRef_iterator(Container& container, begin_iterator_tag){
             start_ptr_ = container.dataptr();
             layout_ptr_ = &(container.layout());
             coordinates_.fill(0);
@@ -72,7 +75,7 @@ class HRef_iterator {
 
         // Function used for geeting the end iterator.
         template<typename Container> //TODO: this should be a concept of a Holor_Ref. Or else, the whole iterator class may be moved inside of Holor_Ref
-        explicit HRef_iterator(Container& container, bool is_end){
+        explicit HRef_iterator(Container& container, end_iterator_tag){
             start_ptr_ = container.dataptr();
             layout_ptr_ = &(container.layout());
             for (auto cnt = 0; cnt < (N-1) ; cnt++){
