@@ -43,11 +43,13 @@ namespace holor{
 ================================================================================================*/
 /// Holor class
 /*!
- * Class providing a dense implementation of a general n-dimensional tensor container.
- * Since the purpose of this class is to provide a container object, tensor arithmetic operations are not supported.
+ * \brief Class implementing a general N-dimensional container with contiguous storage in memory.
  * 
- * It uses a row-major representation, i.e. the elements of rows are contiguous and the elements of a columne are separated by a fixed number of elements (a stride)
+ * A Holor is intended as a general `N`-dimensional container, whose elements need not to be numerical types, but can be of a generic type `T`. 
+ * Holors are implemented with a row-major representation, i.e., the elements of last dimension of the container are contiguous. For more information on row-major ordering please refer to https://en.wikipedia.org/wiki/Row-_and_column-major_order.
  * 
+ * \tparam N the number of dimensions of the container. For example, for a matrix-like container it is `N-2`.
+ * \tparam T the type of the elements stored in the container.
  * //TODO: explain better what is a tensor (number of dimensions, extensions, slicing, access)
  */
 template<typename T, size_t N>
@@ -57,13 +59,12 @@ class Holor{
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     ALIASES
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        static constexpr size_t dimensions = N; ///! \brief number of dimensions in the container 
-
-        using value_type = T; ///! type of the values in the container
-        using iterator = typename std::vector<T>::iterator; ///! iterator type for the underlying data storage
-        using const_iterator = typename std::vector<T>::const_iterator; ///! iterator type for the underlying data storage
-        using reverse_iterator = typename std::vector<T>::reverse_iterator;
-        using const_reverse_iterator = typename std::vector<T>::const_reverse_iterator;
+        static constexpr size_t dimensions = N;                                         ///< \brief number of dimensions in the container 
+        using value_type = T;                                                           ///< \brief type of the values in the container
+        using iterator = typename std::vector<T>::iterator;                             ///< \brief type of the iterator for the container
+        using const_iterator = typename std::vector<T>::const_iterator;                 ///< \brief type of the const_iterator for the container
+        using reverse_iterator = typename std::vector<T>::reverse_iterator;             ///< \brief type of the reverse_iterator for the container
+        using const_reverse_iterator = typename std::vector<T>::const_reverse_iterator; ///< \brief type of the const_reverse_iterator for the container
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
