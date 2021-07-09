@@ -76,28 +76,84 @@ namespace assert{
     struct substitution_succeeded<substitution_failure>: std::false_type {};
 
 
-    // //----------------     IS PRINTABLE   -------------------------
-    // template<typename T>
-    // struct get_print{
-    //     private:
-    //         std::ostream& os;
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        Type Selection
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    /*!
+    * \brief predicate to select among two different types based on a boolean flag.
+    */
+    template <bool flag, class IsTrue, class IsFalse>
+    struct choose;
 
-    //         template<typename X>
-    //         static auto check(X const& x) -> decltype(operator<<(os, x));
+    template <class IsTrue, class IsFalse>
+    struct choose<true, IsTrue, IsFalse> {
+        using type =  IsTrue;
+    };
 
-    //         static substitution_failure check(...);
-        
-    //     public:
-    //         using type = decltype(check(std::declval<T>()));
-    // };
+    template <class IsTrue, class IsFalse>
+    struct choose<false, IsTrue, IsFalse> {
+        using type = IsFalse;
+    };
 
-    // template<typename T>
-    // struct is_printable: substitution_succeeded<typename get_print<T>::type>{};
 
-    // template<typename T>
-    // constexpr bool is_printable_v(){
-    //     return is_printable<T>::value;
-    // }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        Container Concepts
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    /*!
+     * \brief Type that as a resize function
+     */
+    template<class T>
+    concept Resizable = requires(T container)
+    {
+        container.resize(std::size_t{0});
+    };
+
+    /*!
+     * \brief Type that has size, begin and end functions
+     */
+    template<class T>
+    concept Iterable = requires(T container)
+    {
+        container.begin();
+        container.end();
+        container.size();
+    };
+
+    /*!
+     * \brief Type that has size, begin and end functions
+     */
+    template<class T, class U>
+    concept Convertible = std::convertible_to<typename T::value_type,U>;
+
+    /*!
+     * \brief Container that has size fixed to N
+     */
+    template<class T, size_t N>
+    concept Sized = (std::tuple_size<T>::value==N);    
+
+    /*!
+     * \brief concept for a resizeable container, with elements convertible to U and iterators
+     */
+    template<class T, class U>
+    concept  ResizeableTypedContainer = Iterable<T> && Resizable<T> && Convertible<T,U>;
+
+    /*!
+     * \brief concept for a fixed legnth container, with N elements convertible to U and iterators
+     */
+    template<class T, class U, size_t N>
+    concept SizedTypedContainer = Iterable<T> && !Resizable<T> && Convertible<T,U> && Sized<T,N>;
+
+
+
+
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            Printable
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
 
 } //namespace assert
 

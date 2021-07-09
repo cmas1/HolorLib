@@ -38,7 +38,7 @@ namespace impl{
 
 
     /*!
-    * \brief function to select among two different types based on a boolean flag.
+    * \brief predicate to select among two different types based on a boolean flag.
     */
     template <bool flag, class IsTrue, class IsFalse>
     struct choose;
@@ -53,6 +53,44 @@ namespace impl{
         using type = IsFalse;
     };
 
+
+
+    /*!
+     * \brief resizable concept
+     */
+    template<class T>
+    concept Resizable = requires(T container)
+    {
+        container.resize(std::size_t{0});
+    };
+
+
+    /*!
+     * \brief concept for a container
+     */
+    template<class T>
+    concept Container = requires(T container)
+    {
+        container.begin();
+        container.end();
+        // container.cbegin();
+        // container.cend();
+        container.size();
+    };
+
+
+    /*!
+     * \brief concept for a fixed length (at compile-time) container
+     */
+    template<class T>
+    concept FixedArray = Container<T> && !Resizable<T>;
+
+    /*!
+     * \brief concept for a variable length (not fixed at compile-time) container
+     */
+    template<class T>
+    concept VariableArray = Container<T> && Resizable<T>;
+    
 
 } //namespace impl
 } //namespace holor

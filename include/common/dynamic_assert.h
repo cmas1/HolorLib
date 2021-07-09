@@ -47,8 +47,7 @@ namespace assert{
 enum AssertionLevel{
     no_checks = 0,
     release = 1,
-    internal = 2,
-    debug = 3,
+    debug = 2
 };
 
 
@@ -62,8 +61,8 @@ constexpr bool assertion_level(int n){
     return (n <= current_level);
 }
 
-
-template<bool cond = assertion_level(default_level), typename Exception = holor::exception::HolorInvalidArgument>
+//TODO: check that there is no computational overhead when cond is false
+template<bool cond = assertion_level(default_level), typename Exception = holor::exception::HolorRuntimeError>
 void dynamic_assert(bool assertion, const std::string& message = "Dynamic assertion failed."){
     if (assertion){
         return;
@@ -81,18 +80,6 @@ void dynamic_assert<false, holor::exception::HolorRuntimeError>(bool, const std:
 // If condition is false (the assertion level is higher than the current level chosen) do nothing
 template<>
 void dynamic_assert<false, holor::exception::HolorInvalidArgument>(bool, const std::string&){}
-
-
-
-// template<typename Exception = holor::exception::HolorRuntimeError>
-// void dynamic_assert(bool assertion, const std::string& message = "Dynamic assertion failed."){
-//     if (assertion){
-//         return;
-//     } else {
-//         throw Exception(message);
-//     }
-// }
-
 
 
 

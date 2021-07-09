@@ -27,6 +27,7 @@
 #include <ranges>
 #include <algorithm>
 
+#include "../../include/common/static_assert.h"
 
 
 using namespace holor;
@@ -34,7 +35,7 @@ using namespace holor;
 
 int main(){
 
-    Layout<2> A{{2,3},0};
+    Layout<2> A{std::vector<int>{2,3}};
     std::cout << "A:\nlengths = [" << A.lengths()[0] << ", " << A.lengths()[1] << "]\n";
     std::cout << "strides = [" << A.strides()[0] << ", " << A.strides()[1] << "]\n";
     std::cout << "offset = " << A.offset() << "\n\n";
@@ -81,6 +82,14 @@ int main(){
     std::cout << "offset = " << F.offset() << "\n";
     std::cout << "dimensions = " << F.dimensions() << "\n\n";
 
+
+
+    Layout<2> AAA{std::array<int,2>{2,3}};
+    Layout<3> BBB{std::vector<int>{2,3,5}};
+    Layout<2> CCC(2,3);
+    std::cout << "CCC:\nlengths = [" << CCC.lengths()[0] << ", " << CCC.lengths()[1] << "]\n";
+    std::cout << "strides = [" << CCC.strides()[0] << ", " << CCC.strides()[1] << "]\n";
+    std::cout << "offset = " << CCC.offset() << "\n\n";
 
     return 0;
 }

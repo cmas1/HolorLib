@@ -46,5 +46,9 @@ int main(){
     std::cout << "pluto(1,{1,2}) = " << pluto(1,range(1,2)) << "\n\n";
     std::cout << "pluto({0,1},{1,2}) = " << pluto(range{0,1}, range(1,2)) << "\n\n";
 
+    Holor<int,3> topolino;
+    auto topo_lengths = topolino.lengths();
+    std::cout << topo_lengths[0] << ", " << topo_lengths[1] << ", " << topo_lengths[2] << "\n\n";
+
      return 0;
 }

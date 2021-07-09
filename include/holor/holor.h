@@ -25,6 +25,8 @@
 #ifndef HOLOR_H
 #define HOLOR_H
 
+
+//TODO: check all includes
 #include <cstddef>
 #include <vector>
 #include <type_traits>
@@ -50,7 +52,6 @@ namespace holor{
  * 
  * \tparam N the number of dimensions of the container. For example, for a matrix-like container it is `N-2`.
  * \tparam T the type of the elements stored in the container.
- * //TODO: explain better what is a tensor (number of dimensions, extensions, slicing, access)
  */
 template<typename T, size_t N>
 class Holor{   
@@ -70,52 +71,13 @@ class Holor{
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        /*!
-         * \brief Default constructor.
-         * 
-         * \return A Holor with zero elements on each dimension
-         */
-        Holor() = default;
-
-
-        /*!
-         * \brief Default move constructor.
-         * 
-         * \return A Holor equal to the argument
-         */
-        Holor(Holor&&) = default;
-
-
-        /*!
-         * \brief Default copy constructor.
-         * 
-         * \return A Holor equal to the argument
-         */
-        Holor(const Holor&) = default;
-
-
-        /*!
-         * \brief Default move assignement.
-         * 
-         * \return A Holor equal to the argument
-         */
-        Holor& operator=(Holor&&) = default;
-
-
-        /*!
-         * \brief Default copy assignement.
-         * 
-         * \return A Holor equal to the argument
-         */
-        Holor& operator=(const Holor&) = default;
-
-
-        /*!
-         *  \brief Default destructor.
-         */
-        ~Holor() = default;
-
-
+        Holor() = default;                          ///< \brief default constructor with zero elements in every dimension
+        Holor(Holor&&) = default;                   ///< \brief default move constructor
+        Holor(const Holor&) = default;              ///< \brief default copy constructor
+        Holor& operator=(Holor&&) = default;        ///< \brief default move assignment
+        Holor& operator=(const Holor&) = default;   ///< \brief default copy assignment
+        ~Holor() = default;                         ///< \brief default destructor
+    
         //TODO:  Do we need a constructor from lengths, perhaps with default initialization? Can we implement it using ranges?
         /*!
          * \brief Constructor that creates a Holor by specifying the length of each dimension
@@ -137,7 +99,7 @@ class Holor{
 
 
         /*!
-         * \brief Constructor from a HolorRef object
+         * \brief Constructor from a HolorRef object. Only copy is allowed, because the HolorRef does not own the objects it contains.
          * \param ref a HolorRef object
          * \return a Holor
          */

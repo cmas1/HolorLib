@@ -398,7 +398,7 @@ class HolorRef{
          * \param layout layout that indicates how the elements stored in the location pointer by dataptr can be indexed
          * \return a HolorRef
          */
-        HolorRef(T* dataptr, Layout<N> layout): layout_{layout}, dataptr_{dataptr}{}
+        HolorRef(T* dataptr, const Layout<N>& layout): layout_{layout}, dataptr_{dataptr}{}
 
 
         //TODO:  Should add a constructor from a datapointer plus lengths. Can we implement it using ranges?

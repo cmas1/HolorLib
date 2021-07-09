@@ -35,6 +35,7 @@
 #include "../common/static_assert.h"
 #include "../common/dynamic_assert.h"
 
+#include <iostream>
 
 namespace holor{
 
@@ -183,96 +184,56 @@ class Layout{
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     ALIASES
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        static constexpr size_t order = N; ///! \brief number of dimensions in the reference container 
+        static constexpr size_t order = N; ///< \brief number of dimensions in the reference container 
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/    
-        /*!
-         * \brief Default constructor that creates an empty layout with no elements
-         */
-        Layout():size_{0}, offset_{0}{};
-
-
-        /*!
-         * \brief Copy constructor
-         * \param layout Layout to be copied
-         * \return a copy of the input Layout
-         */
-        Layout(const Layout<N>& layout) = default;
-
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ 
+        Layout():size_{0}, offset_{0}{};                            ///< \brief Default constructor that creates an empty layout with no elements
+        Layout(const Layout<N>& layout) = default;                  ///< \brief default copy constructor
+        Layout<N>& operator=(const Layout<N>& layout) = default;    ///< \brief default copy assignment
+        Layout(Layout<N>&& layout) = default;                       ///< \brief default move constructor
+        Layout<N>& operator=(Layout<N>&& layout) = default;         ///< \brief default move assignment
 
         /*!
-         * \brief Copy assignment
-         * \param layout Layout to be copied
-         * \return a copy of the input Layout
-         */
-        Layout<N>& operator=(const Layout<N>& layout) = default;
-
-
-        /*!
-         * \brief Move constructor
-         * \param layout Layout to be moved
-         * \return a Layout moved from the input
-         */
-        Layout(Layout<N>&& layout) = default;
-
-
-        /*!
-         * \brief Move assignment
-         * \param layout Layout to be moved
-         * \return a Layout moved from the input
-         */
-        Layout<N>& operator=(Layout<N>&& layout) = default;
-
-
-        /*!
-         * \brief Constructor of a layout from an offset and an array of lengths
-         * \param lengths array containing the number of elements along each dimension of the layout
-         * \param offset index of the first element of the layout in the original Holor container (default is 0)
+         * \brief Constructor of a layout from a container of lengths with compile-time size equal to `N` (e.g., `std::array<size_t,N>`).
+         * \param lengths container of the number of elements along each dimension of the layout
          * \return a Layout
          */
-        Layout(const std::array<size_t,N>& lengths, size_t offset=0): offset_{offset}, lengths_{lengths} {
+        template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
+        explicit Layout(Container lengths) {
+            offset_ = 0;
+            std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
             update_strides_size();
         };
 
-
         /*!
-         * \brief Constructor of a layout from an offset and an array of lengths
-         * \param lengths array containing the number of elements along each dimension of the layout
-         * \param offset index of the first element of the layout in the original Holor container
+         * \brief Constructor of a layout from a resizeable container of lengths with size equal to `N` (e.g., `std::vector<size_t>`). The dimensionality check on the lenght of the container is done at runtime. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to AssertionLevel::no_checks to exclude this check.
+         * \param lengths container of the number of elements along each dimension of the layout
          * \return a Layout
          */
-        Layout(std::array<size_t,N>&& lengths, size_t offset=0): offset_{offset}, lengths_{lengths} {
+        template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
+        explicit Layout(Container lengths) {
+            assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
+            offset_ = 0;
+            std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
             update_strides_size();
         };
 
-
         /*!
-         * \brief Constructor of a layout from an offset, an array of lengths and an array of strides
-         * \param lengths array containing the number of elements along each dimension of the layout
-         * \param strides array containing the strides along each dimension of the layout
-         * \param offset index of the first element of the layout in the original Holor container (default is 0)
+         * \brief Constructor of a variadic template of lengths. For example, `Layout<N> my_layout(5,2)` creates a Layout for a container with 5 elements in the first dimension and 2 elements in the second dimension.
+         * \tparam Lengths parameter pack of lengths. There must be `N` arguments in the pack.   
+         * \param lengths variadic arguments denoting the number of elements along each dimension of the container.
          * \return a Layout
          */
-        Layout(const std::array<size_t,N>& lengths, const std::array<size_t,N>& strides, size_t offset=0): offset_{offset}, lengths_{lengths}, strides_{strides} {
-            update_size();
-        };
-
-
-        /*!
-         * \brief Constructor of a layout from an offset and an array of lengths
-         * \param lengths array containing the number of elements along each dimension of the layout
-         * \param strides array containing the strides along each dimension of the layout
-         * \param offset index of the first element of the layout in the original Holor container
-         * \return a Layout
-         */
-        Layout(std::array<size_t,N>&& lengths, std::array<size_t,N>&& strides, size_t offset): offset_{offset}, lengths_{lengths}, strides_{strides} {
-            update_size();
-        };
-
-       
+        template<typename... Lengths> requires ((sizeof...(Lengths)==N) )
+        explicit Layout(Lengths&&... lengths) {
+            offset_ = 0;
+            single_length_copy<0>(std::forward<Lengths>(lengths)...);
+            update_strides_size();
+        }
+      
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     GET/SET FUNCTIONS
@@ -331,14 +292,6 @@ class Layout{
         std::array<size_t,N> strides() const{
             return strides_;
         }
-
-        // /*!
-        //  * \brief Set the lengths of the layout, without updating the strides
-        //  * \param lengths are the lengths to be set
-        //  */
-        // void set_lengths(const std::array<size_t,N>& lengths) {
-        //     lengths_ = lengths;
-        // }
 
         /*!
          * \brief Set the lengths of the layout, updating also the strides
@@ -539,6 +492,20 @@ class Layout{
         template<size_t M, SingleIndex FirstArg>
         size_t single_element_indexing_helper(FirstArg first) const{
             return first * strides_[M];
+        }
+
+
+
+        //TODO: write comments
+        template<size_t M, typename FirstLength, typename... Lengths> requires (std::convertible_to<FirstLength, size_t>)
+        void single_length_copy(FirstLength arg, Lengths&&... other){
+            lengths_[M] = arg;
+            single_length_copy<M+1>(std::forward<Lengths>(other)...);
+        }
+
+        template<size_t M, typename FirstLength> requires (std::convertible_to<FirstLength, size_t>)
+        void single_length_copy(FirstLength arg){
+            lengths_[M] = arg;
         }
 
 }; //class Layout
