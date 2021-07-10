@@ -255,13 +255,6 @@ class Layout{
         }
 
         /*!
-         * \brief updates the size of the layout. This is only useful when the layout is modified using a set_lengths or set_length function.
-         */
-        void update_size(){
-            size_ = std::accumulate(lengths_.begin(), lengths_.end(), 1, std::multiplies<size_t>());
-        }
-
-        /*!
          * \brief Get the offset of the layout. This is a const function.
          * \return the offset (with respect to the layout Holor container) of the layout
          */
@@ -338,6 +331,13 @@ class Layout{
             offset_ = offset;
         }
 
+        //TODO: this function should not be in the public interface
+        /*!
+         * \brief updates the size of the layout. This is only useful when the layout is modified using a set_lengths or set_length function.
+         */
+        void update_size(){
+            size_ = std::accumulate(lengths_.begin(), lengths_.end(), 1, std::multiplies<size_t>());
+        }
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             INDEXING AND SLICING
@@ -494,13 +494,18 @@ class Layout{
             return first * strides_[M];
         }
 
-
-
-        //TODO: write comments
-        template<size_t M, typename FirstLength, typename... Lengths> requires (std::convertible_to<FirstLength, size_t>)
-        void single_length_copy(FirstLength arg, Lengths&&... other){
+        /*!
+         * \brief Helper function that is used to construct a Layout from a parameter pack of sizes that specify the number of elements along each dimension
+         * \tparam M unsigned integer used to unpack the parameter pack, one element at a time, and copy into `lenghts_`
+         * \tparam FirstLength first element of the parameter pack
+         * \tparam OtherLengths remaining elements of the parameter pack
+         * \param arg is the first dimension in the parameter pack
+         * \param other remaining dimensions in the parameter pack
+         */
+        template<size_t M, typename FirstLength, typename... OtherLengths> requires (std::convertible_to<FirstLength, size_t>)
+        void single_length_copy(FirstLength arg, OtherLengths&&... other){
             lengths_[M] = arg;
-            single_length_copy<M+1>(std::forward<Lengths>(other)...);
+            single_length_copy<M+1>(std::forward<OtherLengths>(other)...);
         }
 
         template<size_t M, typename FirstLength> requires (std::convertible_to<FirstLength, size_t>)
