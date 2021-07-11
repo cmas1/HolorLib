@@ -222,7 +222,7 @@ class Layout{
         };
 
         /*!
-         * \brief Constructor of a variadic template of lengths. For example, `Layout<N> my_layout(5,2)` creates a Layout for a container with 5 elements in the first dimension and 2 elements in the second dimension.
+         * \brief Constructor from a variadic template of lengths. For example, `Layout<N> my_layout(5,2)` creates a Layout for a container with 5 elements in the first dimension and 2 elements in the second dimension.
          * \tparam Lengths parameter pack of lengths. There must be `N` arguments in the pack.   
          * \param lengths variadic arguments denoting the number of elements along each dimension of the container.
          * \return a Layout
@@ -239,10 +239,10 @@ class Layout{
                                     GET/SET FUNCTIONS
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         /*!
-         * \brief Get the number of dimensions of the layout
+         * \brief Get the number of dimensions of the layout. This is a const function.
          * \return the number `N` of dimensions of the layout.
          */
-        constexpr size_t dimensions(){
+        constexpr size_t dimensions() const{
             return N;
         }
 
