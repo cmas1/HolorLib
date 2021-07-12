@@ -11,6 +11,7 @@ layout.h:
 indexes.h:
     ☐ //TODO: So far the step in range is not supported
     ☐ //TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
+    ☐ //TODO: change dependencies in layout.h to use this header, and in layout.h add dynamic_checks on indexes (those that cannot be done in indexes.h)
 
 holor.h:
     ☐ Finish implementing constructors and assignment operators
