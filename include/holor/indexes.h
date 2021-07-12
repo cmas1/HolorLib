@@ -28,6 +28,7 @@
 #include <concepts>
 
 #include "../common/dynamic_assert.h"
+#include "../common/static_assert.h"
 
 namespace holor{
 
@@ -53,9 +54,7 @@ struct range{
      * \param step step between two elements in the range. Defaults to 1.
      */
     range(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
-        assert::dynamic_assert( (start>=0) && (start>=0) , EXCEPTION_MESSAGE("Wrong number of elements!"));
-        // assert::dynamic_assert<assertion_level(assert::AssertionLevel::internal)>( (end>start)&&(start>=0) EXCEPTION_MESSAGE("Invalid range") );
-        // TODO: implement checks using dynamic asserts. it must be end > start, start >=0, end <= length[dim], step >=1
+        assert::dynamic_assert( (start>=0) && (end>start) && (step>0) , EXCEPTION_MESSAGE("Invalid range!"));
         // TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
     }        
 };
@@ -83,6 +82,7 @@ concept RangeIndex = std::convertible_to<T, range>;
  */
 template<typename T>
 concept Index = SingleIndex<T> || RangeIndex<T>;
+
 
 
 

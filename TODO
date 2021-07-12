@@ -9,9 +9,8 @@ layout.h:
     ☐ //NOTE: check includes
 
 indexes.h:
-    ☐ //TODO: So far the step in range is not supported
+    ☐ //TODO: So far the step in range is not supported 
     ☐ //TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
-    ☐ //TODO: change dependencies in layout.h to use this header, and in layout.h add dynamic_checks on indexes (those that cannot be done in indexes.h)
 
 holor.h:
     ☐ Finish implementing constructors and assignment operators
@@ -21,8 +20,7 @@ holor_concepts.h:
     ☐ Concept HolorLayout
 
 static_assert.h:
-    ☐ //TODO: move things to common_predicates.h and common_concepts.h? Or perhaps rename
-
-
+    ☐ //TODO: reorder this file, common_concepts and common_predicates.
 Archive:
+  ✔ //TODO: change dependencies in layout.h to use this header, and in layout.h add dynamic_checks on indexes (those that cannot be done in indexes.h) @done(21-07-12 20:00) @project(indexes.h)
   ✔ Templatize `dim`: Right now, the recursive slicing operation on a layout (slice_dimension, slice_helper) take a size_t dim as an argument. Conceptually, it would make sense to have it as a template parameter, to separate the indexing argument from the dimension. Moreover, in slice_helper `dim` is used to unwind the recursive calls to the function, therefore it would be better set as a template parameter. Using a template parameter would also make it possible to translate all the checks on dim as compile time requiurements, rather than dynamic assertions. The problem is that simply changing it to a template parameter makes slice_helper not compile anymore @done(21-04-30 11:18) @project(layout.h)

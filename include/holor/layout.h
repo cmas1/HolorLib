@@ -32,6 +32,7 @@
 #include <ranges>
 #include <algorithm>
 
+#include "./indexes.h"
 #include "../common/static_assert.h"
 #include "../common/dynamic_assert.h"
 
@@ -39,71 +40,16 @@
 namespace holor{
 
 
-/*==============================================================================================
-                        MONO-DIMENSIONAL RANGE FOR SLICING LAYOUTS
-===============================================================================================*/
-/*!
- * \brief Structure that represents a range to index a slice of a Holor container. 
- * \b Example: Assume to have a 1D Holor container of size 7. To select the slice that takes the elements from the second to the fourth, we 
- * can index the holor using `range{1, 3}` to create the slice.
- * \b Note: `range{1, 5, 1}` is equivalent to `1:5` in Matlab.
- */
-struct range{
-    size_t start_; /*! beginning of the range */
-    size_t end_; /*! end of the range (this element is included in the range) */
-    size_t step_; /*! number of steps between elements. \b Example: step = 1, the elements in the range are contiguous; step = 2, the range skips every other element. */
-
-    /*!
-     * \brief Constructor with checks on the arguments
-     * \param start beginning of the range
-     * \param end end (last element) of the range
-     * \param step step between two elements in the range. Defaults to 1.
-     */
-    range(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
-        // assert::dynamic_assert<assertion_level(assert::AssertionLevel::internal)>( (end>start)&&(start>=0) EXCEPTION_MESSAGE("Invalid range") );
-        // TODO: implement checks using dynamic asserts. it must be end > start, start >=0, end <= length[dim], step >=1
-        // TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
-    }        
-};
-
-
-        
-
 /*================================================================================================
-                                CONCEPTS AND PREDICATES
+                        LAYOUT CONCEPT
 ================================================================================================*/
-//TODO: move to layout_concepts.h or indexing.h (this also includes trhe struct range)
-/*!
- * \brief concept that represents a type that can be used to index a single element of a layout
- */
+//WIP====================================
 template<typename T>
-concept SingleIndex = std::is_integral_v<T> && std::convertible_to<T, size_t>;
-
-/*!
- * \brief concept that represents a type that can be used to index a range of a layout
- */
-template<typename T>
-concept RangeIndex = std::convertible_to<T, range>;
-
-/*!
- * \brief concept that represents a type that can be used to index a layout
- */
-template<typename T>
-concept Index = SingleIndex<T> || RangeIndex<T>;
+concept LayoutType = true;
+//NOTE: it must have indexing operations, it must have a fixed size, constructors from lengths, ...
+//WIP====================================
 
 
-
-namespace impl{
-    /*! 
-    * \brief predicate used to test that the arguments of an indexing operation are actual indexes and at least one of them is a RangeIndex
-    * \tparam Args pack of indices to be verified
-    * \return true if at least one of the indices is a RangeIndex
-    */
-    template<typename... Args>
-    constexpr bool range_indexing(){
-        return assert::all(Index<Args>...) && assert::some(RangeIndex<Args>...);
-    }
-}
 
 
 
@@ -113,9 +59,10 @@ namespace impl{
 template<size_t N>
 class Layout;
  
-
 namespace impl{
 
+    //IMPROVE==========================================================================================================================================
+    //IMPROVE: the slice_dimension operation is not very efficient, because it iterates over all dimensions and each time it returns a new layout
     //TODO: replace the template Layout with a proper concept
     /*!
      * \brief helper functor that is used by `Layout<N>::operator()(Args&&... args)` to index a slice of a Layout. The functor implements a recursive algorithm that indexes a dimension at a time, until they are all processed. Each iteration produces a new, subLayout.
@@ -132,10 +79,8 @@ namespace impl{
         template<typename Layout, Index FirstArg, typename... OtherArgs>
         auto operator()(Layout layout, FirstArg&& first, OtherArgs&&... other) const{
             if constexpr(RangeIndex<FirstArg>){
-                //TODO: add dynamick check on the feasibility of the range
                 return slice_helper<Dim+1>()(layout.template slice_dimension<Dim>(std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
             }else{
-                //TODO: add dynamick check on the feasibility of the index
                 return slice_helper<Dim>()(layout.template slice_dimension<Dim>(std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
             }
         }
@@ -152,13 +97,12 @@ namespace impl{
         }
     };
 }
-// TODO: each setp in the recursion implemented by the functor `slice_helper` creates a new Layout. Can we avoid creating all these intermediate objects, perhaps using coroutines?
 
 
 
 
 /*================================================================================================
-                                    Layout Class
+                                    LAYOUT CLASS
 ================================================================================================*/
 /*!
  * \brief Class that represents the contiguous memory layout of a Holor container or a Slice of a Holor.
@@ -369,7 +313,7 @@ class Layout{
         //IMPROVE==========================================================================================================================================
         //IMPROVE: the slice_dimension operation is not very efficient, because it iterates over all dimensions and each time it returns a new layout. We can look at different things to improve this:
         //IMPROVE: 1) Coroutines, although it does not look an ideal solution
-        //IMPROVE: 2) Templetized operators, but this is not easily scalable
+        //IMPROVE: 2) Templatized operators, but this is not easily scalable
         //IMPROVE: 3) We could use ranges, which support lazy evaluation, to operate on the lengths_ and size_ arrays. So that basically we can Chain operation on these ranges and, only at the end, after all arguments have been processed, create a Layout of the final size that evaluates these operations and outputs the resulting Layout.
         /*!
          * \brief Function for indexing a single dimension of the Layout
@@ -447,6 +391,7 @@ class Layout{
          */
         template<size_t M, SingleIndex FirstArg, SingleIndex... OtherArgs>
         size_t single_element_indexing_helper(FirstArg first, OtherArgs&&... other) const{
+            //TODO: dynamic check on singleindex feasibility
             return first * strides_[M] + single_element_indexing_helper<M+1>(std::forward<OtherArgs>(other)...);
         }
 
@@ -455,6 +400,7 @@ class Layout{
          */
         template<size_t M, SingleIndex FirstArg>
         size_t single_element_indexing_helper(FirstArg first) const{
+            //TODO: dynamic check on singleindex feasibility
             return first * strides_[M];
         }
 
@@ -497,6 +443,7 @@ class Layout{
 template<>
 template<SingleIndex Index> 
 size_t Layout<1>::operator()(Index i) const{
+    //TODO: dynamic check on singleindex feasibility
     return offset_ + i*strides_[0];
 }
 
@@ -512,6 +459,7 @@ size_t Layout<1>::operator()(Index i) const{
 template<>
 template<SingleIndex Index> 
 size_t Layout<2>::operator()(Index i, Index j) const{
+    //TODO: dynamic check on singleindex feasibility
     return offset_ + i*strides_[0] + j*strides_[1];
 }
 
@@ -529,6 +477,7 @@ size_t Layout<2>::operator()(Index i, Index j) const{
 template<>
 template<SingleIndex Index> 
 size_t Layout<3>::operator()(Index i, Index j, Index k) const{
+    //TODO: dynamic check on singleindex feasibility
     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
 }
 
