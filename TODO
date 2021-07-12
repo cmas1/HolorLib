@@ -1,15 +1,16 @@
-☐ Now the slicing functions (including row, col, etc.) reduce the dimension of the container. It could be useful to have also a version that retains the dimensions of the container (so that a column has lenghts [1, c] rather than [c])
 ☐ We need to allow to assign HolorRef elements from a nested_initializer, e.g. to do A.row(0) = {1,2,3};
 
-
 layout.h:
-    There are several minor things and few main things that should be improved
-    ✔ Templatize `dim`: Right now, the recursive slicing operation on a layout (slice_dimension, slice_helper) take a size_t dim as an argument. Conceptually, it would make sense to have it as a template parameter, to separate the indexing argument from the dimension. Moreover, in slice_helper `dim` is used to unwind the recursive calls to the function, therefore it would be better set as a template parameter. Using a template parameter would also make it possible to translate all the checks on dim as compile time requiurements, rather than dynamic assertions. The problem is that simply changing it to a template parameter makes slice_helper not compile anymore @done(21-04-30 11:18)
-    ☐ Initializing lengths and strides from ranges: right now, we only initialize lengths and strides from std::arrays. However, in the function `Layout<N-1> slice_dimension(size_t dim, size_t num) const` we need to copy lengths and strides (all elements except one) from a `Layout<N>` to a `Layout<N-1>`. To do this, we had to add two functions `set_length` and `set_stride` to the public interface of the class, even though they shouldn't be part of the interface. Perhaps, these functions and the for loop used for the copy could be removed using ranges. For this purpose, we need to 1) create a std::array from a range and, 2) find a way to create  subrange where the i-th element of another range is removed.
-    ☐ When slicing a Layout, each step of the recursion returns a subLayout. Is it possible to make it more efficient, avoiding the creation of all these intermediate objects? Can coroutines help here? NOPE, coroutines do not support auto return types
-    ☐ Need to allow the use of `constexpr` as much as possible (methods, constructors, ...), in order to allow the possibility of using the library at compile time.
-    ☐ Add const methods, where needed/possible
+    ☐ //TODO: Layout concept?
+    ☐ //TODO: improve description, perhaps with images
+    ☐ //IMPROVEMENT: When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This seems inefficient. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation.
+    ☐ //TODO: Now the slicing function reduces the dimension of the Layout (and thus of the holor container). It could be useful to have also a version that retains the dimensions of the Layout (and thus of container,  so that for example a slicing a column from a matrix has lenghts [1, c] rather than [c])
+    ☐ //TODO: add specialization of element indexing for a Layout<4> (used in four-dimensional tensors)
+    ☐ //NOTE: check includes
 
+indexes.h:
+    ☐ //TODO: So far the step in range is not supported
+    ☐ //TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
 
 holor.h:
     ☐ Finish implementing constructors and assignment operators
@@ -18,5 +19,9 @@ holor_concepts.h:
     ☐ Concept HolorContainer
     ☐ Concept HolorLayout
 
+static_assert.h:
+    ☐ //TODO: move things to common_predicates.h and common_concepts.h? Or perhaps rename
 
 
+Archive:
+  ✔ Templatize `dim`: Right now, the recursive slicing operation on a layout (slice_dimension, slice_helper) take a size_t dim as an argument. Conceptually, it would make sense to have it as a template parameter, to separate the indexing argument from the dimension. Moreover, in slice_helper `dim` is used to unwind the recursive calls to the function, therefore it would be better set as a template parameter. Using a template parameter would also make it possible to translate all the checks on dim as compile time requiurements, rather than dynamic assertions. The problem is that simply changing it to a template parameter makes slice_helper not compile anymore @done(21-04-30 11:18) @project(layout.h)

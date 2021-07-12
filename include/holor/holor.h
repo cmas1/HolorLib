@@ -135,8 +135,9 @@ class Holor{
          * \return a Holor containing the elements in the list
          */
         Holor(holor::nested_list<T,N> init){
-            layout_.set_offset(0);
-            layout_.set_lengths(impl::derive_lengths<N>(init));
+            layout_ = Layout<N>(impl::derive_lengths<N>(init));
+            // layout_.set_offset(0);
+            // layout_.set_lengths(impl::derive_lengths<N>(init));
             data_.reserve(layout_.size());
             impl::insert_flat(init, data_);
             // TODO: dynamic check that the  number of elements in the container matches the extents?

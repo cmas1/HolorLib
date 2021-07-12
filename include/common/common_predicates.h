@@ -22,8 +22,8 @@
 
 
 
-#ifndef PREDICATES_H
-#define PREDICATES_H
+#ifndef COMMON_PREDICATES_H
+#define COMMON_PREDICATES_H
 
 
 #include <type_traits>
@@ -95,4 +95,4 @@ namespace impl{
 } //namespace impl
 } //namespace holor
 
-#endif // PREDICATES_H
+#endif // COMMON_PREDICATES_H

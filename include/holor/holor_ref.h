@@ -32,7 +32,7 @@
 
 #include "layout.h"
 #include "initializer.h"
-#include "../common/predicates.h"
+#include "../common/common_predicates.h"
 
 
 namespace holor{
