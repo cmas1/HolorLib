@@ -44,6 +44,9 @@ namespace holor{
                         LAYOUT CONCEPT
 ================================================================================================*/
 //WIP====================================
+/*!
+ * \brief 
+ */
 template<typename T>
 concept LayoutType = true;
 //NOTE: it must have indexing operations, it must have a fixed size, constructors from lengths, ...
@@ -391,7 +394,7 @@ class Layout{
          */
         template<size_t M, SingleIndex FirstArg, SingleIndex... OtherArgs>
         size_t single_element_indexing_helper(FirstArg first, OtherArgs&&... other) const{
-            //TODO: dynamic check on singleindex feasibility
+            assert::dynamic_assert(first>=0 && first<lengths_[M], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
             return first * strides_[M] + single_element_indexing_helper<M+1>(std::forward<OtherArgs>(other)...);
         }
 
@@ -400,7 +403,7 @@ class Layout{
          */
         template<size_t M, SingleIndex FirstArg>
         size_t single_element_indexing_helper(FirstArg first) const{
-            //TODO: dynamic check on singleindex feasibility
+            assert::dynamic_assert(first>=0 && first<lengths_[M], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
             return first * strides_[M];
         }
 
