@@ -39,30 +39,6 @@
 
 namespace holor{
 
-
-/*================================================================================================
-                        LAYOUT CONCEPT
-================================================================================================*/
-//WIP====================================
-/*!
- * \brief 
- */
-template<typename T>
-concept LayoutType = true;
-//NOTE: it must have indexing operations, it must have a fixed size, constructors from lengths, ...
-// requires (LayoutType layout)
-//indexing operations => layout()
-//fixed size =>
-
-
-// template<size_t N, typename... T>
-// concept IndexesPack = (sizeof...(T)== N) && SingleIndex<T>;
-//WIP====================================
-
-
-
-
-
 /*================================================================================================
                                     HELPER FUNCTIONS FOR SLICING A LAYOUT
 ================================================================================================*/
@@ -73,7 +49,6 @@ namespace impl{
 
     //IMPROVE==========================================================================================================================================
     //IMPROVE: the slice_dimension operation is not very efficient, because it iterates over all dimensions and each time it returns a new layout
-    //TODO: replace the template Layout with a proper concept
     /*!
      * \brief helper functor that is used by `Layout<N>::operator()(Args&&... args)` to index a slice of a Layout. The functor implements a recursive algorithm that indexes a dimension at a time, until they are all processed. Each iteration produces a new, subLayout.
      */
@@ -117,8 +92,8 @@ namespace impl{
 /*!
  * \brief Class that represents the contiguous memory layout of a Holor container or a Slice of a Holor.
  *
- * The Layout class contains the information for indexing the contiguous memory where the elements of the Holor or Slice are stored.
- * It uses the idea of generalized layouts from the standard library, i.e., it is based on the fact that the elements of a Holor or Slice
+ * The Layout class contains the information for indexing the contiguous memory where the elements of the Holor or HolorRef are stored.
+ * It uses the idea of generalized layouts from the standard library, i.e., it is based on the fact that the elements of a Holor or HolorRef
  * are stored as a 1D data sequence following a row-major representation.
  * 
  * A layout contains three fundamental information: 
@@ -126,15 +101,27 @@ namespace impl{
  *      - The \b lengths are the numbers of elements along every dimension of the layout.
  *      - The \b strides are the distances in the 1D data sequence between successive elements in individual dimensions of the layout.
  *  For a Layout with `N` dimensions, both the length array and the stride array must be size `N`.
+ * A Layout supports two fundamental operations:
+ * \verbatim embed:rst:leading-asterisk //TODO: move this more discursive part with images directly in the rst file of the documentation
+ * * Indexing a single element: determine the index in memory of a single element in the container;
+ *      *Example:* consider the 3-dimensional Holor container in Figure.
+ *      .. figure:: ../../docs/doxygen/images/tensorslice_1.jpg
+ *          :alt: layout example
+ *          :width: 400
+ *      In this example the Holor container is a 3-dimensional tensor of floating point numbers. These numbers are stored contiguously in a 1D memory, using the row-major paradigm. In this case, the Layout that describes the location of the elements in memory has offset=0, lengths = [3,3,3] and strides = [9, 3, 1]. The location in the 1D memory (index) of the element at row i, column j and depth k is computed as 
+ *      ..math::
+ *          index = offset + i \cdot strides[0] + j \cdot strides [1] + k \cdot strides [2]
  * 
- * Given a Holor container with `N` dimensions, the elements of a layout are indexed from the underlying 1D data sequence according to the following formula
- * \f[
- *  index = offset + \sum_{j=0}^{N-1} j \cdot strides[j]
- * \f]
+ * * Indexing a slice of the container: determine a new Layout that provides the information for indexing a subset of elements from the initial container.
+ *  *Example:* consider the 3-dimensional Holor container in Figure.
+ *      .. figure:: ../../docs/doxygen/images/tensorslice_2.jpg
+ *          :alt: layout example
+ *          :width: 400
+ *      In this example the Holor container is a the same as in the previous case, but we index a sub-tensor from the container. The Layout that describes this sub-tensor has offset=12, lengths= and strides= .
+ * \endverbatim
  * 
  * \tparam N is the number of dimensions in the layout
  */
-//TODO: mention that a Layout supports two fundamental operations: accessing an element and slicing
 template<size_t N>
 class Layout{
 
@@ -292,22 +279,20 @@ class Layout{
         }
         
         /*!
-         * \brief Specialization of the function Layout<N>::operator()(Dims&&... dims) for the case when `N=1`, for a more efficient implementation. For the general case Layout<N> this specialization is not defined.
+         * \brief Specialization of the function Layout<N>::operator()(Dims&&... dims) for the case when `N=1, ..., 4`, for a more efficient implementation. For the general case Layout<N> this specialization is not defined.
          */
         template<SingleIndex Index>
         size_t operator()(Index i) const;
 
-        /*!
-         * \brief Specialization of the function Layout<N>::operator()(Dims&&... dims) for the case when `N=2`, for a more efficient implementation. For the general case Layout<N> this specialization is not defined.
-         */
         template<SingleIndex Index>
         size_t operator()(Index x, Index j) const;
 
-        /*!
-         * \brief Specialization of the function Layout<N>::operator()(Dims&&... dims) for the case when `N=3`, for a more efficient implementation. For the general case Layout<N> this specialization is not defined.
-         */
         template<SingleIndex Index>
         size_t operator()(Index x, Index j, Index k) const;
+
+        template<SingleIndex Index>
+        size_t operator()(Index x, Index j, Index k, Index w) const;
+
 
         /*!
          * \brief Function for indexing a slice from the Layout
@@ -460,8 +445,7 @@ size_t Layout<1>::operator()(Index i) const{
 
 /*!
  * \brief Specialization of the function for indexing a single element from Layout with dimension `N=2`
- * \tparam Index1 is the type of the first index
- * \tparam Index2 is the type of the second index
+ * \tparam Index is the type of the indexes
  * \param i is the value of the first index
  * \param j is the value of the second index
  * \return the index of the subscripted element in the Holor
@@ -476,9 +460,7 @@ size_t Layout<2>::operator()(Index i, Index j) const{
 
 /*!
  * \brief Specialization of the function for indexing a single element from Layout with dimension `N=3`
- * \tparam Index1 is the type of the first index
- * \tparam Index2 is the type of the second index
- * \tparam Index3 is the type of the second index
+ * \tparam Index is the type of the indexes
  * \param i is the value of the first 
  * \param j is the value of the second index
  * \param k is the value of the third index
@@ -489,6 +471,23 @@ template<SingleIndex Index>
 size_t Layout<3>::operator()(Index i, Index j, Index k) const{
     assert::dynamic_assert( (i>=0 && i<lengths_[0]) && (j>=0 && j<lengths_[1]) && (k>=0 && k<lengths_[2]), EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
+}
+
+
+/*!
+ * \brief Specialization of the function for indexing a single element from Layout with dimension `N=3`
+ * \tparam Index is the type of the indexes
+ * \param i is the value of the first 
+ * \param j is the value of the second index
+ * \param k is the value of the third index
+ * \param w is the value of the fourth index
+ * \return the index of the subscripted element in the Holor
+ */
+template<>
+template<SingleIndex Index> 
+size_t Layout<4>::operator()(Index i, Index j, Index k, Index w) const{
+    assert::dynamic_assert( (i>=0 && i<lengths_[0]) && (j>=0 && j<lengths_[1]) && (k>=0 && k<lengths_[2]) && (w>=0 && w<lengths_[3]), EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+    return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2] + w*strides_[3];
 }
 
 } //namespace holor

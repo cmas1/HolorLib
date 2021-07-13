@@ -25,7 +25,6 @@
 #define HOLOR_INDEXES_H
 
 #include <cstddef>
-#include <concepts>
 
 #include "../common/dynamic_assert.h"
 #include "../common/static_assert.h"
@@ -92,7 +91,7 @@ namespace impl{
     template<typename... Args>
     constexpr bool range_indexing(){
         return assert::all(Index<Args>...) && assert::some(RangeIndex<Args>...);
-    }
+    };
 }
 
 
