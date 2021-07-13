@@ -263,6 +263,7 @@ class Layout{
             return result;
         }
         
+
         /*!
          * \brief Specialization of the function Layout<N>::operator()(Dims&&... dims) for the case when `N=1, ..., 4`, for a more efficient implementation. For the general case Layout<N> this specialization is not defined.
          */
@@ -280,7 +281,14 @@ class Layout{
 
 
         /*!
-         * \brief Function for indexing a slice from the Layout
+         * \brief Function for indexing a slice from the Layout. Singleton dimensions (dimensions that are reduced to a single element) are removed.
+         + \b Example:
+         * \verbatim embed:rst:leading-asterisk
+         *  .. code::
+         *      using namespace holor;
+         *      Layout<2> my_layout(2,2); //two dimensional Layout describing a 2x2 container
+         *      auto row = my_layout(0, range{0,1}); // This operation compute the Layout corresponding to the first row. The result would is a Layout<1> with lengths = [2];
+         * \endverbatim
          * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
          * \param args parameters pack. Each element of the pack indexes either an element or a range of elements along a dimension of the Layout.
          * \return the Layout containing the indexed range of elements
@@ -291,14 +299,25 @@ class Layout{
         }
 
 
-        //WIP=================
+        /*!
+         * \brief Function for indexing a slice from the Layout, but without removing singleton dimensions (dimensions with a single element).
+         + \b Example:
+         * \verbatim embed:rst:leading-asterisk
+         *  .. code::
+         *      using namespace holor;
+         *      Layout<2> my_layout(2,2); //two dimensional Layout describing a 2x2 container
+         *      auto row = my_layout(0, range{0,1}); // This operation compute the Layout corresponding to the first row. The result would is a Layout<2> with lengths = [1, 2];
+         * \endverbatim
+         * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
+         * \param args parameters pack. Each element of the pack indexes either an element or a range of elements along a dimension of the Layout.
+         * \return the Layout containing the indexed range of elements. In this case the Layout has dimension `N`, i.e. the dimensionality is not reduced.
+         */
         template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
-        Layout<N> unreduced_slicing(Args&&... args) const{
+        Layout<N> slice_unreduced(Args&&... args) const{
             Layout<N> result = *this;
-            fixed_dim_slice_helper<0>(result, std::forward<Args>(args)...);
+            slice_unreduced_helper<0>(result, std::forward<Args>(args)...);
             return result;
         }
-        //WIP======================
         
         //IMPROVE==========================================================================================================================================
         //IMPROVE: the slice_dimension operation is not very efficient, because it iterates over all dimensions and each time it returns a new layout. We can look at different things to improve this:
@@ -393,8 +412,6 @@ class Layout{
 
 
 
-        //WIP:==================================================
-        //TODO: names to be finalized
         /*!
          * \brief Helper recursive template function that is used to slice a single subset of the layout without changing its dimensionality. This means that some dimensions of the resulting Layout may be singletons (collapse to a single element). This function uses a variadic template, where the indices for each dimension of the layout are unwind one at a time
          * \tparam M dimension to be indexed by the `FirstArg`
@@ -404,7 +421,7 @@ class Layout{
          * \param other is the pack with the remaining indices that need to be unwind
          */
         template<size_t Dim, Index FirstArg, Index... OtherArgs>
-        static void fixed_dim_slice_helper(Layout<N>& result, FirstArg coordinate, OtherArgs&&... other){
+        static void slice_unreduced_helper(Layout<N>& result, FirstArg coordinate, OtherArgs&&... other){
             if constexpr(SingleIndex<FirstArg>){
                 //this dimension becomes a singleton
                 assert::dynamic_assert(coordinate>=0 && coordinate<result.lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
@@ -418,11 +435,11 @@ class Layout{
                 result.lengths_[Dim] = coordinate.end_ - coordinate.start_ + 1;
                 result.offset_ += coordinate.start_*result.strides_[Dim];
             }
-            fixed_dim_slice_helper<Dim+1>(result, std::forward<OtherArgs>(other)...);
+            slice_unreduced_helper<Dim+1>(result, std::forward<OtherArgs>(other)...);
         }
 
         template<size_t Dim, Index FirstArg>
-        static void fixed_dim_slice_helper(Layout<N>& result, FirstArg coordinate){
+        static void slice_unreduced_helper(Layout<N>& result, FirstArg coordinate){
             if constexpr(SingleIndex<FirstArg>){
                 //this dimension becomes a singleton
                 assert::dynamic_assert(coordinate>=0 && coordinate<result.lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
@@ -438,7 +455,6 @@ class Layout{
             }
             result.size_ = std::accumulate(result.lengths_.begin(), result.lengths_.end(), 1, std::multiplies<size_t>());         
         }
-        //WIP:==================================================
 
 
 

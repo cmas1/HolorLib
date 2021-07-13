@@ -177,28 +177,14 @@ class Holor{
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             ITERATORS
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        auto begin(){
-            return data_.begin();
-        }
+        auto begin(){ return data_.begin(); }
+        auto end(){ return data_.end(); }
 
-        auto end(){
-            return data_.end();
-        }
+        auto cbegin() const{ return data_.cbegin(); }
+        auto cend() const{ return data_.cend();  }
 
-        auto cbegin() const{
-            return data_.cbegin();
-        }
-
-        auto cend() const{
-            return data_.cend();
-        }
-
-        auto rbegin(){
-            return data_.rbegin();
-        }
-
-        auto rend(){
-            return data_.rend();
+        auto rbegin(){ return data_.rbegin(); }
+        auto rend(){    return data_.rend();
         }
 
         auto crbegin(){

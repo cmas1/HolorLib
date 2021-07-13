@@ -48,9 +48,9 @@ int main(){
     std::cout << "A_row(1) = " << A_row(1) << "\n";
     std::cout << "A_row(2) = " << A_row(2) << "\n\n";
 
-    auto A_row_fix = A.unreduced_slicing(0, range{0,2});
+    auto A_row_fix = A.slice_unreduced(0, range{0,2});
     std::cout << "A_row_fix:\nlengths = [" << A_row_fix.lengths()[0] << ", " << A_row_fix.lengths()[1] <<"]\n";
-    std::cout << "strides = [" << A_row_fix.strides()[0] << ", " << A_row_fix.strides()[2] <<"]\n";
+    std::cout << "strides = [" << A_row_fix.strides()[0] << ", " << A_row_fix.strides()[1] <<"]\n";
     std::cout << "offset = " << A_row_fix.offset() << "\n\n";
     std::cout << "A_row_fix(0) = " << A_row_fix(0,0) << "\n";
     std::cout << "A_row_fix(1) = " << A_row_fix(0,1) << "\n";
