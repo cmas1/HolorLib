@@ -50,7 +50,7 @@ namespace impl{
     //IMPROVE==========================================================================================================================================
     //IMPROVE: the slice_dimension operation is not very efficient, because it iterates over all dimensions and each time it returns a new layout
     /*!
-     * \brief helper functor that is used by `Layout<N>::operator()(Args&&... args)` to index a slice of a Layout. The functor implements a recursive algorithm that indexes a dimension at a time, until they are all processed. Each iteration produces a new, subLayout.
+     * \brief helper functor that is used by `Layout<N>::operator()(Args&&... args)` to index a slice of a Layout. The functor implements a recursive algorithm that indexes a dimension at a time, until they are all processed. Each iteration produces a new, subLayout. This functor is implementd outside of the Layout<N> class because the result of a slicing operation may yeld a Layout with reduced dimensionality, that requires the function to operate on a different instatiation of the template class.
      */
     template<size_t Dim>
     struct slice_helper{
@@ -62,7 +62,7 @@ namespace impl{
          * \param dim is an unsigned int that is used to unwind the recursion, depending on the type of indices.
          */
         template<typename Layout, Index FirstArg, typename... OtherArgs>
-        auto operator()(Layout layout, FirstArg&& first, OtherArgs&&... other) const{
+        auto operator()(Layout layout, FirstArg&& first, OtherArgs&&... other) const{ //NOTE: can we pass by reference, to avoid copying?
             if constexpr(RangeIndex<FirstArg>){
                 return slice_helper<Dim+1>()(layout.template slice_dimension<Dim>(std::forward<FirstArg>(first)), std::forward<OtherArgs>(other)...);
             }else{
@@ -77,7 +77,7 @@ namespace impl{
          * \param dim is an unsigned int that is used to unwind the recursion, depending on the type of indices.
          */
         template<typename Layout, Index FirstArg>
-        auto operator()(Layout layout, FirstArg&& first) const{
+        auto operator()(Layout layout, FirstArg&& first) const{ //NOTE: can we pass by reference, to avoid copying?
             return layout.template slice_dimension<Dim>(std::forward<FirstArg>(first));
         }
     };
@@ -102,23 +102,8 @@ namespace impl{
  *      - The \b strides are the distances in the 1D data sequence between successive elements in individual dimensions of the layout.
  *  For a Layout with `N` dimensions, both the length array and the stride array must be size `N`.
  * A Layout supports two fundamental operations:
- * \verbatim embed:rst:leading-asterisk //TODO: move this more discursive part with images directly in the rst file of the documentation
- * * Indexing a single element: determine the index in memory of a single element in the container;
- *      *Example:* consider the 3-dimensional Holor container in Figure.
- *      .. figure:: ../../docs/doxygen/images/tensorslice_1.jpg
- *          :alt: layout example
- *          :width: 400
- *      In this example the Holor container is a 3-dimensional tensor of floating point numbers. These numbers are stored contiguously in a 1D memory, using the row-major paradigm. In this case, the Layout that describes the location of the elements in memory has offset=0, lengths = [3,3,3] and strides = [9, 3, 1]. The location in the 1D memory (index) of the element at row i, column j and depth k is computed as 
- *      ..math::
- *          index = offset + i \cdot strides[0] + j \cdot strides [1] + k \cdot strides [2]
- * 
- * * Indexing a slice of the container: determine a new Layout that provides the information for indexing a subset of elements from the initial container.
- *  *Example:* consider the 3-dimensional Holor container in Figure.
- *      .. figure:: ../../docs/doxygen/images/tensorslice_2.jpg
- *          :alt: layout example
- *          :width: 400
- *      In this example the Holor container is a the same as in the previous case, but we index a sub-tensor from the container. The Layout that describes this sub-tensor has offset=12, lengths= and strides= .
- * \endverbatim
+ * - \i Indexing a single element: this operation provides a map from the coordinates in the container to the index in memory of the selected element;
+ * - \i Indexing a slice of the container: this operation allows to select a subset of elements from a container by computing a new Layout that provides the needed information to index them. 
  * 
  * \tparam N is the number of dimensions in the layout
  */
@@ -126,8 +111,8 @@ template<size_t N>
 class Layout{
 
     
-    /*
-     * Layout<N> is made friend of Layout<M> so that we can modify its private ariables when slicing a layout (and reducing its dimension)
+    /*!
+     * \brief Layout<N> is made friend of Layout<M> so that we can modify its private ariables when slicing a layout (and reducing its dimension)
      */
     template<size_t M>
     friend class Layout;
@@ -304,6 +289,16 @@ class Layout{
         auto operator()(Args&&... args) const{
             return impl::slice_helper<0>()(*this, std::forward<Args>(args)...);
         }
+
+
+        //WIP=================
+        template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
+        Layout<N> unreduced_slicing(Args&&... args) const{
+            Layout<N> result = *this;
+            fixed_dim_slice_helper<0>(result, std::forward<Args>(args)...);
+            return result;
+        }
+        //WIP======================
         
         //IMPROVE==========================================================================================================================================
         //IMPROVE: the slice_dimension operation is not very efficient, because it iterates over all dimensions and each time it returns a new layout. We can look at different things to improve this:
@@ -320,7 +315,7 @@ class Layout{
          */
         template<size_t Dim> requires ( (Dim>=0) && (Dim <N) )
         Layout<N> slice_dimension(range range) const{
-            assert::dynamic_assert(range.end_ < lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+            assert::dynamic_assert( range.end_ < lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
             Layout<N> res = *this;
             res.lengths_[Dim] = range.end_-range.start_+1;
             res.size_ = std::accumulate(res.lengths_.begin(), res.lengths_.end(), 1, std::multiplies<size_t>());
@@ -377,7 +372,7 @@ class Layout{
         }
 
         /*!
-         * \brief Helper function that is used to index a single element of the layout. It uses a variadic template, where the indices for each dimension of the layout are unwind one at a time
+         * \brief Helper recursive template function that is used to index a single element of the layout. It uses a variadic template, where the indices for each dimension of the layout are unwind one at a time
          * \tparam M dimension to be indexed by the `FirstArg`
          * \tparam FirstArg first index of the parameter pack
          * \tparam OtherArgs rest of the indices in the parameter pack
@@ -390,9 +385,6 @@ class Layout{
             return first * strides_[M] + single_element_indexing_helper<M+1>(std::forward<OtherArgs>(other)...);
         }
 
-        /*!
-         * \brief this is the last step in unwinding the parameter pack with the function single_element_indexing_helper
-         */
         template<size_t M, SingleIndex FirstArg>
         size_t single_element_indexing_helper(FirstArg first) const{
             assert::dynamic_assert(first>=0 && first<lengths_[M], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
@@ -400,8 +392,58 @@ class Layout{
         }
 
 
+
+        //WIP:==================================================
+        //TODO: names to be finalized
         /*!
-         * \brief Helper function that is used to construct a Layout from a parameter pack of sizes that specify the number of elements along each dimension
+         * \brief Helper recursive template function that is used to slice a single subset of the layout without changing its dimensionality. This means that some dimensions of the resulting Layout may be singletons (collapse to a single element). This function uses a variadic template, where the indices for each dimension of the layout are unwind one at a time
+         * \tparam M dimension to be indexed by the `FirstArg`
+         * \tparam FirstArg first index of the parameter pack
+         * \tparam OtherArgs rest of the indices in the parameter pack
+         * \param first is the index to be considered for the dimension `Dim`
+         * \param other is the pack with the remaining indices that need to be unwind
+         */
+        template<size_t Dim, Index FirstArg, Index... OtherArgs>
+        static void fixed_dim_slice_helper(Layout<N>& result, FirstArg coordinate, OtherArgs&&... other){
+            if constexpr(SingleIndex<FirstArg>){
+                //this dimension becomes a singleton
+                assert::dynamic_assert(coordinate>=0 && coordinate<result.lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+                result.offset_ += coordinate*result.strides_[Dim];
+                result.lengths_[Dim] = 1;
+                result.strides_[Dim] = 0;
+            }
+            else{
+                //this dimension does not collapse to a single element
+                assert::dynamic_assert( coordinate.end_ < result.lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+                result.lengths_[Dim] = coordinate.end_ - coordinate.start_ + 1;
+                result.offset_ += coordinate.start_*result.strides_[Dim];
+            }
+            fixed_dim_slice_helper<Dim+1>(result, std::forward<OtherArgs>(other)...);
+        }
+
+        template<size_t Dim, Index FirstArg>
+        static void fixed_dim_slice_helper(Layout<N>& result, FirstArg coordinate){
+            if constexpr(SingleIndex<FirstArg>){
+                //this dimension becomes a singleton
+                assert::dynamic_assert(coordinate>=0 && coordinate<result.lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
+                result.offset_ += coordinate*result.strides_[Dim];
+                result.lengths_[Dim] = 1;
+                result.strides_[Dim] = 0;
+            }
+            else{
+                //this dimension does not collapse to a single element
+                assert::dynamic_assert( coordinate.end_ < result.lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
+                result.lengths_[Dim] = coordinate.end_ - coordinate.start_ + 1;
+                result.offset_ += coordinate.start_*result.strides_[Dim];
+            }
+            result.size_ = std::accumulate(result.lengths_.begin(), result.lengths_.end(), 1, std::multiplies<size_t>());         
+        }
+        //WIP:==================================================
+
+
+
+        /*!
+         * \brief Helper recursive template function that is used to construct a Layout from a parameter pack of sizes that specify the number of elements along each dimension
          * \tparam M unsigned integer used to unpack the parameter pack, one element at a time, and copy into `lenghts_`
          * \tparam FirstLength first element of the parameter pack
          * \tparam OtherLengths remaining elements of the parameter pack
@@ -414,9 +456,6 @@ class Layout{
             single_length_copy<M+1>(std::forward<OtherLengths>(other)...);
         }
 
-        /*!
-         * \brief this is the last step in unwinding the parameter pack with the function single_length_copy
-         */
         template<size_t M, typename FirstLength> requires (std::convertible_to<FirstLength, size_t>)
         void single_length_copy(FirstLength arg){
             lengths_[M] = arg;

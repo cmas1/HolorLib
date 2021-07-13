@@ -48,6 +48,14 @@ int main(){
     std::cout << "A_row(1) = " << A_row(1) << "\n";
     std::cout << "A_row(2) = " << A_row(2) << "\n\n";
 
+    auto A_row_fix = A.unreduced_slicing(0, range{0,2});
+    std::cout << "A_row_fix:\nlengths = [" << A_row_fix.lengths()[0] << ", " << A_row_fix.lengths()[1] <<"]\n";
+    std::cout << "strides = [" << A_row_fix.strides()[0] << ", " << A_row_fix.strides()[2] <<"]\n";
+    std::cout << "offset = " << A_row_fix.offset() << "\n\n";
+    std::cout << "A_row_fix(0) = " << A_row_fix(0,0) << "\n";
+    std::cout << "A_row_fix(1) = " << A_row_fix(0,1) << "\n";
+    std::cout << "A_row_fix(2) = " << A_row_fix(0,2) << "\n\n";
+
     // Layout<2> A{{3,4},0};
     // std::cout << "A:\nlengths = [" << A.lengths()[0] << ", " << A.lengths()[1] << "]\n";
     // std::cout << "strides = [" << A.strides()[0] << ", " << A.strides()[1] << "]\n";
