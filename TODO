@@ -1,29 +1,33 @@
 ☐ We need to allow to assign HolorRef elements from a nested_initializer, e.g. to do A.row(0) = {1,2,3};
 
 layout.h:
-    ☐ //TODO: improve description, perhaps with images
     ☐ //IMPROVEMENT: When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This seems inefficient. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation.
-    ☐ //TODO: Now the slicing function reduces the dimension of the Layout (and thus of the holor container). It could be useful to have also a version that retains the dimensions of the Layout (and thus of container,  so that for example a slicing a column from a matrix has lenghts [1, c] rather than [c])
+    ☐ //WIP: Now the slicing function reduces the dimension of the Layout (and thus of the holor container). It could be useful to have also a version that retains the dimensions of the Layout (and thus of container,  so that for example a slicing a column from a matrix has lenghts [1, c] rather than [c])
+
 
 indexes.h:
     ☐ //TODO: So far the step in range is not supported 
     ☐ //TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
 
+
 holor.h:
     ☐ Finish implementing constructors and assignment operators
+
 
 holor_concepts.h:
     ☐ Concept HolorContainer
     ☐ Concept HolorLayout
 
+
 static_assert.h:
     ☐ //TODO: reorder this file, common_concepts and common_predicates.
 
 
+Documentation:
 
 
-    
 Archive:
+  ✘ //TODO: improve description, perhaps with images @cancelled(21-07-13 16:55) @project(layout.h)
   ✔ //TODO: add specialization of element indexing for a Layout<4> (used in four-dimensional tensors) @done(21-07-13 15:17) @project(layout.h)
   ✔ //NOTE: check includes @done(21-07-13 15:17) @project(layout.h)
   ✘ //TODO: Layout concept (refer to https://andreasfertig.blog/2020/08/cpp20-concepts-testing-constrained-functions/ for info on constrained variadic function templates). This was cancelled because it is not possible to verify that a type can be indexed with a variadic template of arguments without passing the template arguments to the check, i.e., without specializing the layout. Namely, it is not possible to have a template<typename T> concept Layout, but it should be template<typename T, typename... Args> concept Layout. @cancelled(21-07-13 14:01) @project(layout.h)
