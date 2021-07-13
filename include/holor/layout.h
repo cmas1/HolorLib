@@ -50,6 +50,13 @@ namespace holor{
 template<typename T>
 concept LayoutType = true;
 //NOTE: it must have indexing operations, it must have a fixed size, constructors from lengths, ...
+// requires (LayoutType layout)
+//indexing operations => layout()
+//fixed size =>
+
+
+// template<size_t N, typename... T>
+// concept IndexesPack = (sizeof...(T)== N) && SingleIndex<T>;
 //WIP====================================
 
 
@@ -446,7 +453,7 @@ class Layout{
 template<>
 template<SingleIndex Index> 
 size_t Layout<1>::operator()(Index i) const{
-    //TODO: dynamic check on singleindex feasibility
+    assert::dynamic_assert(i>=0 && i<lengths_[0], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
     return offset_ + i*strides_[0];
 }
 
@@ -462,7 +469,7 @@ size_t Layout<1>::operator()(Index i) const{
 template<>
 template<SingleIndex Index> 
 size_t Layout<2>::operator()(Index i, Index j) const{
-    //TODO: dynamic check on singleindex feasibility
+    assert::dynamic_assert( (i>=0 && i<lengths_[0]) && (j>=0 && j<lengths_[1]), EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
     return offset_ + i*strides_[0] + j*strides_[1];
 }
 
@@ -480,7 +487,7 @@ size_t Layout<2>::operator()(Index i, Index j) const{
 template<>
 template<SingleIndex Index> 
 size_t Layout<3>::operator()(Index i, Index j, Index k) const{
-    //TODO: dynamic check on singleindex feasibility
+    assert::dynamic_assert( (i>=0 && i<lengths_[0]) && (j>=0 && j<lengths_[1]) && (k>=0 && k<lengths_[2]), EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2];
 }
 

@@ -83,9 +83,6 @@ concept RangeIndex = std::convertible_to<T, range>;
 template<typename T>
 concept Index = SingleIndex<T> || RangeIndex<T>;
 
-
-
-
 namespace impl{
     /*! 
     * \brief predicate used to test that the arguments of an indexing operation are actual indexes and at least one of them is a RangeIndex
