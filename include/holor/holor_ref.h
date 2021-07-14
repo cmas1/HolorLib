@@ -334,21 +334,7 @@ class HolorRef{
          * \return a HolorRef
          */
         template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
-        explicit HolorRef(T* dataptr, const Container& lengths): layout_{lengths}, dataptr_{dataptr}{}
-
-
-        /*!
-         * \brief Constructor that creates a HolorRef by specifying a data pointer and a the lengths of each dimension of the container
-         * \tparam Lengths parameter pack of lengths. There must be `N` arguments in the pack.   
-         * \param dataptr pointer to the location where the data is hosted
-         * \param lengths lengths along each dimension of the container
-         * \return a HolorRef
-         */
-        template<typename... Lengths> requires ( (sizeof...(Lengths)==N) && (assert::all(std::is_convertible_v<Lengths,size_t>...)) )
-        explicit HolorRef(T* dataptr, Lengths&&... lengths): dataptr_{dataptr}{
-            layout_ = Layout<N>{std::forward<Lengths>(lengths)...};
-        }
-        
+        explicit HolorRef(T* dataptr, const Container& lengths): layout_{lengths}, dataptr_{dataptr}{}        
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             GET/SET FUNCTIONS
@@ -491,10 +477,42 @@ class HolorRef{
         }
 
 
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        ELEMENT ASSIGNMENT FUNCTIONS
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    /*!
+     * \brief assign the elements in the HolorRef container from another HolorRef container with the same type of elements, dimensions and extents
+     * \param rhs HolorRef containr from where the values are copied
+     */
+    void substitute(const HolorRef<T,N>& rhs){
+        assert::dynamic_assert(this->layout_.lengths() == rhs.lengths(), EXCEPTION_MESSAGE("Incompatible dimensions."));
+        std::copy(rhs.cbegin(), rhs.cend(), this->begin());
+    }
+
+    /*!
+     * \brief assign the elements in the HolorRef container from an Holor container with the same type of elements, dimensions and extents
+     * \tparam HolorContainer template parameter used to refer to type of the Holor container
+     * \param rhs HolorRef containr from where the values are copied
+     */
+    //TODO: use a proper concept for HolorContainer
+    template<typename HolorContainer> requires ( (HolorContainer::dimensions == N) && (std::is_same_v<typename HolorContainer::value_type, T>) )
+    void substitute(const HolorContainer& rhs){
+        assert::dynamic_assert(this->layout_.lengths() == rhs.lengths(), EXCEPTION_MESSAGE("Incompatible dimensions."));
+        std::copy(rhs.cbegin(), rhs.cend(), this->begin());
+    }
+
+    template<typename HolorContainer> requires ( (HolorContainer::dimensions == N) && (std::is_same_v<typename HolorContainer::value_type, T>) )
+    void substitute(HolorContainer&& rhs){
+        assert::dynamic_assert(this->layout_.lengths() == rhs.lengths(), EXCEPTION_MESSAGE("Incompatible dimensions."));
+        std::move(rhs.begin(), rhs.end(), this->begin());
+    }
+
+
+private:
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         PRIVATE MEMBERS AND FUNCTIONS
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-    private:
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/    
         Layout<N> layout_;  ///< \brief The Layout of how the elements of the container are stored in memory
         T* dataptr_;        ///< \brief Pointer to the memory location where the data is stored
 

@@ -22,20 +22,29 @@
 
 
 
-#ifndef HOLOR_EXTRA_H
-#define HOLOR_EXTRA_H
+#ifndef HOLOR_PRINTER_H
+#define HOLOR_PRINTER_H
 
 #include "holor.h"
 #include "holor_ref.h"
+#include "../common/static_assert.h"
 
 #include <type_traits>
 #include <iostream>
+
+
 
 namespace holor{
 
 
 namespace impl{
-    template<typename HolorType> //TODO: requires concepts HolorType and PrintableType
+
+
+    //TODO: use a proper concept for HolorType
+    /*!
+     * \brief Functor that is used to help printing the content of a Holor or HolorRef container in a readable
+     */
+    template<typename HolorType> 
     struct holor_printer{
         std::ostream& operator()(std::ostream& os, HolorType h){
             os << " [";
@@ -53,7 +62,10 @@ namespace impl{
             return os;
         }
     };
-}
+
+
+} //namespace impl
+
 
 
 /*!
@@ -65,8 +77,8 @@ namespace impl{
  * \param h is the container to be printed
  * \return a reference to the ostream
  */
-template<typename T, size_t N> //TODO: requires printable T
-std::ostream& operator<<(std::ostream& os, Holor<T,N>& h){
+template<typename T, size_t N> requires (assert::Printable<T>)
+std::ostream& operator<<(std::ostream& os, const Holor<T,N>& h){
     return impl::holor_printer<std::remove_cvref_t<decltype(h)>>()(os, h);
 }
 
@@ -80,11 +92,11 @@ std::ostream& operator<<(std::ostream& os, Holor<T,N>& h){
  * \param h is container to be printed
  * \return a reference to the ostream
  */
-template<typename T, size_t N> //TODO: requires printable T
-std::ostream& operator<<(std::ostream& os, HolorRef<T,N> h){
+template<typename T, size_t N> requires (assert::Printable<T>)
+std::ostream& operator<<(std::ostream& os, const HolorRef<T,N>& h){
     return impl::holor_printer<std::remove_cvref_t<decltype(h)>>()(os, h);
 }
 
 } //namespace holor
 
-#endif // HOLOR_EXTRA_H
+#endif // HOLOR_PRINTER_H

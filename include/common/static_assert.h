@@ -26,6 +26,7 @@
 #define HOLOR_STATIC_ASSERT_H
 
 #include <type_traits>
+#include <iostream>
 
 // TODO: add documentation
 
@@ -146,13 +147,17 @@ namespace assert{
 
 
 
-
-
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             Printable
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
+    /*!
+     * \brief concept for a fixed legnth container, with N elements convertible to U and iterators
+     */
+    template<class Type>
+    concept Printable = requires (Type object, std::ostream& os){
+        (os<<object);
+    };
 
 
 } //namespace assert

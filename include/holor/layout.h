@@ -61,6 +61,7 @@ namespace impl{
          * \tparam OtherArgs are the `Index` type of the other indices besides the first
          * \param dim is an unsigned int that is used to unwind the recursion, depending on the type of indices.
          */
+        //TODO: use a proper Layout concept
         template<typename Layout, Index FirstArg, typename... OtherArgs>
         auto operator()(Layout layout, FirstArg&& first, OtherArgs&&... other) const{ //NOTE: can we pass by reference, to avoid copying?
             if constexpr(RangeIndex<FirstArg>){
@@ -166,7 +167,7 @@ class Layout{
          * \param lengths variadic arguments denoting the number of elements along each dimension of the container.
          * \return a Layout
          */
-        template<typename... Lengths> requires ((sizeof...(Lengths)==N) )
+        template<typename... Lengths> requires ((sizeof...(Lengths)==N) && (assert::all(std::is_convertible_v<Lengths,size_t>...)) )
         explicit Layout(Lengths&&... lengths) {
             offset_ = 0;
             single_length_copy<0>(std::forward<Lengths>(lengths)...);

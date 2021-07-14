@@ -22,7 +22,7 @@
 
 
 #include "../../include/holor/holor.h"
-#include "../../include/holor/holor_extra.h"
+#include "../../include/holor/holor_printer.h"
 #include <iostream>
 #include <vector>
 #include <ranges>
@@ -46,9 +46,12 @@ int main(){
     std::cout << "pluto(1,{1,2}) = " << pluto(1,range(1,2)) << "\n\n";
     std::cout << "pluto({0,1},{1,2}) = " << pluto(range{0,1}, range(1,2)) << "\n\n";
 
-    Holor<int,3> topolino;
-    auto topo_lengths = topolino.lengths();
-    std::cout << topo_lengths[0] << ", " << topo_lengths[1] << ", " << topo_lengths[2] << "\n\n";
 
-     return 0;
+    auto col1 = pluto.col(1);
+    col1.substitute(Holor<int,1>{11,22});
+
+    std::cout << "pluto = " << pluto << "\n\n";
+
+
+    return 0;
 }

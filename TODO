@@ -1,16 +1,17 @@
 layout.h:
     ☐ //IMPROVEMENT: When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This seems inefficient. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation.
+    ☐ //TODO: use a proper LayoutType concept (Line 64)
 
 indexes.h:
     ☐ //TODO: So far the step in range is not supported 
     ☐ //TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
 
 holor_ref.h:
-    ☐ Add function to HolorRef elements from an Holor or HolorRef with suitable dimensions and lengths. Essentially, this function should wrap a dimensionality check plus a call to std::copy (or move in the case of a Holor rvalue)
+    ☐ //TODO: use a proper concept for HolorContainer (Line 498)
 
-holor_extra.h:
-    ☐ implement concept Printable
+holor_printer.h:
     ☐ verify and clean up the print function
+    ☐ //TODO: use a proper concept for HolorType (Line )
 
 concepts.h:
     ☐ Concept HolorType
@@ -20,6 +21,8 @@ static_assert.h:
     ☐ //TODO: reorder this file, common_concepts and common_predicates.
 
 Archive:
+  ✔ implement concept Printable @done(21-07-14 15:31) @project(holor_printer.h)
+  ✔ Add function to HolorRef elements from an Holor or HolorRef with suitable dimensions and lengths. Essentially, this function should wrap a dimensionality check plus a call to std::copy (or move in the case of a Holor rvalue) @done(21-07-14 14:22) @project(holor_ref.h)
   ✔ //NOTE: check includes @done(21-07-14 13:02) @project(holor_ref.h)
   ✔ holor.h: @done(21-07-14 11:54)
   ✔ //NOTE: check includes @done(21-07-14 11:54)

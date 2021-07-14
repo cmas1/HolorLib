@@ -34,6 +34,7 @@
 
 #include <utility>
 #include <chrono>
+#include <iostream>
 
 
 
@@ -44,15 +45,10 @@ namespace utils{
 
 
 /*!
-* Function that measures the time elapsed by a function, averaging it over multiple repetitions
-*
+* \brief Measure the time elapsed by a function, averaging it over multiple repetitions.
 * \param n_times number of repetitions used to compute the average elapsed time
-* \param func is the function object whose duration we want to measure
-* \param args is the pack of argument to be passed to the function, i.e. to invoke
-* \code
-*   func(args...);
-* \endcode
-*
+* \param func is the function object whose duration is to be measured
+* \param args is the pack of argument to be passed to the function, i.e. to invoke `func(args...);`
 * \return the the average elapsed time measured in microseconds
 */
 auto elapsed_time_ms = [](int n_times, auto&& func, auto&&... args){
@@ -66,7 +62,13 @@ auto elapsed_time_ms = [](int n_times, auto&& func, auto&&... args){
 };
 
 
-
+/*!
+* \brief Measure the time elapsed by a function, averaging it over multiple repetitions
+* \param n_times number of repetitions used to compute the average elapsed time
+* \param func is the function object whose duration is to be measured
+* \param args is the pack of argument to be passed to the function, i.e. to invoke `func(args...);`
+* \return the the average elapsed time measured in nanoseconds
+*/
 auto elapsed_time_ns = [](int n_times, auto&& func, auto&&... args){
     std::chrono::duration<double, std::nano>  average_duration{0};
     for (int i = 0; i < n_times; i++){
@@ -79,7 +81,12 @@ auto elapsed_time_ns = [](int n_times, auto&& func, auto&&... args){
 
 
 
-
+/*!
+* \brief Measure the time (in nanoseconds) elapsed by a function, averaging it over multiple repetitions. The elapsed time is written on the standard output.
+* \param n_times number of repetitions used to compute the average elapsed time
+* \param func is the function object whose duration is to be measured
+* \param args is the pack of argument to be passed to the function, i.e. to invoke `func(args...);`
+*/
 auto elapsed_time_ns_cout = [](std::string test_name, int n_times, auto&& func, auto&&... args){
     std::chrono::duration<double, std::nano>  average_duration{0};
     for (int i = 0; i < n_times; i++){
@@ -97,11 +104,7 @@ auto elapsed_time_ns_cout = [](std::string test_name, int n_times, auto&& func, 
 
 
 
-
-
-
-}
-
+} //namespace utils
 } //namespace holor
 
 

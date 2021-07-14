@@ -94,16 +94,6 @@ class Holor{
             data_.reserve(layout_.size_);
         }
 
-        /*!
-         * \brief Constructor that creates a Holor by specifying the length of each dimension
-         * \tparam Lengths parameter pack of lengths. There must be `N` arguments in the pack.   
-         * \param lengths variadic arguments denoting the number of elements along each dimension of the container.
-         * \return a Holor with specified lenghts but without initialization of its elements
-         */
-        template<typename... Lengths> requires ((sizeof...(Lengths)==N) )
-        explicit Holor(Lengths&&... lengths): layout_{std::forward<Lengths>(lengths)...}{
-            data_.reserve(layout_.size_);
-        }
 
         /*!
          * \brief Constructor from a HolorRef object. Only copy is allowed, because the HolorRef does not own the objects it contains.
@@ -135,7 +125,8 @@ class Holor{
          * \param init nested list of the elements to be inserted in the container
          * \return a Holor containing the elements in the list
          */
-        Holor(holor::nested_list<T,N> init): layout_{Layout<N>(impl::derive_lengths<N>(init))} {
+        Holor(holor::nested_list<T,N> init) {
+            layout_ = Layout<N>(impl::derive_lengths<N>(init));
             data_.reserve(layout_.size());
             impl::insert_flat(init, data_);
         }
