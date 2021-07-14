@@ -22,76 +22,27 @@
 
 
 
-#ifndef HOLOR_PREDICATES_H
-#define HOLOR_PREDICATES_H
+#ifndef HOLOR_CONCEPTS_H
+#define HOLOR_CONCEPTS_H
 
 
 #include <type_traits>
 
 
-/** \file tensor_initializer.h
- * \brief predicates used the implementation of tensors, in static assertions, compile time conditions and runtime assertions
- */
-
 namespace holor{
-namespace impl{
 
+    //TODO: Concept LayoutType requirements: 
+    //TODO:     semiregular type
+    //TODO:     fixed dimension N
+    //TODO:     lengths and strides with dimensionality N
+    //TODO:     indexing functions
 
+    //TODO: Concept HolorType requirements: 
+    //TODO:     semiregular type
+    //TODO:     fixed dimension N and value_type T
+    //TODO:     lengths and strides with dimensionality N
+    //TODO:     access functions
 
+} //namespace holor
 
-
-
-    /*
-    * function used to verify that the subscripts used to access the elements of a tensor are actually <tt>size_t</tt>
-    * return \p true if all the arguments can be converted to <tt>size_t</tt>
-    */
-    // template<typename... Args>
-    // constexpr bool requesting_element(){
-    //     return assert::all(std::is_convertible<Args, size_t>()...);
-    // }
-
-
-
-
-    /*
-    * function used to verify that the subscripts used to access the elements of a tensor are actually <tt>size_t</tt>
-    * return \p true if all the arguments can be converted to <tt>size_t</tt>
-    */
-    // template<size_t N, typename... Dims>
-    // bool check_bounds(const TensorSlice<N>& slice, Dims... dims){
-    //     size_t indexes[N]{size_t(dims)...};
-    //     return equal(indexes, indexes+N, slice.lengths_.begin(), std::less<size_t>{});
-    // }
-
-    
-    //----------------     IS SEQUENCE CONTAINER   -------------------------
-
-    // template<typename T, typename _ = void>
-    // struct is_seq_container : std::false_type {};
-
-    // template<typename T>
-    // struct is_seq_container<
-    //     T,
-    //     std::void_t<
-    //             typename T::value_type,
-    //             typename T::size_type,
-    //             typename T::iterator,
-    //             typename T::const_iterator,
-    //             decltype(std::declval<T>().size()),
-    //             decltype(std::declval<T>().begin()),
-    //             decltype(std::declval<T>().end()),
-    //             decltype(std::declval<T>().cbegin()),
-    //             decltype(std::declval<T>().cend())>
-    // > : public std::true_type {};
-
-
-    // template<typename T>
-    // constexpr bool is_seq_container_v(){
-    //     return is_seq_container<std::remove_reference_t<T>>::value;
-    // }
-
-
-} //namespace tensor_impl
-} //namespace bst
-
-#endif // HOLOR_PREDICATES_H
+#endif // HOLOR_CONCEPTS_H
