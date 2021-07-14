@@ -140,7 +140,7 @@ class Layout{
          * \return a Layout
          */
         template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
-        explicit Layout(Container lengths) {
+        explicit Layout(const Container& lengths) {
             offset_ = 0;
             std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
             update_strides_size();
@@ -153,7 +153,7 @@ class Layout{
          * \return a Layout
          */
         template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
-        explicit Layout(Container lengths) {
+        explicit Layout(const Container& lengths) {
             assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
             offset_ = 0;
             std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 

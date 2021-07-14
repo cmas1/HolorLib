@@ -1,5 +1,3 @@
-☐ We need to allow to assign HolorRef elements from a nested_initializer, e.g. to do A.row(0) = {1,2,3};
-
 layout.h:
     ☐ //IMPROVEMENT: When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This seems inefficient. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation.
 
@@ -7,22 +5,27 @@ indexes.h:
     ☐ //TODO: So far the step in range is not supported 
     ☐ //TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
 
-holor.h:
-    ☐ Finish implementing constructors and assignment operators
+
+holor_ref.h:
+    ☐ We need to allow to assign HolorRef elements from a nested_initializer, e.g. to do A.row(0) = {1,2,3};
+    ☐ //NOTE: check includes
 
 holor_extra.h:
     ☐ implement concept Printable
     ☐ verify and clean up the print function
 
-holor_concepts.h:
-    ☐ Concept HolorContainer
-    ☐ Concept HolorLayout
+concepts.h:
+    ☐ Concept HolorType
+    ☐ Concept LayoutType
 
 static_assert.h:
     ☐ //TODO: reorder this file, common_concepts and common_predicates.
 
-
 Archive:
+  ✔ holor.h: @done(21-07-14 11:54)
+  ✔ //NOTE: check includes @done(21-07-14 11:54)
+  ✔ Finish implementing constructors and assignment operators @done(21-07-14 11:32) @project(holor.h)
+  ✔ initializer.h: @done(21-07-14 11:31)
   ✔ Now the slicing function reduces the dimension of the Layout (and thus of the holor container). It could be useful to have also a version that retains the dimensions of the Layout (and thus of container,  so that for example a slicing a column from a matrix has lenghts [1, c] rather than [c]) @done(21-07-13 22:44) @project(layout.h)
   ✘ //TODO: improve description, perhaps with images @cancelled(21-07-13 16:55) @project(layout.h)
   ✔ //TODO: add specialization of element indexing for a Layout<4> (used in four-dimensional tensors) @done(21-07-13 15:17) @project(layout.h)
