@@ -275,7 +275,7 @@ class Holor{
 
 
         /*!
-         * \brief Access the `i-th` row of the tensor
+         * \brief Access the `i-th` row of the container
          * \param i index of the row to be indexed
          * \return a reference container to the row 
          */
@@ -289,7 +289,7 @@ class Holor{
 
         
         /*!
-         * \brief Access the `i-th` column of the tensor
+         * \brief Access the `i-th` column of the container
          * \param i index of the column to be indexed
          * \return a reference container to the column 
          */

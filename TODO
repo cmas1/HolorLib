@@ -5,10 +5,8 @@ indexes.h:
     ☐ //TODO: So far the step in range is not supported 
     ☐ //TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
 
-
 holor_ref.h:
-    ☐ We need to allow to assign HolorRef elements from a nested_initializer, e.g. to do A.row(0) = {1,2,3};
-    ☐ //NOTE: check includes
+    ☐ Add function to HolorRef elements from an Holor or HolorRef with suitable dimensions and lengths. Essentially, this function should wrap a dimensionality check plus a call to std::copy (or move in the case of a Holor rvalue)
 
 holor_extra.h:
     ☐ implement concept Printable
@@ -22,6 +20,7 @@ static_assert.h:
     ☐ //TODO: reorder this file, common_concepts and common_predicates.
 
 Archive:
+  ✔ //NOTE: check includes @done(21-07-14 13:02) @project(holor_ref.h)
   ✔ holor.h: @done(21-07-14 11:54)
   ✔ //NOTE: check includes @done(21-07-14 11:54)
   ✔ Finish implementing constructors and assignment operators @done(21-07-14 11:32) @project(holor.h)
