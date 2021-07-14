@@ -10,7 +10,6 @@ holor_ref.h:
     ☐ //TODO: use a proper concept for HolorContainer (Line 498)
 
 holor_printer.h:
-    ☐ verify and clean up the print function
     ☐ //TODO: use a proper concept for HolorType (Line )
 
 concepts.h:
@@ -21,6 +20,7 @@ static_assert.h:
     ☐ //TODO: reorder this file, common_concepts and common_predicates.
 
 Archive:
+  ✔ verify and clean up the print function @done(21-07-14 15:51) @project(holor_printer.h)
   ✔ implement concept Printable @done(21-07-14 15:31) @project(holor_printer.h)
   ✔ Add function to HolorRef elements from an Holor or HolorRef with suitable dimensions and lengths. Essentially, this function should wrap a dimensionality check plus a call to std::copy (or move in the case of a Holor rvalue) @done(21-07-14 14:22) @project(holor_ref.h)
   ✔ //NOTE: check includes @done(21-07-14 13:02) @project(holor_ref.h)
