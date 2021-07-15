@@ -26,7 +26,7 @@
 
 #include <cstddef>
 
-#include "../common/dynamic_assert.h"
+#include "../common/runtime_assertions.h"
 #include "../common/static_assert.h"
 
 namespace holor{

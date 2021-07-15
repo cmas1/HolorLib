@@ -21,40 +21,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include "../../include/holor/holor_all.h"
-#include <iostream>
-#include <vector>
+#ifndef HOLOR_ALL_H
+#define HOLOR_ALL_H
 
-#include "../../include/common/utils.h"
+#include "holor.h"
+#include "holor_printer.h"
 
-
-using namespace holor;
-
-
-int main(){
-    
-    Holor<int, 2> pluto{{1, 2, 3}, {4, 5, 6}};
-
-    std::cout << "pluto = " << pluto << "\n\n";
-    
-    std::cout << "row0 = " << pluto.row(0) << "\n";
-    std::cout << "row1 = " << pluto.row(1) << "\n";
-    std::cout << "col0 = " << pluto.col(0) << "\n";
-    std::cout << "col1 = " << pluto.col(1) << "\n\n";
-
-    std::cout << "pluto(1,2) = " << pluto(1,2) << "\n";
-    std::cout << "pluto(1,{1,2}) = " << pluto(1,range(1,2)) << "\n\n";
-    std::cout << "pluto({0,1},{1,2}) = " << pluto(range{0,1}, range(1,2)) << "\n\n";
-
-
-    auto col1 = pluto.col(1);
-    col1.substitute(Holor<int,1>{11,22});
-
-    std::cout << "pluto = " << pluto << "\n\n";
-
-    Holor<int, 2> holor2D{ {1, 2, 3}, {4, 5, 5} };
-    std::cout << "average elapsed time = " << utils::elapsed_time_ms(100000, ([&holor2D](){holor2D(1,1);})) << "ms" << std::endl;
-    std::cout << "average elapsed time = " << utils::elapsed_time_ns(100000, ([&holor2D](){holor2D(1,1);})) << "ns" << std::endl;
-
-    return 0;
-}
+#endif // HOLOR_ALL_H

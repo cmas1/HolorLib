@@ -34,18 +34,23 @@
 
 #include <utility>
 #include <chrono>
-#include <iostream>
-
 
 
 namespace holor{
 namespace utils{
 
 
-
-
 /*!
 * \brief Measure the time elapsed by a function, averaging it over multiple repetitions.
+* \b Example:
+* \verbatim embed:rst:leading-asterisk
+*  .. code:
+*      //various includes ...
+*
+*      using namespace holor;
+*      Holor<int, 2> holor2D{ {1, 2, 3}, {4, 5, 5} };
+*      std::cout << "average elapsed time = " << utils::elapsed_time_ms(100000, ([&holor2D](){holor2D(1,1);})) << "ms" << std::endl;
+* \endverbatim
 * \param n_times number of repetitions used to compute the average elapsed time
 * \param func is the function object whose duration is to be measured
 * \param args is the pack of argument to be passed to the function, i.e. to invoke `func(args...);`
@@ -64,6 +69,15 @@ auto elapsed_time_ms = [](int n_times, auto&& func, auto&&... args){
 
 /*!
 * \brief Measure the time elapsed by a function, averaging it over multiple repetitions
+* \b Example:
+* \verbatim embed:rst:leading-asterisk
+*  .. code:
+*      //various includes ...
+*
+*      using namespace holor;
+*      Holor<int, 2> holor2D{ {1, 2, 3}, {4, 5, 5} };
+*      std::cout << "average elapsed time = " << utils::elapsed_time_ns(100000, ([&holor2D](){holor2D(1,1);})) << "ns" << std::endl;
+* \endverbatim
 * \param n_times number of repetitions used to compute the average elapsed time
 * \param func is the function object whose duration is to be measured
 * \param args is the pack of argument to be passed to the function, i.e. to invoke `func(args...);`
@@ -78,30 +92,6 @@ auto elapsed_time_ns = [](int n_times, auto&& func, auto&&... args){
     }
     return average_duration.count()/n_times;
 };
-
-
-
-/*!
-* \brief Measure the time (in nanoseconds) elapsed by a function, averaging it over multiple repetitions. The elapsed time is written on the standard output.
-* \param n_times number of repetitions used to compute the average elapsed time
-* \param func is the function object whose duration is to be measured
-* \param args is the pack of argument to be passed to the function, i.e. to invoke `func(args...);`
-*/
-auto elapsed_time_ns_cout = [](std::string test_name, int n_times, auto&& func, auto&&... args){
-    std::chrono::duration<double, std::nano>  average_duration{0};
-    for (int i = 0; i < n_times; i++){
-        auto t1 = std::chrono::high_resolution_clock::now();
-        std::forward<decltype(func)>(func)(std::forward<decltype(args)>(args)...);
-        average_duration += std::chrono::duration_cast<std::chrono::duration<double, std::nano>>(std::chrono::high_resolution_clock::now() - t1);
-    }
-    const std::string red("\033[0;31m");
-    const std::string green("\033[0;32m");
-    const std::string yellow("\033[0;33m");
-    const std::string reset("\033[0m");
-    std::cout << green << test_name << "\t" << yellow << average_duration.count()/n_times << " ns";
-    std::cout << reset << "\n";
-};
-
 
 
 } //namespace utils

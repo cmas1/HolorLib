@@ -26,9 +26,7 @@
 #define HOLOR_EXCEPTIONS_H
 
 /** \file exceptions.h
- * \brief Exceptions.
- *
- * This header contains exception-related utils used within BSTools.
+ * \brief This header contains exception-related utils.
  */
 
 #include <stdexcept>
@@ -43,17 +41,15 @@ namespace holor{
 namespace exception{
 
 
-/// BstInvalidArgument struct
 /*!
- * Type of exceptions thrown when an invalid argument is passed to a function. It is derived from the base type \p std::invalid_argument
+ * \brief Type of exceptions thrown when an invalid argument is passed to a function. It is derived from the base type \p std::invalid_argument
  */
 struct HolorInvalidArgument : public std::invalid_argument {
     HolorInvalidArgument(const std::string& p) : std::invalid_argument(p){};
 };
 
-/// HolorRuntimeError struct
 /*!
- * Type of exceptions thrown when an invalid argument is passed to a function. It is derived from the base type \p std::runtime_error
+ * \brief Type of exceptions thrown when an invalid argument is passed to a function. It is derived from the base type \p std::runtime_error
  */
 struct HolorRuntimeError : public std::runtime_error {
     HolorRuntimeError(const std::string& p) : std::runtime_error(p){}
@@ -61,14 +57,14 @@ struct HolorRuntimeError : public std::runtime_error {
 
 
 /*!
-* Function that composes the message for a thrown exception.
-* 
-* \param file name of the file where the exceptions is thrown
-* \param line line number of the file where the exception originated
-* \param info additonal information to be inserted in the message
-* 
-* \return the message as a \p std::string
-*/
+ * \brief Function that composes the message for a thrown exception.
+ * 
+ * \param file name of the file where the exceptions is thrown
+ * \param line line number of the file where the exception originated
+ * \param info additonal information to be inserted in the message
+ * 
+ * \return the message as a \p std::string
+ */
 std::string compose_message(const char* file, int line, const std::string& info){
    std::ostringstream os("(");
    os << file << ", " << line << "): " << info;
@@ -78,8 +74,12 @@ std::string compose_message(const char* file, int line, const std::string& info)
 
 } //namespace exception
 
-} //namespace bst
+} //namespace holor
 
+
+/*!
+ * \brief macro that is used to compose an exception message that specifies the file and line number which originated the exception
+ */
 #define EXCEPTION_MESSAGE(msg) holor::exception::compose_message(__FILE__, __LINE__, msg)
 
 

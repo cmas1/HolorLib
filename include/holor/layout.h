@@ -34,7 +34,7 @@
 
 #include "./indexes.h"
 #include "../common/static_assert.h"
-#include "../common/dynamic_assert.h"
+#include "../common/runtime_assertions.h"
 
 
 namespace holor{
@@ -61,7 +61,6 @@ namespace impl{
          * \tparam OtherArgs are the `Index` type of the other indices besides the first
          * \param dim is an unsigned int that is used to unwind the recursion, depending on the type of indices.
          */
-        //TODO: use a proper Layout concept
         template<typename Layout, Index FirstArg, typename... OtherArgs>
         auto operator()(Layout layout, FirstArg&& first, OtherArgs&&... other) const{ //NOTE: can we pass by reference, to avoid copying?
             if constexpr(RangeIndex<FirstArg>){
@@ -282,7 +281,7 @@ class Layout{
 
         /*!
          * \brief Function for indexing a slice from the Layout. Singleton dimensions (dimensions that are reduced to a single element) are removed.
-         + \b Example:
+         * \b Example:
          * \verbatim embed:rst:leading-asterisk
          *  .. code::
          *      using namespace holor;
