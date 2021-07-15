@@ -21,10 +21,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#ifndef HOLOR_ALL_H
-#define HOLOR_ALL_H
+#ifndef HOLOR_FULL_H
+#define HOLOR_FULL_H
 
 #include "holor.h"
 #include "holor_printer.h"
 
-#endif // HOLOR_ALL_H
+#endif // HOLOR_FULL_H

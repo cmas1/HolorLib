@@ -21,7 +21,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include "../../include/holor/holor_all.h"
+#include "../../include/holor/holor_full.h"
 #include <iostream>
 #include <vector>
 

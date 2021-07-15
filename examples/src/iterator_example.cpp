@@ -21,13 +21,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include "../../include/holor/holor.h"
-#include "../../include/holor/holor_printer.h"
+#include "../../include/holor/holor_full.h"
 #include <iostream>
 #include <vector>
-#include <ranges>
-
-// #include "../../include/holor/holor_ref_iterator.h"
 
 using namespace holor;
 
