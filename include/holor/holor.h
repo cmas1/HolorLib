@@ -258,7 +258,7 @@ class Holor{
          * \param dims pack of indices, one per dimension of the Holor container
          * \return the value of the Holor stored at the position indexed by the indices
          */
-        template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
+        template<typename... Args> requires (impl::ranged_index_pack<Args...>() && (sizeof...(Args)==N) )
         auto operator()(Args&&... args) {
             auto sliced_layout = layout_(std::forward<Args>(args)...);
             return HolorRef<T, decltype(sliced_layout)::order>(data_.data(), sliced_layout);

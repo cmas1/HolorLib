@@ -125,7 +125,6 @@ class Layout{
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         static constexpr size_t order = N; ///< \brief number of dimensions in the reference container 
 
-
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ 
@@ -294,7 +293,7 @@ class Layout{
          * \param args parameters pack. Each element of the pack indexes either an element or a range of elements along a dimension of the Layout.
          * \return the Layout containing the indexed range of elements
          */
-        template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
+        template<typename... Args> requires (impl::ranged_index_pack<Args...>() && (sizeof...(Args)==N) )
         auto operator()(Args&&... args) const{
             return impl::slice_helper<0>()(*this, std::forward<Args>(args)...);
         }
@@ -313,7 +312,7 @@ class Layout{
          * \param args parameters pack. Each element of the pack indexes either an element or a range of elements along a dimension of the Layout.
          * \return the Layout containing the indexed range of elements. In this case the Layout has dimension `N`, i.e. the dimensionality is not reduced.
          */
-        template<typename... Args> requires (impl::range_indexing<Args...>() && (sizeof...(Args)==N) )
+        template<typename... Args> requires (impl::ranged_index_pack<Args...>() && (sizeof...(Args)==N) )
         Layout<N> slice_unreduced(Args&&... args) const{
             Layout<N> result = *this;
             slice_unreduced_helper<0>(result, std::forward<Args>(args)...);

@@ -99,5 +99,6 @@ int main(){
     std::cout << "strides = [" << CCC.strides()[0] << ", " << CCC.strides()[1] << "]\n";
     std::cout << "offset = " << CCC.offset() << "\n\n";
 
+
     return 0;
 }

@@ -90,12 +90,20 @@ namespace impl{
     * \return true if at least one of the indices is a RangeIndex
     */
     template<typename... Args>
-    constexpr bool range_indexing(){
+    constexpr bool ranged_index_pack(){
         return assert::all(Index<Args>...) && assert::some(RangeIndex<Args>...);
     };
+
+    /*! 
+    * \brief predicate used to test that the arguments of an indexing operation are actual indexes
+    * \tparam Args pack of indices to be verified
+    * \return true if at least one of the indices is a RangeIndex
+    */
+    template<typename... Args>
+    constexpr bool index_pack(){
+        return assert::all(Index<Args>...);
+    };
 }
-
-
 
 } //namespace holor
 

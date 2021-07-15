@@ -1,20 +1,13 @@
+holor_concepts.h:
+    ☐ //SKIP Concept LayoutType (to be used in layout.h) => //NOTE: the indexing constraint (check that LayoutType supports indexing) requires to verify the existance of a variadic member function with N arguments. I cannot find a way to express this without adding other template parameters to the concept and probably it is not doable 
+    ☐ //SKIP Concept HolorType (to be used in holor_ref.h and holor_printer.h) => //NOTE HolorType requires LayoutType. Therefore, if LayoutType cannot be implemented  the indexing function requires a variadic template with size N. I cannot ind a way to express this
+
 layout.h:
     ☐ //IMPROVEMENT: When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This seems inefficient. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation.
-    ☐ //TODO: use a proper LayoutType concept (Line 64)
 
 indexes.h:
-    ☐ //TODO: So far the step in range is not supported 
-    ☐ //TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
-
-holor_ref.h:
-    ☐ //TODO: use a proper concept for HolorContainer (Line 498)
-
-holor_printer.h:
-    ☐ //TODO: use a proper concept for HolorType (Line )
-
-concepts.h:
-    ☐ Concept HolorType
-    ☐ Concept LayoutType
+    ☐ So far the step in range is not supported to create ranges with gaps (for example range{1,7,2} => [1,3,5,7]). This would imply reworking Layouts, namely the way they are indexed with a range. //NOTE: not a priority, avoid for the time being
+    ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 static_assert.h:
     ☐ //TODO: reorder this file, common_concepts and common_predicates.
