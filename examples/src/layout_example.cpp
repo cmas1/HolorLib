@@ -27,7 +27,6 @@
 #include <ranges>
 #include <algorithm>
 
-#include "../../include/common/static_assert.h"
 
 
 using namespace holor;

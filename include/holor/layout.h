@@ -33,7 +33,7 @@
 #include <algorithm>
 
 #include "./indexes.h"
-#include "../common/static_assert.h"
+#include "../common/static_assertions.h"
 #include "../common/runtime_assertions.h"
 
 

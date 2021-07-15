@@ -22,26 +22,26 @@
 
 
 
-#ifndef HOLOR_STATIC_ASSERT_H
-#define HOLOR_STATIC_ASSERT_H
+#ifndef HOLOR_STATIC_ASSERTIONS_H
+#define HOLOR_STATIC_ASSERTIONS_H
 
 #include <type_traits>
 #include <iostream>
 
-// TODO: add documentation
 
-
-/** \file static_assert.h
- * \brief static assertions.
- *
- * This header contains utils related to static assertions used within BSTools.
+/** \file static_assertions.h
+ * \brief This header contains utils related to compile-time assertions
  */
 namespace holor{
-
 namespace assert{
-    /****************************************************************
-                                ALL
-    ****************************************************************/
+
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        Predicate ALL
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    /*!
+     * \brief predicate that returns true if all the arguments are true
+     */
     constexpr bool all(){
         return true;
     }
@@ -52,9 +52,12 @@ namespace assert{
     }
 
 
-    /****************************************************************
-                                SOME
-    ****************************************************************/
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        Predicate SOME
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    /*!
+     * \brief predicate that returns true at least one of the arguments is true
+     */
     constexpr bool some(){
         return false;
     }
@@ -63,18 +66,6 @@ namespace assert{
     constexpr bool some(bool b, Args... args){
         return b || some(args...);
     }
-
-
-    /****************************************************************
-                        HAS_FUNCTIONS
-    ****************************************************************/
-    struct substitution_failure{};
-
-    template<typename T>
-    struct substitution_succeeded: std::true_type {};
-
-    template<>
-    struct substitution_succeeded<substitution_failure>: std::false_type {};
 
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -148,11 +139,10 @@ namespace assert{
 
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                            Printable
+                            Concept Printable
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
     /*!
-     * \brief concept for a fixed legnth container, with N elements convertible to U and iterators
+     * \brief concept for type that supports the operator << for printing on an outputstream
      */
     template<class Type>
     concept Printable = requires (Type object, std::ostream& os){
@@ -165,4 +155,4 @@ namespace assert{
 } //namespace holor
 
 
-#endif // HOLOR_STATIC_ASSERT_H
+#endif // HOLOR_STATIC_ASSERTIONS_H

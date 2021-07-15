@@ -27,9 +27,8 @@
 
 #include "holor.h"
 #include "holor_ref.h"
-#include "../common/static_assert.h"
+#include "../common/static_assertions.h"
 
-#include <type_traits>
 #include <iostream>
 
 
