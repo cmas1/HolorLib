@@ -44,8 +44,8 @@ extensions = [
 autoclass_content = 'both'
 
 # BREATHE configuration paths
-breathe_projects = {"bstools": "../doxygen/xml"}
-breathe_default_project = "bstools"
+breathe_projects = {"holor": "../doxygen/xml"}
+breathe_default_project = "holor"
 breathe_default_members = ('members',)
 
 # Intersphinx mappings.
@@ -67,7 +67,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'bstools'
+project = 'holor'
 copyright = '2018-2019, Carlo Masone'
 author = 'Carlo Masone'
 
@@ -76,7 +76,7 @@ author = 'Carlo Masone'
 # built documents.
 #
 # The short X.Y version.
-version = '@bstools_VERSION@'
+version = '@holor_VERSION@'
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -110,7 +110,7 @@ exclude_patterns = ['build']
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
-#show_authors = False
+show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -154,8 +154,8 @@ html_theme_options = {
     # Values: amber, blue, brown, cyan deep_orange, deep_purple, green, grey, indigo, light_blue,
     #         light_green, lime, orange, pink, purple, red, teal, yellow(Default: indigo)
     'primary_color': 'indigo',
-    # Values: Same as primary_color. (Default: pink)
     'accent_color': 'purple',
+
 
     # Customize layout.
     # For details see link.
