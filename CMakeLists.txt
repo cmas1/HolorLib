@@ -10,9 +10,13 @@ set(CMAKE_CXX_COMPILER "/usr/bin/clang++-11")
 
 add_definitions(-DDEFINE_ASSERT_LEVEL=AssertionLevel::release)
 
+#set build path
+#first build library to destination
 
+#if build_examples on, compile them
 include_directories(./include/)
-
-
 add_subdirectory(examples)
-#add_subdirectory(benchmark)
+
+#if test on, compile tests
+
+#if benchmark on, compile benchmarks
