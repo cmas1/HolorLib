@@ -15,6 +15,7 @@ endif()
 include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
 include(CMakeDependentOption)
+include(CMakePackageConfigHelpers)
 
 
 set(HOLOR_CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -68,6 +69,17 @@ message(STATUS "HOLOR_BUILD_EXAMPLES='${HOLOR_BUILD_EXAMPLES}'")
 
 
 
+#====================================================
+#               Installation Paths
+#====================================================
+#path to install the header files
+set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}" CACHE PATH "The directory relative to CMAKE_INSTALL_PREFIX where Holor header files are installed")
+
+#path to install the exported cmake package
+set(CMAKEPACKAGE_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/cmake" CACHE PATH "The directory relative to CMAKE_INSTALL_PREFIX where HolorConfig.cmake is installed")
+
+
+
 
 #====================================================
 #               Library
@@ -76,14 +88,10 @@ add_library(${PROJECT_NAME} INTERFACE)
 # add alias so the project can be uses with add_subdirectory
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}" CACHE PATH "The directory relative to CMAKE_INSTALL_PREFIX where Holor header files are installed")
-set(CMAKEPACKAGE_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/cmake" CACHE PATH "The directory relative to CMAKE_INSTALL_PREFIX where HolorConfig.cmake is installed")
-
 target_include_directories(${PROJECT_NAME} INTERFACE 
-    $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
 )
-
 
 
 
@@ -93,7 +101,6 @@ target_include_directories(${PROJECT_NAME} INTERFACE
 if(HOLOR_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
-
 
 
 
@@ -119,39 +126,54 @@ endif()
 #               Install Library
 #====================================================
 if(HOLOR_INSTALL_LIBRARY)
-  # locations are provided by GNUInstallDirs
-  install(
-    TARGETS ${PROJECT_NAME}
-    EXPORT ${PROJECT_NAME}Targets
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    # locations are provided by GNUInstallDirs
+    
+    #install library
+    install(
+        TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}Targets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${INCLUDE_INSTALL_DIR}
+    )
 
-    include(CMakePackageConfigHelpers)
-    write_basic_package_version_file(
-        "${PROJECT_NAME}ConfigVersion.cmake"
-        VERSION ${PROJECT_VERSION}
-        COMPATIBILITY SameMajorVersion)
-  
-    configure_package_config_file(
-        "${HOLOR_CMAKE_MODULE_PATH}/${PROJECT_NAME}Config.cmake.in"
-        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-        INSTALL_DESTINATION ${CMAKEPACKAGE_INSTALL_DIR})
-  
+    #install headers
+    install(
+        DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+        DESTINATION ${INCLUDE_INSTALL_DIR}
+    )
+
+    #install the export details
     install(
         EXPORT ${PROJECT_NAME}Targets
         FILE ${PROJECT_NAME}Targets.cmake
         NAMESPACE ${PROJECT_NAME}::
-        DESTINATION ${CMAKEPACKAGE_INSTALL_DIR})
+        DESTINATION ${CMAKEPACKAGE_INSTALL_DIR}
+    )
+
+
+    
+    write_basic_package_version_file(
+        "${PROJECT_NAME}ConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
   
+    #configure the package
+    configure_package_config_file(
+        "${HOLOR_CMAKE_MODULE_PATH}/${PROJECT_NAME}Config.cmake.in"
+        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+        INSTALL_DESTINATION ${CMAKEPACKAGE_INSTALL_DIR}
+    )
+  
+    #install the Config and ConfigVersion of the package
     install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
                   "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
             DESTINATION ${CMAKEPACKAGE_INSTALL_DIR})
   
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-            DESTINATION ${INCLUDE_INSTALL_DIR})
-  endif()
-
+    
+endif()
 
 
 
