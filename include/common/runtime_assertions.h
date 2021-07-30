@@ -42,7 +42,7 @@ namespace assert{
 
 
 /*!
- * \brief enumeration of the various levels that are used to verify whether a dynamic_asertion check should be performed or not. Namely, a dynamic assertion is performed if its AssertionLEvel is less or equal to the current assertion level
+ * \brief enumeration of the various levels that are used to verify whether a dynamic_asertion check should be performed or not. Namely, a dynamic assertion is performed if its AssertionLevel is less or equal to the current assertion level
  */
 enum AssertionLevel{
     no_checks = 0,
