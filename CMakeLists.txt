@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project("Holor" VERSION 1.0.1
+project("Holor" VERSION 1.0
              DESCRIPTION "A C++ header-only template library for multi-dimensional containers."
              HOMEPAGE_URL "https://github.com/cmas1/Holor")
 
@@ -17,9 +17,7 @@ include(GNUInstallDirs)
 include(CMakeDependentOption)
 
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-
-
+set(HOLOR_CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -124,7 +122,7 @@ if(HOLOR_INSTALL_LIBRARY)
   # locations are provided by GNUInstallDirs
   install(
     TARGETS ${PROJECT_NAME}
-    EXPORT ${PROJECT_NAME}_Targets
+    EXPORT ${PROJECT_NAME}Targets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -136,12 +134,12 @@ if(HOLOR_INSTALL_LIBRARY)
         COMPATIBILITY SameMajorVersion)
   
     configure_package_config_file(
-        "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
+        "${HOLOR_CMAKE_MODULE_PATH}/${PROJECT_NAME}Config.cmake.in"
         "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
         INSTALL_DESTINATION ${CMAKEPACKAGE_INSTALL_DIR})
   
     install(
-        EXPORT ${PROJECT_NAME}_Targets
+        EXPORT ${PROJECT_NAME}Targets
         FILE ${PROJECT_NAME}Targets.cmake
         NAMESPACE ${PROJECT_NAME}::
         DESTINATION ${CMAKEPACKAGE_INSTALL_DIR})
@@ -163,5 +161,5 @@ if(HOLOR_INSTALL_LIBRARY)
 #This adds an uninstall command that looks at all the files from the install_manifest.txt and removes them. To use this command
 # go into the build directory and execute $make uninstall
 add_custom_target(uninstall 
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/HolorUninstall.cmake)
+    COMMAND ${CMAKE_COMMAND} -P ${HOLOR_CMAKE_MODULE_PATH}/HolorUninstall.cmake)
 
