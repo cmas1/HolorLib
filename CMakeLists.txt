@@ -144,7 +144,8 @@ if(HOLOR_INSTALL_LIBRARY)
         DESTINATION ${INCLUDE_INSTALL_DIR}
     )
 
-    #install the export details
+    #install the export details. The HolorTargets will be located in the Holor namespace. Other CMake
+    # targets can refer to it using Holor::HolorTargets.
     install(
         EXPORT ${PROJECT_NAME}Targets
         FILE ${PROJECT_NAME}Targets.cmake
@@ -153,25 +154,29 @@ if(HOLOR_INSTALL_LIBRARY)
     )
 
 
-    
+    #create the cmake package to be exported so that other cmake projects can find it easily
     write_basic_package_version_file(
         "${PROJECT_NAME}ConfigVersion.cmake"
         VERSION ${PROJECT_VERSION}
         COMPATIBILITY SameMajorVersion
     )
   
-    #configure the package
     configure_package_config_file(
         "${HOLOR_CMAKE_MODULE_PATH}/${PROJECT_NAME}Config.cmake.in"
         "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
         INSTALL_DESTINATION ${CMAKEPACKAGE_INSTALL_DIR}
     )
   
+
     #install the Config and ConfigVersion of the package
     install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
                   "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
             DESTINATION ${CMAKEPACKAGE_INSTALL_DIR})
-  
+    
+    # Export the Holor package to CMake registry such that it can be easily found by
+    # CMake even if it has not been installed to a standard directory.
+    export (PACKAGE ${PROJECT_NAME})
+
     
 endif()
 
