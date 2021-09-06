@@ -43,7 +43,7 @@ endif()
 # Set the assertion level, which determines the level of dynamic checks performed when calling the functions from the library, e.g. to verify that the arguments passed to the functions are meaningful
 # The possible values are:
 #     * no_checks  -> removes all checks
-#     * release -> is the recommended setting, which enables only the necessary runtime checks
+#     * release -> is the recommended setting, which enables only meanningful runtime checks
 #     * debug -> this is mainly used for development, to add runtime checks to perform some tests
 set(DynamicAssertionLevel "release" CACHE STRING "Dynamic assertions level chosen by the user at CMake configure time")
 set_property(CACHE DynamicAssertionLevel PROPERTY STRINGS "release" "no_checks" "debug")
