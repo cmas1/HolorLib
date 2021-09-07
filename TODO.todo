@@ -2,7 +2,8 @@
 ☐ Write documentation
 ☐ Write benchmarks
 ☐ Write tests
-☐ Verify CMake and test library installation
+☐ Verify CMake and test library installation @started(21-09-07 12:13)
+☐ add installation scripts
 ☐ Write INSTALL
 ☐ Write Readme
 
