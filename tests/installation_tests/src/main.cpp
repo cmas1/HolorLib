@@ -28,5 +28,8 @@ using namespace holor;
 int main(int, char **) {
     Holor<int, 2> my_holor2D{{1, 2, 3}, {4, 5, 6}};
     auto my_holor1D = my_holor2D.col(1);
+
+    std::cout << "my_holor2D = " << my_holor2D << "\n";
+    std::cout << "The second column is = " << my_holor1D << "\n";
     return 0;
 }
