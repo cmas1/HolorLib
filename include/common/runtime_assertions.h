@@ -50,7 +50,7 @@ enum AssertionLevel{
     debug = 2
 };
 
-constexpr int current_level = DEFINE_ASSERT_LEVEL; ///< \brief DEFINE_EXCEPTION_LEVEL comes from -Doption and it is specified in the CMakeLists.txt file
+constexpr int current_level = DEFINE_HOLOR_ASSERT_LEVEL; ///< \brief DEFINE_EXCEPTION_LEVEL comes from -Doption and it is specified in the CMakeLists.txt file
 constexpr int default_level = 1; ///< \brief By default, assertions are set to the level 1 (i.e., release)
 
 

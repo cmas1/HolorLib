@@ -2,3 +2,4 @@
 build/**
 docs/sphinx/build/**
 docs/doxygen/**
+tests/build/**

@@ -20,7 +20,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 
-#include <Holor/holor_full.h>
+#include <holor/holor_full.h>
 #include <iostream>
 
 using namespace holor;

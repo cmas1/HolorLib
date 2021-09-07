@@ -2,3 +2,8 @@
 
 include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")
 check_required_components("@PROJECT_NAME@")
+
+set(HolorDynamicAssertionLevel "release" CACHE STRING "Dynamic assertions level chosen by the user at CMake configure time")
+set_property(CACHE HolorDynamicAssertionLevel PROPERTY STRINGS "release" "no_checks" "debug")
+message(STATUS "HolorDynamicAssertionLevel='${HolorDynamicAssertionLevel}'")
+add_definitions(-DDEFINE_HOLOR_ASSERT_LEVEL=AssertionLevel::${HolorDynamicAssertionLevel})

@@ -45,10 +45,10 @@ endif()
 #     * no_checks  -> removes all checks
 #     * release -> is the recommended setting, which enables only meanningful runtime checks
 #     * debug -> this is mainly used for development, to add runtime checks to perform some tests
-set(DynamicAssertionLevel "release" CACHE STRING "Dynamic assertions level chosen by the user at CMake configure time")
-set_property(CACHE DynamicAssertionLevel PROPERTY STRINGS "release" "no_checks" "debug")
-message(STATUS "DynamicAssertionLevel='${DynamicAssertionLevel}'")
-add_definitions(-DDEFINE_ASSERT_LEVEL=AssertionLevel::${DynamicAssertionLevel})
+set(HolorDynamicAssertionLevel "release" CACHE STRING "Dynamic assertions level chosen by the user at CMake configure time")
+set_property(CACHE HolorDynamicAssertionLevel PROPERTY STRINGS "release" "no_checks" "debug")
+message(STATUS "HolorDynamicAssertionLevel='${HolorDynamicAssertionLevel}'")
+add_definitions(-DDEFINE_HOLOR_ASSERT_LEVEL=AssertionLevel::${HolorDynamicAssertionLevel})
 
 #option to install the library
 option(HOLOR_INSTALL_LIBRARY "Install the Holor library" ON)
@@ -65,9 +65,6 @@ message(STATUS "HOLOR_BUILD_BENCHMARKS='${HOLOR_BUILD_BENCHMARKS}'")
 #option to build the examples
 option(HOLOR_BUILD_EXAMPLES "Build examples " ON)
 message(STATUS "HOLOR_BUILD_EXAMPLES='${HOLOR_BUILD_EXAMPLES}'")
-
-
-
 
 #====================================================
 #               Installation Paths
