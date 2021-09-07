@@ -1,8 +1,10 @@
 ☐ Write examples
 ☐ Write documentation
+    ☐ Add script that builds the documentation
 ☐ Write benchmarks
 ☐ Write tests
 ☐ Verify CMake and test library installation @started(21-09-07 12:13)
+    ☐ in CMake organize better the build directory, creating subdirs for examples...
 ☐ add installation scripts
 ☐ Write INSTALL
 ☐ Write Readme
