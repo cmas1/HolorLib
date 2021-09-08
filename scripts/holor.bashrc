@@ -56,7 +56,9 @@ function ok() {
 }
 
 function print_delim() {
+  echo
   echo "=============================================="
+  echo
 }
 
 function get_now() {

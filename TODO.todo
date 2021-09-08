@@ -4,7 +4,8 @@
 ☐ Write benchmarks
 ☐ Write tests
 ☐ Verify CMake and test library installation @started(21-09-07 12:13)
-    ☐ in CMake organize better the build directory, creating subdirs for examples...
+    ☐ //CHECK if it is possible to have a CMake project with multiple CMakeLists
+    ☐ //CHECK how to split build files and compiled binaries in different folders
 ☐ add installation scripts
 ☐ Write INSTALL
 ☐ Write Readme

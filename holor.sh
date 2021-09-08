@@ -26,34 +26,28 @@
 
 set -e
 
-
 HOLOR_ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-SCRIPTS_DIR="${HOLOR_ROOT_DIR}/scripts"
-source "${SCRIPTS_DIR}/holor.bashrc"
+HOLOR_SCRIPTS_DIR="${HOLOR_ROOT_DIR}/scripts"
+source "${HOLOR_SCRIPTS_DIR}/holor.bashrc"
 
 
 AVAILABLE_COMMANDS="build build_examples build_tests build_docs build_all clean clean_examples clean_tests clean_docs clean_all -h --help"
-
 
 
 function _usage() {
     echo -e "\n${RED}Usage${NO_COLOR}:
     .${BOLD}/holor.sh${NO_COLOR} [OPTION]"
     echo -e "\n${RED}Options${NO_COLOR}:
-    ${BLUE}install [path]${NO_COLOR}: install the library header files at the path specified. If no path is provided, the library is installed at 
-    ${BLUE}build_tests${NO_COLOR}: build test units.
-    ${BLUE}build_examples${NO_COLOR}: build examples.
-    ${BLUE}build_benchmarks${NO_COLOR}: build benchmarks.
-    ${BLUE}build_docs${NO_COLOR}: build documentation.
+    ${BLUE}install [path]${NO_COLOR}: install the library header files and optionally build examples, benchmarks and tests
+    ${BLUE}docs${NO_COLOR}: build documentation.
     ${BLUE}clean${NO_COLOR}: remove installation, compiled units and clean build files
     ${BLUE}-h|--help ${NO_COLOR}: show this message and exit
     "
 }
 
 
-
-
 function main() {
+    #if no arguments are given, show the help and exit
     if [ "$#" -eq 0 ]; then
         _usage
         exit 0
@@ -63,7 +57,14 @@ function main() {
     shift
     case "${cmd}" in
         install)
-            bash "${SCRIPTS_DIR}/holor_install.sh" "$@"
+            info "Installing the Holor library"
+            bash "${HOLOR_SCRIPTS_DIR}/holor_install.sh" "$@"
+            ;;
+        clean)
+            bash "${HOLOR_SCRIPTS_DIR}/holor_clean.sh"
+            ;;
+        docs)
+            bash "${HOLOR_SCRIPTS_DIR}/holor_install.sh"
             ;;
         -h|--help)
             _usage

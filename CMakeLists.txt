@@ -72,6 +72,9 @@ message(STATUS "HOLOR_BUILD_EXAMPLES='${HOLOR_BUILD_EXAMPLES}'")
 #path to install the header files
 set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}" CACHE PATH "The directory relative to CMAKE_INSTALL_PREFIX where Holor header files are installed")
 
+
+
+
 #path to install the exported cmake package
 set(CMAKEPACKAGE_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/cmake" CACHE PATH "The directory relative to CMAKE_INSTALL_PREFIX where HolorConfig.cmake is installed")
 
@@ -116,8 +119,6 @@ endif()
 if(HOLOR_BUILD_BENCHMARKS)
     add_subdirectory(benchmarks)
 endif()
-
-
 
 #====================================================
 #               Install Library

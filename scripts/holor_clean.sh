@@ -31,47 +31,22 @@ HOLOR_SCRIPTS_PATH="${HOLOR_ROOT_PATH}/scripts"
 source "${HOLOR_SCRIPTS_PATH}/holor.bashrc"
 
 
-PARSED_OPTIONS=
-
-function parse_cmdline_arguments() {
-    for ((pos = 1; pos <= $#; pos++)); do
-        local opt="${!pos}"
-        local optarg
-
-        case "${opt}" in
-            --compiler)
-                ((++pos))
-                PARSED_OPTIONS="${PARSED_OPTIONS} -DCMAKE_CXX_COMPILER=${!pos}"
-                info "The library requires a compiler that supports C++20"
-                info "selected compiler ${!pos}"
-                ;;
-            *)
-                ;;
-        esac
-    done
-}
-
 
 
 function main() {
     cd ${HOLOR_ROOT_PATH}
     if [ ! -d "${HOLOR_ROOT_PATH}/build" ] 
     then
-        warning "The build directory does not exist and will be created." 
-        mkdir build
-    else 
-        warning "The build directory already exists and its content may be overwritten." 
+        error "The build directory does not exist and perhaps it was deleted manually. " 
+        exit 0
     fi
     cd build
-
-    parse_cmdline_arguments "$@"
-    cmake ${HOLOR_ROOT_PATH} ${PARSED_OPTIONS} -DCMAKE_BUILD_TYPE=Release
-    sudo cmake --install .
-    cmake --build .
+    sudo make uninstall
     cd ${HOLOR_ROOT_PATH}
+    rm -rf build
 
     echo
-    ok "Installation completed"
+    ok "Cleaning completed"
 }
 
 
