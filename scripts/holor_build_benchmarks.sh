@@ -53,9 +53,9 @@ function parse_cmdline_arguments() {
 
 
 function main() {
-    info "This script will build the examples provided with the Holor library."
+    info "This script will build the benchmarks provided with the Holor library."
     info "The library requires a compiler that supports C++20. If the default compiler does not support C++20, please select a supported compiler and provided it as an argument to this script as:"
-    info "${GREEN}./holor.sh build_examples --compiler <chosen compiler>${NO_COLOR}"
+    info "${GREEN}./holor.sh build_benchmarks --compiler <chosen compiler>${NO_COLOR}"
     cd ${HOLOR_ROOT_PATH}
     if [ ! -d "${HOLOR_ROOT_PATH}/build" ] 
     then
@@ -65,7 +65,7 @@ function main() {
     cd build
 
     parse_cmdline_arguments "$@"
-    cmake ${HOLOR_ROOT_PATH} ${PARSED_OPTIONS} -DCMAKE_BUILD_TYPE=Release -DHOLOR_BUILD_TESTS=OFF -DHOLOR_BUILD_BENCHMARKS=OFF -DHOLOR_BUILD_EXAMPLES=ON -DHOLOR_INSTALL_LIBRARY=OFF
+    cmake ${HOLOR_ROOT_PATH} ${PARSED_OPTIONS} -DCMAKE_BUILD_TYPE=Release -DHOLOR_BUILD_TESTS=OFF -DHOLOR_BUILD_BENCHMARKS=ON -DHOLOR_BUILD_EXAMPLES=OFF -DHOLOR_INSTALL_LIBRARY=OFF
     cmake --build .
     cd ${HOLOR_ROOT_PATH}
 

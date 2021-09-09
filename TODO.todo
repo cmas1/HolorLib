@@ -3,12 +3,9 @@
     ☐ Add script that builds the documentation
 ☐ Write benchmarks
 ☐ Write tests
-☐ Verify CMake and test library installation @started(21-09-07 12:13)
-    ☐ //CHECK if it is possible to have a CMake project with multiple CMakeLists
-    ☐ //CHECK how to split build files and compiled binaries in different folders
-☐ add installation scripts
 ☐ Write INSTALL
 ☐ Write Readme
+☐ Rename include to holor?
 
 holor_concepts.h:
     ☐ //SKIP Concept LayoutType (to be used in layout.h) => //NOTE: the indexing constraint (check that LayoutType supports indexing) requires to verify the existance of a variadic member function with N arguments. I cannot find a way to express this without adding other template parameters to the concept and probably it is not doable 
@@ -22,6 +19,8 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ Verify CMake and test library installation @started(21-09-07 12:13) @done(21-09-09 14:35) @lasted(2d2h22m32s)
+  ✔ add installation scripts @done(21-09-09 14:35)
   ✔ Update License @done(21-07-16 23:38)
   ✔ //TODO: reorder this file, common_concepts and common_predicates. @done(21-07-15 15:44) @project(static_assert.h)
   ✔ add example to the description of the functions @done(21-07-15 15:25) @project(utils.h)

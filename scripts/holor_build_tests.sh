@@ -50,24 +50,10 @@ function parse_cmdline_arguments() {
     done
 }
 
-# # test building a project with an executable linked against the Holor library installation
-# testPureCmakeInstallation() {
-#     # cmake ${ROOT_DIR} -B${SI_BUILD_DIR} -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PATH} -DBUILD_TESTING=off -DCMAKE_BUILD_TYPE=Release
-#     # cmake --build ${SI_BUILD_DIR} --config Release --target install
-#     # assertEquals "Installation build successful" 0 $?
-#     mkdir build
-#     cmake ${ROOT_DIR}/tests/installation_tests -B ./build  -DCMAKE_CXX_COMPILER=clang++-12 -DCMAKE_BUILD_TYPE=Release
-#     cmake --build ./build
-#     # assertEquals "build against installation successful" 0 $?
-    
-# }
-
-
-
 function main() {
-    info "This script will build the examples provided with the Holor library."
+    info "This script will build the tests provided with the Holor library."
     info "The library requires a compiler that supports C++20. If the default compiler does not support C++20, please select a supported compiler and provided it as an argument to this script as:"
-    info "${GREEN}./holor.sh build_examples --compiler <chosen compiler>${NO_COLOR}"
+    info "${GREEN}./holor.sh build_tests --compiler <chosen compiler>${NO_COLOR}"
     cd ${HOLOR_ROOT_PATH}
     if [ ! -d "${HOLOR_ROOT_PATH}/build" ] 
     then
@@ -77,7 +63,7 @@ function main() {
     cd build
 
     parse_cmdline_arguments "$@"
-    cmake ${HOLOR_ROOT_PATH} ${PARSED_OPTIONS} -DCMAKE_BUILD_TYPE=Release -DHOLOR_BUILD_TESTS=OFF -DHOLOR_BUILD_BENCHMARKS=OFF -DHOLOR_BUILD_EXAMPLES=ON -DHOLOR_INSTALL_LIBRARY=OFF
+    cmake ${HOLOR_ROOT_PATH} ${PARSED_OPTIONS} -DCMAKE_BUILD_TYPE=Release -DHOLOR_BUILD_TESTS=ON -DHOLOR_BUILD_BENCHMARKS=OFF -DHOLOR_BUILD_EXAMPLES=OFF -DHOLOR_INSTALL_LIBRARY=OFF
     cmake --build .
     cd ${HOLOR_ROOT_PATH}
 
