@@ -31,14 +31,13 @@ HOLOR_SCRIPTS_DIR="${HOLOR_ROOT_DIR}/scripts"
 source "${HOLOR_SCRIPTS_DIR}/holor.bashrc"
 
 
-AVAILABLE_COMMANDS="build build_examples build_tests build_docs build_all clean clean_examples clean_tests clean_docs clean_all -h --help"
-
 
 function _usage() {
     echo -e "\n${RED}Usage${NO_COLOR}:
     .${BOLD}/holor.sh${NO_COLOR} [OPTION]"
     echo -e "\n${RED}Options${NO_COLOR}:
-    ${BLUE}install [path]${NO_COLOR}: install the library header files and optionally build examples, benchmarks and tests
+    ${BLUE}install${NO_COLOR}: install the library header files
+    ${BLUE}build_examples${NO_COLOR}: and optionally build examples, benchmarks and tests
     ${BLUE}docs${NO_COLOR}: build documentation.
     ${BLUE}clean${NO_COLOR}: remove installation, compiled units and clean build files
     ${BLUE}-h|--help ${NO_COLOR}: show this message and exit
@@ -59,6 +58,18 @@ function main() {
         install)
             info "Installing the Holor library"
             bash "${HOLOR_SCRIPTS_DIR}/holor_install.sh" "$@"
+            ;;
+        build_examples)
+            info "Build the examples provided with the Holor library."
+            bash "${HOLOR_SCRIPTS_DIR}/holor_build_examples.sh" "$@"
+            ;;
+        build_benchmarks)
+            info "Build the benchmarks provided with the Holor library. Requires "
+            bash "${HOLOR_SCRIPTS_DIR}/holor_build_examples.sh" "$@"
+            ;;
+        build_tests)
+            info "Build the tests provided with the Holor library. Requires gtest"
+            bash "${HOLOR_SCRIPTS_DIR}/holor_build_examples.sh" "$@"
             ;;
         clean)
             bash "${HOLOR_SCRIPTS_DIR}/holor_clean.sh"

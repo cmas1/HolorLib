@@ -33,25 +33,44 @@ source "${HOLOR_SCRIPTS_PATH}/holor.bashrc"
 
 PARSED_OPTIONS=
 
+function parse_cmdline_arguments() {
+    for ((pos = 1; pos <= $#; pos++)); do
+        local opt="${!pos}"
+        local optarg
+
+        case "${opt}" in
+            --compiler)
+                ((++pos))
+                PARSED_OPTIONS="${PARSED_OPTIONS} -DCMAKE_CXX_COMPILER=${!pos}"
+                info "selected compiler ${!pos}"
+                ;;
+            *)
+                ;;
+        esac
+    done
+}
+
+
 
 function main() {
+    info "This script will build the examples provided with the Holor library."
+    info "The library requires a compiler that supports C++20. If the default compiler does not support C++20, please select a supported compiler and provided it as an argument to this script as:"
+    info "${GREEN}./holor.sh build_examples --compiler <chosen compiler>${NO_COLOR}"
     cd ${HOLOR_ROOT_PATH}
     if [ ! -d "${HOLOR_ROOT_PATH}/build" ] 
     then
         warning "The build directory does not exist and will be created." 
         mkdir build
-    else 
-        warning "The build directory already exists and its content may be overwritten." 
     fi
     cd build
 
     parse_cmdline_arguments "$@"
-    cmake ${HOLOR_ROOT_PATH} -DCMAKE_BUILD_TYPE=Release -DHOLOR_BUILD_TESTS=OFF -DHOLOR_BUILD_BENCHMARKS=OFF -DHOLOR_BUILD_EXAMPLES=OFF -DHOLOR_INSTALL_LIBRARY=ON
-    sudo cmake --install .
+    cmake ${HOLOR_ROOT_PATH} ${PARSED_OPTIONS} -DCMAKE_BUILD_TYPE=Release -DHOLOR_BUILD_TESTS=OFF -DHOLOR_BUILD_BENCHMARKS=OFF -DHOLOR_BUILD_EXAMPLES=ON -DHOLOR_INSTALL_LIBRARY=OFF
+    cmake --build .
     cd ${HOLOR_ROOT_PATH}
 
     echo
-    ok "Installation completed"
+    ok "Build completed"
 }
 
 
