@@ -81,7 +81,7 @@ class Holor{
          */
         template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
         explicit Holor(const Container& lengths): layout_{lengths}{
-            data_.reserve(layout_.size_);
+            data_.reserve(layout_.size());
         }
 
         /*!
@@ -91,7 +91,7 @@ class Holor{
          */
         template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
         explicit Holor(const Container& lengths): layout_{lengths}{
-            data_.reserve(layout_.size_);
+            data_.reserve(layout_.size());
         }
 
 

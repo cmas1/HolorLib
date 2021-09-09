@@ -41,5 +41,7 @@ static void BM_RangeMoveConstructor(benchmark::State& state) {
 BENCHMARK(BM_RangeMoveConstructor);
 
 
+    // std::cout << "average elapsed time = " << utils::elapsed_time_ms(100000, ([&holor2D](){holor2D(1,1);})) << "ms" << std::endl;
+    // std::cout << "average elapsed time = " << utils::elapsed_time_ns(100000, ([&holor2D](){holor2D(1,1);})) << "ns" << std::endl;
 
 BENCHMARK_MAIN();

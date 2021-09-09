@@ -45,7 +45,6 @@ function main() {
     fi
     cd build
 
-    parse_cmdline_arguments "$@"
     cmake ${HOLOR_ROOT_PATH} -DCMAKE_BUILD_TYPE=Release -DHOLOR_BUILD_TESTS=OFF -DHOLOR_BUILD_BENCHMARKS=OFF -DHOLOR_BUILD_EXAMPLES=OFF -DHOLOR_INSTALL_LIBRARY=ON
     sudo cmake --install .
     cd ${HOLOR_ROOT_PATH}
