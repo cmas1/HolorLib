@@ -45,6 +45,10 @@ function main() {
     cd ${HOLOR_ROOT_PATH}
     rm -rf build
 
+    cd sphinx
+    make clean
+    cd ${HOLOR_ROOT_PATH}
+
     echo
     ok "Cleaning completed"
 }
