@@ -48,28 +48,76 @@ int main(){
     std::cout << "Creating a holor as  \033[32m auto my_holor_02 = my_holor_01; \033[0m \n";
     std::cout << "The created container is my_holor_02 = " << my_holor_02 << "\n\n";
     std::cout << "Creating a holor as  \033[32m Holor<int, 2> my_holor_03{my_holor_01}; \033[0m \n";
-    std::cout << "The created container is my_holor_03 = " << my_holor_03 << "\n\n";
+    std::cout << "The created container is \033[1m my_holor_03 = " << my_holor_03 << "\033[0m \n\n";
 
 
     // 3) Construct an empty holor specifying the length of its dimensions with a  standard container
-    std::cout << "\n\033[33m Example 3):\033[0m  Construct an empty holor specifying the lenght of its dimensions with a  standard container\n";
+    std::cout << "\n\033[33m Example 3):\033[0m  Construct an empty holor specifying the length of its dimensions with a  standard container\n";
     std::cout << "The legnths can be specified both using a dynamic-lenght container (e.g., a vector) or a fixed-length container (e.g., an array) provided that they must have the same number of elements as the dimensions of the holor\n";
+
 
     std::vector<int> length_01{3,6,2};
     Holor<float, 3> empty_holor_01(length_01);
     std::cout << "  \033[32m std::vector<int> length_01{3,6,2}; \033[0m \n";
-    std::cout << "  \033[32m Holor<float, 3> empty_holor_01(length_01); \033[0m \n\n";
+    std::cout << "  \033[32m Holor<float, 3> empty_holor_01(length_01); \033[0m \n";
+    std::cout << "  The lenghts of \033[1m empty_holor_01 \033[0m  along its dimensions are: [";
+    for(auto cnt = 0; cnt<3; cnt++){
+        std::cout<< "  " << empty_holor_01.lengths(cnt);
+    }
+    std::cout << " ]\n\n";
 
 
     std::array<int,4> length_02{3,1,6,2};
     Holor<float, 4> empty_holor_02(length_02);
     std::cout << "  \033[32m std::array<int,4> length_02{3,1,6,2}; \033[0m \n";
     std::cout << "  \033[32m Holor<float, 4> empty_holor_02(length_02); \033[0m \n\n";
+    std::cout << "  The lenghts of \033[1m empty_holor_02 \033[0m  along its dimensions are: [";
+    for(auto cnt = 0; cnt<4; cnt++){
+        std::cout<< "  " << empty_holor_02.lengths(cnt);
+    }
+    std::cout << " ]\n\n";
 
-    std::cout << "Note that in this case, the argument to the constructor should be passed using () and not {}, otherwise it would be interpreted as a nested list and it would not compile.\n";
+    std::cout << "\033[0;95m Note: \033[0m the container of lenghts shall be passed to the constructor using () and not {}, otherwise it would be interpreted as a nested list and it would not compile.\n";
+    std::cout << "\033[0;95m Note: \033[0m the container of lenghts shall have the same number of elements as are the dimensions of the container, otherwise it would not compile.\n\n";
 
 
-    // 4) Construct an empty holor specifying the lenght of its dimensions with a  standard container
 
+    // 4) Construct an empty holor, without specifying its elements or dimensions
+    std::cout << "\n\033[33m Example 4):\033[0m  Construct an empty holor without specifying its lengths or elements\n";
+    struct my_object{
+        float a;
+        int b;
+        double c;
+    };
+
+    Holor<my_object, 3> empty_holor_03;
+    std::cout << "  \033[32m Holor<my_object, 3> empty_holor_03; \033[0m (my_object is a generic type, for example a struct) \n";
+    std::cout << "  The lenghts of \033[1m empty_holor_03 \033[0m  along its dimensions are: [";
+    for(auto cnt = 0; cnt<3; cnt++){
+        std::cout<< "  " << empty_holor_03.lengths(cnt);
+    }
+    std::cout << " ]\n\n";
+
+
+    // 5) Construct an HolorRef
+    std::cout << "\n\033[33m Example 5):\033[0m  While an Holor owns the elements it stores, an HolorRef provide a Holor-like view to some elements, without taking ownerships of them. Holor_ref can be constructed by providing a pointer to the memory location of the elements as well as i) the lenghts of the view, or ii) a layout\n\n";
+
+    std::vector<int> myvec01{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    HolorRef<int,2> my_holor_ref_01(myvec01.data(), std::vector<int>{5,2});
+    std::cout << "\033[32m std::vector<int> myvec01{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}; \033[0m \n";
+    std::cout << "\033[32m HolorRef<int,2> my_holor_ref_01(myvec01.data(), std::vector<int>{5,2}); \033[0m \n";
+    std::cout << "The created container is my_holor_ref_01 = " << my_holor_ref_01 << "\n\n";
+
+    Layout<2> my_layout(std::vector<int>{2,5});
+    HolorRef<int,2> my_holor_ref_02(myvec01.data(), my_layout);
+    std::cout << "\033[32m Layout<2> my_layout(std::vector<int>{2,5}); \033[0m \n";
+    std::cout << "\033[32m HolorRef<int,2> my_holor_ref_02(myvec01.data(), my_layout); \033[0m \n";
+    std::cout << "The created container is my_holor_ref_02 = " << my_holor_ref_02 << "\n\n";
+
+    std::cout << "\033[0;95m Note: \033[0m HolorRef do not own their elements. Therefore, any change to the original memory location will affect also the HolorRef, and viceversa.\n";
+    std::cout << "For example, let's do \033[32m myvec01[2] = 99; \033[0m.\n";
+    myvec01[2] = 99;
+    std::cout << "=> my_holor_ref_01 = " << my_holor_ref_01 << "\n";
+    std::cout << "=> my_holor_ref_02 = " << my_holor_ref_02 << "\n\n";
     return 0;
 }

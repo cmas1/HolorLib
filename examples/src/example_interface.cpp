@@ -21,29 +21,28 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include "../../include/holor/holor_full.h"
+
+#include <holor/holor_full.h>
 #include <iostream>
-#include <vector>   
+#include <vector>
+#include <array>
 
 using namespace holor;
 
 
 int main(){
-    
-    Holor<int, 2> pluto{{1, 2, 3}, {4, 5, 6}};
-    std::cout << "pluto = " << pluto << "\n\n";
-    
-    
+    //
+    Holor<int, 3> A{{{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}}, {{12, 13, 14, 15}, {16, 17, 18, 19}, {20, 21, 22, 23}}};
+    std::cout << "A = " << A << "\n";
+    std::cout << "A has " << A.dimensions << " dimensions.\n\n";
 
-    auto paperino = pluto.col(1);
+    std::cout << "A has " << A.lengths(0) << " elements along the first dimension.\n";
+    std::cout << "A has " << A.lengths(1) << " elements along the second dimension.\n";
+    std::cout << "A has " << A.lengths(2) << " elements along the third dimension.\n";
+    std::cout << "A has " << A.size() << " total elements.\n\n";
 
-
-    std::vector<int> temp_vec{11,22};
-    std::copy(temp_vec.begin(), temp_vec.end(), paperino.rbegin());
-    std::cout << "pluto = " << pluto << "\n\n";
-
-
-
+    std::cout << "The memory layout of A can be retrieved as A.layout() .\n";
+    std::cout << "The layout contains the neccessary information to index a Holor, such as the strides and offset..\n";
 
     return 0;
 }

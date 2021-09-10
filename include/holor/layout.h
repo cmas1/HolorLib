@@ -127,7 +127,11 @@ class Layout{
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ 
-        Layout():size_{0}, offset_{0}{};                            ///< \brief Default constructor that creates an empty layout with no elements
+        ///< \brief creates an empty layout with no elements
+        Layout():size_{0}, offset_{0}{
+            lengths_.fill(0);
+            strides_.fill(0);
+        };                            
         Layout(const Layout<N>& layout) = default;                  ///< \brief default copy constructor
         Layout<N>& operator=(const Layout<N>& layout) = default;    ///< \brief default copy assignment
         Layout(Layout<N>&& layout) = default;                       ///< \brief default move constructor
