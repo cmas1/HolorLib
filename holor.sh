@@ -77,7 +77,7 @@ function main() {
             bash "${HOLOR_SCRIPTS_DIR}/holor_clean.sh"
             ;;
         docs)
-            bash "${HOLOR_SCRIPTS_DIR}/holor_install.sh"
+            bash "${HOLOR_SCRIPTS_DIR}/holor_build_docs.sh"
             ;;
         -h|--help)
             _usage

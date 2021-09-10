@@ -1,5 +1,6 @@
 .vscode/**
 build/**
-docs/sphinx/build/**
-docs/doxygen/**
+docs/**
 tests/build/**
+# doxygen/**
+sphinx/build/**
