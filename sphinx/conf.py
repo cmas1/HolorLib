@@ -44,8 +44,8 @@ extensions = [
 autoclass_content = 'both'
 
 # BREATHE configuration paths
-breathe_projects = {"holor": "../doxygen/xml"}
-breathe_default_project = "holor"
+breathe_projects = {"Holor": "../doxygen/xml"}
+breathe_default_project = "Holor"
 breathe_default_members = ('members',)
 
 # Intersphinx mappings.
@@ -67,8 +67,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'holor'
-copyright = '2018-2019, Carlo Masone'
+project = 'Holor'
+copyright = '2018-2020, Carlo Masone'
 author = 'Carlo Masone'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -76,7 +76,7 @@ author = 'Carlo Masone'
 # built documents.
 #
 # The short X.Y version.
-version = '@holor_VERSION@'
+version = '@Holor_VERSION@'
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -95,7 +95,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['build']
+exclude_patterns = ['../build' '../examples' '../tests']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -143,8 +143,8 @@ html_theme_options = {
     # For details see link.
     # https://material.io/icons/
     'header_links': [
-        ('Home', 'index', False, 'home'),
-        ("GitHub", "https://github.com/bluescarni/mppp", True, 'link')
+        ('Home', './index', False, 'home'),
+        ("GitHub", "TBD", True, 'link')
     ],
 
     # Customize css colors.
@@ -188,16 +188,16 @@ html_theme_options = {
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = 'bstools v0.1'
+# html_title = 
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
-# html_short_title = None
+# html_short_title = Holor
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
 #
-# html_logo = None
+html_logo = "./images/holor_logo.png"
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -254,11 +254,11 @@ html_theme_options = {
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 #
-# html_show_sphinx = True
+html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
 #
-# html_show_copyright = True
+html_show_copyright = True
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the

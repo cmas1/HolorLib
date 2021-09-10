@@ -40,11 +40,10 @@ cd ${HOLOR_SPHINX_PATH}
 make clean
 
 cd ${HOLOR_DOXYGEN_PATH}
-doxygen > /dev/null
-cp -r images/* xml
+doxygen # > /dev/null
 
 cd ${HOLOR_SPHINX_PATH}
-make html > /dev/null
+make html # > /dev/null
 
 cd ${HOLOR_DOXYGEN_PATH} 
 rm -rf xml
@@ -54,4 +53,4 @@ rm -rf doctrees
 
 cd ${HOLOR_ROOT_PATH}
 
-info "The documentation has been built in docs/".
+info "Documentation built and available in docs/".

@@ -1,9 +1,8 @@
-.. _install:
+-- _install::
 
-Installation guide
-==================
+Installation
+============
 
-.. _cpp_install:
 
 C++
 ---
