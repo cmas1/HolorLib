@@ -1,11 +1,16 @@
--- _install::
-
 Installation
 ============
 
+There are several ways to use
 
-C++
----
+
+
+Using HolorCon without installation
+-----------------------------------
+HolorCon is a header-only library, therefore its a
+
+Manual installation using CMake
+-------------------------------
 
 pagmo is a header-only library which has the following third-party dependencies:
 
@@ -56,8 +61,11 @@ your conda installation.
 
 .. _py_install:
 
-Python
-------
+
+
+
+Installation using script
+-------------------------
 
 The Python module corresponding to pagmo is called pygmo. pygmo has two mandatory runtime Python dependencies:
 
