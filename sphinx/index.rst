@@ -13,11 +13,15 @@ Monn and Spencer characterize holors with respect to two qualities:
    - their **valence** :math:`N`, which indicates the **number of dimensions** of the entity.
    - their **plethos** :math:`n`, which indicates the **number of elements in a dimension** of the entity.
    
-The Holor library was given its name to pay omage to Mann and Spencer's Theory of Holors, but it is not a mathematical library. An HolorCon is a generic multi-dimensional container endowed with an interface that allows to easiliy slice it and index its elements.
+An example of a simple holor, a 3D matrix, is shown in Fig. 1 (reproduced from the book *Theory of Holors: a generalization of tensors*).
 
+.. figure:: ./images/3dmatrix_example.png
+   :scale: 20%
+   :alt: Holor example: a 3D matrix
+   :align: center
+   
+   **Figure 1**: the 3D matrix :math:`A_{ijk}` shown in figure is a holor with valence :math:`N=3` and plethos 3 along all axes.
 
-.. image:: ./images/3dmatrix_example.png
-  :width: 20%
 
 If you are using Holor as part of your research, teaching, or other activities, we would be grateful if you could star
 the repository and cite our work as follows...
