@@ -126,36 +126,59 @@ todo_include_todos = False
 
 
 # -- Options for HTML output ----------------------------------------------
-html_theme = 'sphinx_material'
 
-# Material theme options (see theme.conf for more information)
+html_theme = 'sphinx_materialdesign_theme'
+
+# Theme options are theme-specific and customize the look and feel of a theme
+# further.  For a list of options available for each theme, see the
+# documentation.
 html_theme_options = {
+    # Specify a list of menu in Header.
+    # Tuples forms:
+    #  ('Name', 'external url or path of pages in the document', boolean, 'icon name')
+    #
+    # Third argument:
+    # True indicates an external link.
+    # False indicates path of pages in the document.
+    #
+    # Fourth argument:
+    # Specify the icon name.
+    # For details see link.
+    # https://material.io/icons/
+    'header_links': [
+        ('Home', './index', False, 'home'),
+        ("GitHub", "TBD", True, 'link')
+    ],
 
-    # Set the name of the project to appear in the navigation.
-    'nav_title': 'Holor',
+    # Customize css colors.
+    # For details see link.
+    # https://getmdl.io/customize/index.html
+    #
+    # Values: amber, blue, brown, cyan deep_orange, deep_purple, green, grey, indigo, light_blue,
+    #         light_green, lime, orange, pink, purple, red, teal, yellow(Default: indigo)
+    'primary_color': 'indigo',
+    'accent_color': 'purple',
 
-    # Set you GA account ID to enable tracking
-    'google_analytics_account': 'UA-XXXXX',
 
-    # Specify a base_url used to generate sitemap.xml. If not
-    # specified, then no sitemap will be built.
-    'base_url': 'https://project.github.io/project',
+    # Customize layout.
+    # For details see link.
+    # https://getmdl.io/components/index.html#layout-section
+    'fixed_drawer': True,
+    'fixed_header': True,
+    'header_waterfall': True,
+    'header_scroll': False,
 
-    # Set the color and the accent color
-    'color_primary': 'indigo',
-    'color_accent': 'purple',
-
-    # Set the repo location to get a badge with stats
-    'repo_url': 'https://github.com/project/project/',
-    'repo_name': 'Holor',
-
-    # Visible levels of the global TOC; -1 means unlimited
-    'globaltoc_depth': 3,
-    # If False, expand all TOC entries
-    'globaltoc_collapse': False,
-    # If True, show hidden TOC entries
-    'globaltoc_includehidden': False,
+    # Render title in header.
+    # Values: True, False (Default: False)
+    'show_header_title': False,
+    # Render title in drawer.
+    # Values: True, False (Default: True)
+    'show_drawer_title': True,
+    # Render footer.
+    # Values: True, False (Default: True)
+    'show_footer': True,
 }
+
 
 
 # Add any paths that contain custom themes here, relative to this directory.
