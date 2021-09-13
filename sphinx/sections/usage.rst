@@ -1,2 +1,2 @@
-Usage
-=====
+Using in a project
+==================

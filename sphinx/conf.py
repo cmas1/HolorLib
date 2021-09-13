@@ -132,7 +132,7 @@ html_theme = 'sphinx_material'
 html_theme_options = {
 
     # Set the name of the project to appear in the navigation.
-    'nav_title': 'Holor',
+    'nav_title': 'HolorLib',
 
     # Set you GA account ID to enable tracking
     'google_analytics_account': 'UA-XXXXX',
@@ -147,12 +147,12 @@ html_theme_options = {
 
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/project/project/',
-    'repo_name': 'Holor',
+    'repo_name': 'Repository',
 
     # Visible levels of the global TOC; -1 means unlimited
-    'globaltoc_depth': 3,
+    'globaltoc_depth': 2,
     # If False, expand all TOC entries
-    'globaltoc_collapse': False,
+    'globaltoc_collapse': True,
     # If True, show hidden TOC entries
     'globaltoc_includehidden': False,
 }
@@ -168,7 +168,7 @@ html_theme_options = {
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
-html_short_title = "Holor"
+html_short_title = "HolorLib"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -205,7 +205,9 @@ html_logo = "./images/holor_logo.png"
 
 # Custom sidebar templates, maps document names to template names.
 #
-# html_sidebars = {}
+html_sidebars = {
+    "**": ["logo-text.html", "globaltoc.html"]
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
