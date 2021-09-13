@@ -68,7 +68,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Holor'
-copyright = '2018-2020, Carlo Masone'
+copyright = '2020-2021, Carlo Masone'
 author = 'Carlo Masone'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -76,7 +76,7 @@ author = 'Carlo Masone'
 # built documents.
 #
 # The short X.Y version.
-version = '@Holor_VERSION@'
+version = '1.0'
 # The full version, including alpha/beta/rc tags.
 release = version
 
