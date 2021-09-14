@@ -47,7 +47,7 @@ Documentation Content
    sections/usage
 
 .. toctree::
-   :caption: Examples
+   :caption: Tutorials
    :maxdepth: 1
 
    sections/cpp_examples
