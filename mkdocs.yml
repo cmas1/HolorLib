@@ -1,0 +1,8 @@
+site_name: HolorLib
+
+theme:
+  name: material
+  palette:
+    - primary: teal
+      accent: pink
+  logo: images/holor_logo.png
