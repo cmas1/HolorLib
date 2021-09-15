@@ -5,7 +5,8 @@
 ☐ Write INSTALL
 ☐ Write Readme
 ☐ Rename include to holor?
-☐ Add Google analytics (see conf.py in sphinx)
+☐ Write License and unify license plate on all files
+☐ Create repo and publish it
 
 holor.h and layout.h:
     ☐ Now it is possible to create an empy holor without specifying its legnths or elements. To make this useful, we should add the functionality to later specify the lenghts of the holor (and its underlying layout), upadating the size and reserving the appropriate space in memory

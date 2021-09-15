@@ -1,6 +1,6 @@
-# Welcome to MkDocs
+# Welcome to HolorLib
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+For full documentation visit [mkdocs.org](https://www.mkdocs.org) :material-material-design:. 
 
 ## Commands
 
