@@ -60,12 +60,12 @@ theme:
     - content.tabs.link
     # - header.autohide
     # - navigation.expand
-    # - navigation.instant
-    # - navigation.tracking
-    # - navigation.tabs
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
     #   # - navigation.tabs.sticky
     # - navigation.sections
-    # - navigation.top
+    - navigation.top
     # - search.highlight
     - search.share
     - search.suggest
