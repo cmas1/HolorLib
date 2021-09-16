@@ -42,12 +42,12 @@ copyright: Copyright &copy; 2020 - 2021 Carlo Masone
 # Configuration
 theme:
   name: material
-
+  custom_dir: docs_extra
   # custom_dir: !ENV [THEME_DIR, "material"]
 
-  # Static files
-  static_templates:
-    - 404.html
+  # # Static files
+  # static_templates:
+  #   - 404.html
 
   # Don't include MkDocs' JavaScript
   include_search_page: false
@@ -70,7 +70,7 @@ theme:
     # - search.highlight
     - search.share
     - search.suggest
-      toc.integrate
+    - toc.integrate
   palette:
     - scheme: default
       primary: teal
@@ -96,9 +96,18 @@ theme:
 nav:
   - Home: index.md
   - Geting Started:
-    - Origin of the word Holor: getting_started/origin_of_holor.md
-    - Installation: getting_started/install.md
-    - Optional steps: getting_started/optional.md
+      - Origin of the word Holor: getting_started/origin_of_holor.md
+      - What's a Holor container: getting_started/holor_containers.md
+  - Quickstart:
+      - Installation: getting_started/install.md
+      - Optional modules: getting_started/optional.md
+  - Tutorials:
+      - Layout basics: tutorials/layout.md
+      - Holor basics: tutorials/holor.md
+      - HolorRef basics: tutorials/holorref.md
+      - Indexing a Holor or HolorRef container: tutorials/indexing.md
+      - Slicing a Holor or HolorRef container: tutorials/slicing.md
+      - Using Holor and HolorRef's iterators: tutorials/iterators.md
 
 
 # Plugins

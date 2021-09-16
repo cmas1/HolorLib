@@ -28,9 +28,5 @@ This library does not aim to implement these concepts: ==**HolorLib is not a mat
 HolorLib provides fundamental operations to manipulate and access these containers, such as indexing and slicing. Other operations to manipulate the containers and their content, such as addition or product, are typically application specific and are not implemented in this library interface.
 
 
-!!! note "Thank you"
-    If you are using Holor as part of your research, teaching, or other activities, we would be grateful if you could star
-    the repository.
-
 
 [^1]: Parry Moon and Domina Eberle Spencer, *Theory of Holors: a generalization of tensors*, Cambridge, England: Cambridge University Press, 1986

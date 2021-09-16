@@ -26,6 +26,10 @@ The examples can be compiled using the script ``holor.sh``. Optionally, one can 
 The compiled binaries are located  in the directory ``build/bin``.
 
 
+#### Usage
+
+
+---
 
 
 ## Tests
@@ -53,6 +57,10 @@ The tests can be compiled using the script ``holor.sh``. Optionally, one can spe
 The compiled binaries are located  in the directory ``build/bin``.
 
 
+#### Usage
+
+
+---
 
 
 ## Benchmarks
@@ -78,6 +86,10 @@ The compilation of the benchmarks is enabled by setting the cmake option ``-DHOL
 The benchmarks can be compiled using the script ``holor.sh``. Optionally, one can specify the compiler to be used with argument ``--compiler``, for example if the default system compiler does not support `C++20`_.
 The compiled binaries are located  in the directory ``build/bin``.
 
+#### Usage
+
+
+---
 
 
 ## Documentation
@@ -91,5 +103,4 @@ The documentation can be built using the following command
 ``` bash
     mkdocs build
 ```
-
 The documentation, in html format, will be generated in the `site` folder. To consult it, open the ``index.html`` file in a web browser.
