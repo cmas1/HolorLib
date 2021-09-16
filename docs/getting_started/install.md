@@ -8,30 +8,37 @@ We did not perform a thorough test to verify which compilers can be used with th
 
 
 ## Method 1. Installation with CMake (Recommended)
-
 !!! warning "Requirements"
     CMake 3.12 or above
 
-HolorLib is shipped as a CMake package, which allows it to be easily installed and used by other CMake projects. HolorLib offers two options to 
+HolorLib is shipped as a CMake package, which allows it to be easily installed and used by other CMake projects. This process can be performed manually or using the installation script packaged with the library.
 
 
+=== "manual"
 
-``` bash
-   git clone TBD <clone_destination>
-```
+    ``` bash
+      git clone TBD <destination_path>
+      cd <destination path>/Holor
+      mkdir build && cd build 
+      cmake .. -[options]
+      ccmake .
+      cmake --install .
+    ```
 
-Then go into the folder, create the build directory (where the cmake files will be generated), and build the project with cmake
+=== "script"
 
-``` bash
-   cd <clone_destination>/Holor
-   mkdir build && cd build
-   cmake .. -[options]
-```
+    ``` bash
+      git clone TBD <destination_path>
+      cd <destination path>/Holor
+      ./holor.sh install
+    ```
 
-There are a few CMake options that can be passed:
+There are a few CMake options that can be passed to customize the manual cmake installation (although the default values are recommended for most users):
+
+
 
 * ``-DCMAKE_INSTALL_PREFIX=<path>``. This option can be used to specify the location where the header files will be copied. By default the headers are copied in ``\user\local\install``. If there is no specific reaso to change this, the option can be omitted.
-* ``-DDEFINE_HOLOR_ASSERT_LEVEL=<Assertion level>``. This option is used to control what exceptions can be thrown by the HolorLib code. TThere are three levels:
+* ``-DDEFINE_HOLOR_ASSERT_LEVEL=<Assertion level>``. This option is used to control what exceptions can be thrown by the HolorLib code. There are three levels:
    
    - ``AssertionLevel::release`` is the default setting, and it contains few checks that may throw exceptions (for example, accessing an out of index element of a container).
    - ``AssertionLevel::no_checks`` this setting removes all checks
@@ -41,23 +48,31 @@ There are a few CMake options that can be passed:
     We advise to not use the ``DDEFINE_HOLOR_ASSERT_LEVEL`` option.
 
 
-With the cmake files generated, it is possible to review all options and reconfigure the project using the *CMake curses* interface
-
-``` bash
-   ccmake .
-```
-
-Finally, the library can be installed by calling
-
-``` bash
-   cmake --install .
-```
-
 !!! note
     Depending on the destination where the header files will be copied, this last command may require superuser privileges. In that case call it with `#!bash sudo`.
 
 
 ### How to use it in a project
+When HolorLib is installed following :ref:`install1` or :ref:`install2`, a CMake project is exported and can be used in other CMake projects, linking it to the executables that use it
+
+.. code-block:: cmake
+
+    find_package(Holor REQUIRED)
+
+    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+    add_executable(my_program my_program.cpp) #this is just an example of an executable using HolorLib
+    target_link_libraries(my_program PUBLIC Holor::Holor)
+
+
+In the code, in this simple example in the file ``my_program.cpp``, the Holor containers can be used with a simple include 
+
+.. code-block:: cpp
+
+    #include <holor/holor_full.h>
+
+
 
 ### Deleting the installation
 During the installation with these method, CMake create an ``install_manifest.txt`` file in the build folder which contains the information where the files have been installed.
@@ -67,6 +82,16 @@ Therefore, to uninstall the library simply do
    cd <build directory>
    make uninstall
 ```
+
+<!-- === "manual"
+
+    ``` bash
+      todo
+    ```
+
+=== "script" -->
+
+
 !!! tip   
     It may be necessary to call the command ``make uninstall`` with superuser privileges (using ``sudo``) depending on how and where the files were installed.
 
