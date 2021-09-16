@@ -16,133 +16,95 @@ HolorLib is shipped as a CMake package, which allows it to be easily installed a
 
 === "manual"
 
-    ``` bash
+    ``` bash linenums="1"
       git clone TBD <destination_path>
       cd <destination path>/Holor
       mkdir build && cd build 
       cmake .. -[options]
-      ccmake .
+      ccmake . #optional, to check and possibly modify the CMake options
       cmake --install .
     ```
 
 === "script"
 
-    ``` bash
+    ``` bash linenums="1"
       git clone TBD <destination_path>
       cd <destination path>/Holor
       ./holor.sh install
     ```
 
-There are a few CMake options that can be passed to customize the manual cmake installation (although the default values are recommended for most users):
+!!! note
+    Depending on the destination where the header files will be copied, the installation (line 6 in the _manual_ instructions) may require superuser privileges. In that case call it with `#!bash sudo`.
 
 
+There are a few CMake options that can be passed to customize the manual CMake installation:
 
-* ``-DCMAKE_INSTALL_PREFIX=<path>``. This option can be used to specify the location where the header files will be copied. By default the headers are copied in ``\user\local\install``. If there is no specific reaso to change this, the option can be omitted.
-* ``-DDEFINE_HOLOR_ASSERT_LEVEL=<Assertion level>``. This option is used to control what exceptions can be thrown by the HolorLib code. There are three levels:
-   
-   - ``AssertionLevel::release`` is the default setting, and it contains few checks that may throw exceptions (for example, accessing an out of index element of a container).
-   - ``AssertionLevel::no_checks`` this setting removes all checks
-   - ``AssertionLevel::debug`` this setting enables all checks, including the checks that are added for debuggin. 
+| CMake Option                  | Description                                          | Possible Values                                                                | Default                 |
+| ----------------------------- | ---------------------------------------------------- |--------------------------------------------------------------------------------|-------------------------|
+| `CMAKE_INSTALL_PREFIX`        | location where the header files will be copied       | a path                                                                         |`\user\local\install`    |
+| `DEFINE_HOLOR_ASSERT_LEVEL`   | control HolorLibs exceptions-throwing dynamic checks | `AssertionLevel::release`, `AssertionLevel::no_checks`, `AssertionLevel::debug`|`AssertionLevel::release`|
+
+!!! example
+    For a manual installation to a different path (e.g. `/home/user/my_project`), line 4 in the _manual_ instructions becomes
+    ``` bash
+        cmake .. -DCMAKE_INSTALL_PREFIX=/home/user/my_project
+    ```
+
+Such options are not available in the installation _script_, which uses the default values.
 
 !!! tip
-    We advise to not use the ``DDEFINE_HOLOR_ASSERT_LEVEL`` option.
+    We advise to use the default value for `DEFINE_HOLOR_ASSERT_LEVEL`.
 
-
-!!! note
-    Depending on the destination where the header files will be copied, this last command may require superuser privileges. In that case call it with `#!bash sudo`.
 
 
 ### How to use it in a project
-When HolorLib is installed following :ref:`install1` or :ref:`install2`, a CMake project is exported and can be used in other CMake projects, linking it to the executables that use it
+When HolorLib is installed using CMake, it can be easily imported in other CMake projects.
 
-.. code-block:: cmake
+``` cmake
 
     find_package(Holor REQUIRED)
 
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-    add_executable(my_program my_program.cpp) #this is just an example of an executable using HolorLib
+    add_executable(my_program my_program.cpp) #example of an executable
     target_link_libraries(my_program PUBLIC Holor::Holor)
+```
 
+Within the the file `my_program.cpp`, the HolorLib C++ API is accessible with a simple include 
 
-In the code, in this simple example in the file ``my_program.cpp``, the Holor containers can be used with a simple include 
-
-.. code-block:: cpp
-
+``` cpp
     #include <holor/holor_full.h>
-
+```
 
 
 ### Deleting the installation
-During the installation with these method, CMake create an ``install_manifest.txt`` file in the build folder which contains the information where the files have been installed.
-Therefore, to uninstall the library simply do
+During the installation with these method, CMake create an `install_manifest.txt` file in the build folder which contains the information where the files have been installed and allows to easily remove them.
 
-``` bash
-   cd <build directory>
-   make uninstall
-```
 
-<!-- === "manual"
+=== "manual"
 
     ``` bash
-      todo
+        cd <build directory>
+        make uninstall
     ```
 
-=== "script" -->
+=== "script"
 
+    ``` bash
+        ./holor.sh clean
+    ```
 
 !!! tip   
-    It may be necessary to call the command ``make uninstall`` with superuser privileges (using ``sudo``) depending on how and where the files were installed.
-
-Finally, the build folder with all its content can be deleted.
-
+    1. It may be necessary to call the command ``make uninstall`` with superuser privileges (using ``sudo``) depending on how and where the files were installed.
+    2. If `install_manifest.txt` was deleted, the installed files must be removed directly by the user. 
 
 
-
-## Method 3. Installation using script (Recommended)
-!!! warning "Requirements"
-    CMake 3.12 or above
-
-
-To simplify installation, and if the user does not need to modify any of the CMake options listed in :ref:`install2`, we advise to install the library by using the provided script ``holor.sh``, which will call all the appropriate cmake commands.
-
-First, download the repository
-
-``` bash
-   git clone TBD <clone_destination>
-   cd <clone_destination>/Holor
-```
-
-Make sure that the script ``holor.sh`` is executable and verify its options by calling
-
-``` bash
-   ./holor.sh --help
-```
-
-From the help the user can see that this script provides a simple interface to not only install the library, but also to build some additional components such as examples and tests (described in :ref:`optional`). 
-
-
-Install the library by simply calling
-
-``` bash
-   ./holor.sh install
-```
-
-
-
-
-### Deleting the installation
-If the library was installed via the ``holor.sh`` script, all the installed and build files and optional components can be removed with the same script, calling
-
-``` bash
-   ./holor.sh clean
-```
 
 
 
 ## Method 2. Installation without CMake
-HolorLib is a header-only library, therefore it can be used by simply copying the header files into your project
+HolorLib can also be used by simply copying the header files into a project
 
 ``` bash
    git clone TBD <destination_path>
@@ -151,14 +113,14 @@ HolorLib is a header-only library, therefore it can be used by simply copying th
 ```
 
 ### How to use it in a project
-Once the header files are copied in your C++ project, you can use it with a simple include
+Once the header files are copied in the C++ project, HolorLib API is accessible with a simple include
 ``` cpp
     #include "<path_to_local_include>/holor/holor_full.h"
 ```
 
 
 ### Deleting the installation
-Deleting the HolorLib simply amounts to deleting the HolorLib header files copied in the project.
+Since there is no installation, only the header files copied in the project need to be removed.
 
 
 
