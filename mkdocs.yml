@@ -29,7 +29,7 @@ site_description: >-
 
 
 # Repository
-repo_name: squidfunk/mkdocs-material
+repo_name: cmas1/holorlib
 repo_url: https://github.com/squidfunk/mkdocs-material
 edit_uri: ""
 
@@ -61,10 +61,11 @@ theme:
     # - header.autohide
     # - navigation.expand
     - navigation.instant
-    - navigation.tracking
+    #- navigation.tracking
     - navigation.tabs
-    #   # - navigation.tabs.sticky
+    - navigation.tabs.sticky
     # - navigation.sections
+    # - navigation.indexes
     - navigation.top
     # - search.highlight
     - search.share
@@ -75,13 +76,13 @@ theme:
       primary: teal
       accent: pink
       toggle:
-        icon: material/brightness-2
+        icon: material/lightbulb-outline
         name: Switch to dark mode
     - scheme: slate
       primary: blue
       accent: blue
       toggle:
-        icon:  material/brightness-5
+        icon: material/lightbulb
         name: Switch to light mode
   font:
     text: Roboto
@@ -89,17 +90,38 @@ theme:
   logo: images/holor_logo.png
   favicon: images/holor_logo.png
 
+  icon:
+    repo: fontawesome/brands/github
+
 nav:
   - Home: index.md
   - Geting Started:
-    - Pippo: getting_started/getting_started.md
-    # - Your first neuron: index.md
-#   - How to:
+    - Origin of the word Holor: getting_started/origin_of_holor.md
+    - Installation: getting_started/install.md
+    - Optional steps: getting_started/optional.md
 
 
+# Plugins
+plugins:
+  - search
 
-use_directory_urls: true
+#Not editable
+edit_uri: ""
 
+#Extras
+extra:
+  version:
+    provider: mike
+  # analytics:
+  #   provider: google
+  #   property: G-XXXXXXXXXX
+
+
+#to work with offline documentation
+use_directory_urls: false
+
+
+#Extensions
 markdown_extensions:
   - admonition
   - abbr
@@ -108,6 +130,20 @@ markdown_extensions:
   - footnotes
   - meta
   - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  # - pymdownx.betterem:
+  #     smart_enable: all
+  # - pymdownx.keys
+  # - pymdownx.snippets
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
@@ -115,10 +151,9 @@ markdown_extensions:
       toc_depth: 3
       permalink: true
 
-# markdown_extensions:
-#   - admonition
-#   # - mdx_math:
-#   #     enable_dollar_delimiter: True #for use of inline $..$
-#   - toc:
-#       permalink: true
-#   - codehilite
+
+#configuration and javascript for MathJax
+extra_javascript:
+  - javascripts/config.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
