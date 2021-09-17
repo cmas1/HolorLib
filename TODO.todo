@@ -1,6 +1,8 @@
 ☐ Write documentation
-    ☐ Switch to MkDocs
-    ☐ setup google analytics?
+    ☐ Landing page image
+    ☐ Logo
+    ☐ Icon
+    ☐ remove documentation building script
 ☐ Write benchmarks
 ☐ Write tests
 ☐ Write INSTALL
@@ -24,6 +26,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ Switch to MkDocs @done(21-09-16 23:30)
   ✔ Add script that builds the documentation @done(21-09-10 10:46)
   ✔ Write examples @done(21-09-10 10:21)
   ✔ Verify CMake and test library installation @started(21-09-07 12:13) @done(21-09-09 14:35) @lasted(2d2h22m32s)

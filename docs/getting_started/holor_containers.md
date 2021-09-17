@@ -25,7 +25,7 @@ The index of the memory location corresponding to the element of the container  
 \end{equation}
 
 
-## Holor and HolorRef
+## Memory
 HolorLib containers are collections of objects stored in a contiguous memory according to a Layout. The library provides two different types of containers, which differentiate from each other for the ownership of the storage:
 
 * A ``Holor` is a container that takes ownership of the memory location where the elements are stored.
