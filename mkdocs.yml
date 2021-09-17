@@ -42,6 +42,7 @@ copyright: Copyright &copy; 2020 - 2021 Carlo Masone
 # Configuration
 theme:
   name: material
+  custom_dir: docs/custom_theme
   # custom_dir: !ENV [THEME_DIR, "material"]
 
   # # Static files
@@ -94,7 +95,7 @@ theme:
 
 nav:
   - Home: index.md
-  - Geting Started:
+  - Getting Started:
       - Origin of the word Holor: getting_started/origin_of_holor.md
       - What's a Holor container: getting_started/holor_containers.md
   - Quickstart:
