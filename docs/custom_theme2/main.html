@@ -22,15 +22,15 @@
   <meta property="og:image:width" content="1080" />
   <meta property="og:image:height" content="568" />
 
+  <!-- google-site-verification meta-tag -->
+  <meta name="google-site-verification" content="-Rj8YMCn9uu5IwOFdC-WfAzXp4ZOMJtYKxU40ZgcJIU" />
+
 <!-- Extra stylesheets -->
 <!--  <link
     rel="stylesheet"
     href="{{ 'assets/stylesheets/overrides.css' | url }}"
   />-->
 {% endblock %}
-
-
-
 
 <!-- Announcement bar -->
 {% block announce %}
@@ -41,5 +41,14 @@
       .md-announce a:hover{color:currentColor}.md-announce
       strong{white-space:nowrap}.md-announce
   </style>
-  Welcome to <strong style="color: white">HolorLib</strong>
+
+<a href="https://www.linkedin.com/company/binbash">
+    For updates follow <strong style="color: #2a978d">@Binbash</strong> on
+    <span class="twemoji linkedin" style="color: #0e76a8">
+      {% include ".icons/fontawesome/brands/linkedin-in.svg" %}
+    </span>
+
+    <strong style="color: white">LinkedIn</strong>
+  </a>
+
 {% endblock %}

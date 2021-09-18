@@ -30,7 +30,7 @@ site_description: >-
 
 # Repository
 repo_name: cmas1/holorlib
-repo_url: https://github.com/squidfunk/mkdocs-material
+repo_url: https://github.com/cmas1/HolorLib
 edit_uri: ""
 
 
@@ -42,12 +42,8 @@ copyright: Copyright &copy; 2020 - 2021 Carlo Masone
 # Configuration
 theme:
   name: material
-  custom_dir: docs/custom_theme
-  # custom_dir: !ENV [THEME_DIR, "material"]
+  custom_dir: docs/custom_theme1
 
-  # # Static files
-  # static_templates:
-  #   - 404.html
 
   # Don't include MkDocs' JavaScript
   include_search_page: false
