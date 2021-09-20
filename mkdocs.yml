@@ -22,7 +22,7 @@
 
 # Project information
 site_name: HolorLib
-site_url: https://squidfunk.github.io/mkdocs-material/
+site_url: https://cmas1.io/HolorLib/
 site_author: Carlo Masone
 site_description: >-
   A C++ header-only library for generic multi-dimensional containers
@@ -42,7 +42,7 @@ copyright: Copyright &copy; 2020 - 2021 Carlo Masone
 # Configuration
 theme:
   name: material
-  custom_dir: docs/custom_theme
+  custom_dir: docs/custom_home_theme
 
 
   # Don't include MkDocs' JavaScript
@@ -76,7 +76,7 @@ theme:
         name: Switch to dark mode
     - scheme: slate
       primary: amber
-      accent: purple
+      accent: cyan
       toggle:
         icon: material/lightbulb
         name: Switch to light mode
@@ -105,10 +105,6 @@ nav:
       - Slicing a Holor or HolorRef container: tutorials/slicing.md
       - Using Holor and HolorRef's iterators: tutorials/iterators.md
 
-
-# Plugins
-plugins:
-  - search
 
 #Not editable
 edit_uri: ""
@@ -159,6 +155,10 @@ markdown_extensions:
 
 #configuration and javascript for MathJax
 extra_javascript:
-  - javascripts/config.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+
+# Plugins
+plugins:
+  - search
