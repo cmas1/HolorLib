@@ -1,1 +1,38 @@
 {% extends "custom_theme/home-styles.html" %}
+
+<!-- Render hero under tabs -->
+{% block tabs %}
+{{ super() }}
+
+<!-- Hero for landing page -->
+<section class="tx-container">
+    <div class="md-grid md-typeset">
+      <div class="tx-hero">
+        <div class="tx-hero__image">
+          <img src="assets/product-layers.png" draggable="false">
+        </div>
+        <div class="tx-hero__content">
+          <h1> HolorLib </h1>
+          <p>A <b>C++20</b> header-only library for generic multi-dimensional containers.</p>
+          <a href="{{ page.next_page.url | url }}" title="{{ page.next_page.title | striptags }}" class="md-button md-button--primary">
+            Getting started
+          </a>
+          <a href="{{ config.repo_url }}" title="{{ lang.t('source.link.title') }}" class="md-button">
+            Examples
+          </a>
+        </div>
+      </div>
+    </div>
+</section>
+{% endblock %}
+
+
+<!-- Footer -->
+
+
+
+<!-- Content -->
+{% block content %}{% endblock %}
+
+<!-- Application footer -->
+{% block footer %}{% endblock %}

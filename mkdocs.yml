@@ -42,7 +42,7 @@ copyright: Copyright &copy; 2020 - 2021 Carlo Masone
 # Configuration
 theme:
   name: material
-  custom_dir: docs/custom_theme1
+  custom_dir: docs/custom_theme
 
 
   # Don't include MkDocs' JavaScript
