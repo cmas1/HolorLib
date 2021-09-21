@@ -29,4 +29,4 @@ HolorLib provides fundamental operations to manipulate and access these containe
 
 
 
-[^1]: Parry Moon and Domina Eberle Spencer, *Theory of Holors: a generalization of tensors*, Cambridge, England: Cambridge University Press, 1986
+[^1]: [Parry Moon and Domina Eberle Spencer, *Theory of Holors: a generalization of tensors*, Cambridge, England: Cambridge University Press, 1986](https://www.cambridge.org/core/books/theory-of-holors/A4F6FE2D43AAE06C4D3EF6B620932CCD)
