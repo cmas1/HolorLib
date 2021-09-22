@@ -1,7 +1,11 @@
 ☐ Write documentation
+    ☐ clean up the Getting Started section
     ☐ Logo
     ☐ Icon
+    ☐ clean up Installation section
     ☐ remove documentation building script
+    ☐ write examples section
+    ☐ write API section
 ☐ Write benchmarks
 ☐ Write tests
 ☐ Write INSTALL
