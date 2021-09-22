@@ -1,5 +1,4 @@
 ☐ Write documentation
-    ☐ Landing page image
     ☐ Logo
     ☐ Icon
     ☐ remove documentation building script
@@ -26,6 +25,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ Landing page image @done(21-09-22 09:03)
   ✔ Switch to MkDocs @done(21-09-16 23:30)
   ✔ Add script that builds the documentation @done(21-09-10 10:46)
   ✔ Write examples @done(21-09-10 10:21)
