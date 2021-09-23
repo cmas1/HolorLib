@@ -4,6 +4,20 @@ In particular, we use a [row-major ordering](https://en.wikipedia.org/wiki/Row-_
 The correspondance between the shape of the multi-dimensional container and the locations in memory of the stored elements is provided by a *Layout*.
 The Layout is an object, present in each Holor container, that has the information needed to establish a map from the multi-dimensional coordinates (indices) in the container to a memory location, and viceversa.
 
+<figure>
+  <img src="../images/holor.png" width="500" />
+  <figcaption>Holor containers ...</figcaption>
+</figure>
+
+
+## Memory
+HolorLib containers are collections of objects stored in a contiguous memory according to a Layout. The library provides two different types of containers, which differentiate from each other for the ownership of the storage:
+
+* A ``Holor` is a container that takes ownership of the memory location where the elements are stored.
+* A ``HolorRef`` is a non-owning Holor-like view over a sequence of elements stored in a (nearly) contiguous [#f1]_ storage. This storage may be given as a pointer that is manually allocated or it may be owned by some other object (for example a vector or an array).
+
+
+
 
 ## Layout
 A Layout contains three fundamental pieces of information: 
@@ -25,11 +39,6 @@ The index of the memory location corresponding to the element of the container  
 \end{equation}
 
 
-## Memory
-HolorLib containers are collections of objects stored in a contiguous memory according to a Layout. The library provides two different types of containers, which differentiate from each other for the ownership of the storage:
-
-* A ``Holor` is a container that takes ownership of the memory location where the elements are stored.
-* A ``HolorRef`` is a non-owning Holor-like view over a sequence of elements stored in a (nearly) contiguous [#f1]_ storage. This storage may be given as a pointer that is manually allocated or it may be owned by some other object (for example a vector or an array).
 
 
 

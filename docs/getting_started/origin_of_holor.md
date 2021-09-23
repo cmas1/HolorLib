@@ -7,7 +7,7 @@ The name of the library pays homage to the work of Parry Moon and Domina Eberle 
 > -- <cite>Parry Moon and Domina Eberle Spencer <cite> [^1]
 
 
-Namely, Moon and Spencer define holors (from the Greek *ὅλος*, a whole) as a collection of indipendent elements, or merates (from the Greek *μέρος*, a part). These mathematical objects have two fundamental qualities:
+Moon and Spencer define holors (from the Greek *ὅλος*, a whole) as collections of indipendent elements, or merates (from the Greek *μέρος*, a part). These mathematical objects have two fundamental qualities:
 
 - **valence** $N$: which indicates the **number of dimensions**.
 - **plethos** $n_i$: which indicates the **number of elements** in the $i$-th dimension.
