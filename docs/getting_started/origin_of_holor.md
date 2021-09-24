@@ -7,24 +7,25 @@ The name of the library pays homage to the work of Parry Moon and Domina Eberle 
 > -- <cite>Parry Moon and Domina Eberle Spencer <cite> [^1]
 
 
-Moon and Spencer define holors (from the Greek *ὅλος*, a whole) as collections of indipendent elements, or merates (from the Greek *μέρος*, a part). These mathematical objects have two fundamental qualities:
+Moon and Spencer define holors (from the Greek *ὅλος*, a whole) as collections of indipendent elements, or merates (from the Greek *μέρος*, a part). In their definition, holors are characterized by two fundamental qualities:
 
 - **valence** $N$: which indicates the **number of dimensions**.
 - **plethos** $n_i$: which indicates the **number of elements** in the $i$-th dimension.
-   
-A simple example of a holor is a 3D matrix $A_{ijk}$, with three elements in each direction ($N=3$ and $n=3$ along all axes), as shown in this figure
+
+Moon and Spencer also introduce a general index notation to identify the merates of a holor: a single dimensional holor with three merates is denoted as $v^i = (v^1, v^2, v^3)$, a bi-dimensional holor with $2 \times 2$ elements is denoted as $A^{ij} = (A^{1,1}, A^{1,2}, A^{2,1}, A^{2,2})$, and so on.
+The definition of holors is purposedly broad so as to encompass under a unique formulation a large number of mathematical entities, such as matrices, tensors, complex numbers, quaternions, etcetera. Figure 1 illustrates some examples of holors. 
 
 <figure>
-  <img src="../images/3dmatrix_example.png" width="300" />
-  <figcaption>Holor example: a 3D matrix</figcaption>
+  <img src="../images/holors_examples.png" width="800" />
+  <figcaption><b>Figure 1</b>: Some examples of holors: a) a 3D matrix; b) a complex number; c) a quaternion.</figcaption>
 </figure>
 
    
-The elements of this holor are identified by the three indices, $i$, $j$ and $k$. 
+The *Theory of Holors* goes further to elaborate an algebra of holors, an operation called $\gamma$-product that allows to modify the characteristics (valence, positions of indices, symmetry or antisymmetry) of holors, transformations. It also provides definitions for notable classes of holors, like tensors, akinetors, oudors. 
 
-The theory of Holors developed by Moon and Spencer not only provides a generic notation for referring to such collection of elements, but it also generalizes algebraic operations like addition and product, transformations and calculus with these entities. They also provide definitions to important classes of holors, like tensors, akinetors, oudors. 
 
-This library does not aim to implement these concepts: ==**HolorLib is not a mathematical library**==. HolorLib only implements generic multidimensional containers, characterized by a number of dimensions (aka the *valence*) and by a number of elements along each dimension (aka the *plethos*). The elements stored in this container may be objects of any type, not just numbers or other mathematical entities. We call this containers *holors* because inspired by Moon and Spencer's work.
+
+This library does not aim to implement these concepts: **HolorLib is not a mathematical library**, but fundamentally it implements generic multidimensional containers of objects. These objects may be standard types, such as `floats`, `ints` or `vector<double>`, or user defined types such as a `struct`. Inspired by Moon and Spencer's work, we call this containers `Holor` and `HolorRef`.
 HolorLib provides fundamental operations to manipulate and access these containers, such as indexing and slicing. Other operations to manipulate the containers and their content, such as addition or product, are typically application specific and are not implemented in this library interface.
 
 
