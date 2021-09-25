@@ -1,20 +1,28 @@
 # What's a Holor container?
-Holor containers are generic multi-dimensional containers whose elements are stored in a contiguous memory location. Namely, given the start (pointer) of the area of memory, the location of the stored elements with respect to this initial point is defined by a single index even though the container itself may be multi-dimensional. 
-In particular, we use a [row-major ordering](https://en.wikipedia.org/wiki/Row-_and_column-major_order).
-The correspondance between the shape of the multi-dimensional container and the locations in memory of the stored elements is provided by a *Layout*.
-The Layout is an object, present in each Holor container, that has the information needed to establish a map from the multi-dimensional coordinates (indices) in the container to a memory location, and viceversa.
+Holor containers are generic multi-dimensional collections of homogeneous elements, i.e., all elements must be of the same type. These containers are characterized by:
+
+* the number of dimensions `N`;
+* the `lengths`, that is the number of elements along each individual dimension;
+* the type of the elements stored.
+
+From the point of view of implementation, holor containers have three fundamental traits:
+
+* __Memory__: a holor container has access to a contiguous area of memory where the "contained" elements are stored.
+* __Layout__: each holor container possesses a `Layout`, an object that contains the information to map from the the multi-dimensional coordinates (indices) in the container dimensions to a memory location, and viceversa. In particular, holor containers use a [row-major ordering](https://en.wikipedia.org/wiki/Row-_and_column-major_order).
+* __Indexing/Slicing operations__: a holor container is endowed with a set of operations that allow to access its individual elements from a set of `N` coordinates (**indexing**), or to extract a holor container that is a subset of the original one (**slicing**)
+
 
 <figure>
   <img src="../images/holor.png" width="500" />
-  <figcaption>Holor containers ...</figcaption>
+  <figcaption>The implementation of Holor containers has three fundamental elements: a contiguous memory location that stores the elements, a layout that contains information about their ordering, and a set of operations to access or slice the container.</figcaption>
 </figure>
 
 
 ## Memory
-HolorLib containers are collections of objects stored in a contiguous memory according to a Layout. The library provides two different types of containers, which differentiate from each other for the ownership of the storage:
+Each holor container has access to a contiguous area of memory where its elements are stored. The library provides two different types of containers, which differentiate from each other for the ownership of the storage:
 
-* A ``Holor` is a container that takes ownership of the memory location where the elements are stored.
-* A ``HolorRef`` is a non-owning Holor-like view over a sequence of elements stored in a (nearly) contiguous [#f1]_ storage. This storage may be given as a pointer that is manually allocated or it may be owned by some other object (for example a vector or an array).
+* A `Holor` is a container that has ownership of the memory where the elements are stored. This is implemented as an `std::array` within the container.
+* A `HolorRef` is a non-owning Holor-like view over a sequence of elements stored in a contiguous area of memory. The container is given only a pointer to the memory location.
 
 
 

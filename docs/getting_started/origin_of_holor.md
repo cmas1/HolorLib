@@ -25,7 +25,7 @@ The *Theory of Holors* goes further to elaborate an algebra of holors, an operat
 
 
 
-This library does not aim to implement these concepts: **HolorLib is not a mathematical library**, but fundamentally it implements generic multidimensional containers of objects. These objects may be standard types, such as `floats`, `ints` or `vector<double>`, or user defined types such as a `struct`. Inspired by Moon and Spencer's work, we call this containers `Holor` and `HolorRef`.
+This library does not aim to implement these concepts: **HolorLib is not a mathematical library**, but it implements generic multidimensional containers of objects. These objects may be standard types, such as `floats`, `ints` or `vector<double>`, or user defined types such as a `struct`. Inspired by Moon and Spencer's work, we call this containers `Holor` and `HolorRef`.
 HolorLib provides fundamental operations to manipulate and access these containers, such as indexing and slicing. Other operations to manipulate the containers and their content, such as addition or product, are typically application specific and are not implemented in this library interface.
 
 
