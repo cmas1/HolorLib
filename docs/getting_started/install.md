@@ -1,9 +1,9 @@
 # Installation
 
 
-## Before Installing
-HolorLib is a header only library. Therefore the library itself does not need to be compiled to be used in a project. However, the header files are written using [C++20](https://en.cppreference.com/w/cpp/20) features and we plan to include more of these features as they become available in compilers. Therefore, a project using HolorLib should be compiled using a compiler that supports [C++20](https://en.cppreference.com/w/cpp/20).
-We did not perform a thorough test to verify which compilers can be used with this library. We successfully compiled all examples and tests shipped in this library using `clang++12`, but we failed to compile them with `g++-10` due to a compiler bug when using concepts in partial template specializations. 
+## Premise
+HolorLib is a header only library that is written using [C++20](https://en.cppreference.com/w/cpp/20) features. Experimenting with C++20 was actually one of the reasons for the creation of this library, as an exercise. As it stands, C++20 is not yet fully supported by compilers and a few of its new features are not yet readily available. 
+I did not perform a thorough test to verify compilers compatibility and I have only used `clang++-12`, so for now please refer to the compiler support list [here](https://en.cppreference.com/w/cpp/20). Be mindful that, as for all early releases of new compilers, even though they report supporting certain C++20 features, they may have some bugs. For example, I failed to compile the examples shipped with this library using `g++-10` due to a compiler bug when using concepts in partial template specializations.
 
 
 
@@ -11,10 +11,10 @@ We did not perform a thorough test to verify which compilers can be used with th
 !!! warning "Requirements"
     CMake 3.12 or above
 
-HolorLib is shipped as a CMake package, which allows it to be easily installed and used by other CMake projects. This process can be performed manually or using the installation script packaged with the library.
+HolorLib is shipped as a CMake package, which allows it to be easily installed and used by other CMake projects. This process can be performed explicitly or using the installation script packaged with the library.
 
 
-=== "manual"
+=== "explicit"
 
     ``` bash linenums="1"
       git clone TBD <destination_path>
@@ -82,7 +82,7 @@ Within the the file `my_program.cpp`, the HolorLib C++ API is accessible with a 
 During the installation with these method, CMake create an `install_manifest.txt` file in the build folder which contains the information where the files have been installed and allows to easily remove them.
 
 
-=== "manual"
+=== "explicit"
 
     ``` bash
         cd <build directory>
@@ -97,14 +97,14 @@ During the installation with these method, CMake create an `install_manifest.txt
 
 !!! tip   
     1. It may be necessary to call the command ``make uninstall`` with superuser privileges (using ``sudo``) depending on how and where the files were installed.
-    2. If `install_manifest.txt` was deleted, the installed files must be removed directly by the user. 
+    2. If `install_manifest.txt` was deleted, the installed files must be manually removed by the user. 
 
 
 
 
 
 ## Method 2. Installation without CMake
-HolorLib can also be used by simply copying the header files into a project
+HolorLib can also be used by simply copying the header files into a project.
 
 ``` bash
    git clone TBD <destination_path>

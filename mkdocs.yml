@@ -92,18 +92,20 @@ theme:
 nav:
   - Home: index.md
   - About HolorLib:
-      - Origin of the word Holor: getting_started/origin_of_holor.md
-      - What's a Holor container: getting_started/holor_containers.md
-  - Quickstart:
-      - Installation: getting_started/install.md
-      - Optional modules: getting_started/optional.md
+    - Origin of the word Holor: getting_started/origin_of_holor.md
+    - What's a Holor container: getting_started/holor_containers.md
+  - Getting Started:
+    - Installation: getting_started/install.md
+    - Optional modules: getting_started/optional.md
   - Tutorials:
-      - Layout basics: tutorials/layout.md
-      - Holor basics: tutorials/holor.md
-      - HolorRef basics: tutorials/holorref.md
-      - Indexing a Holor or HolorRef container: tutorials/indexing.md
-      - Slicing a Holor or HolorRef container: tutorials/slicing.md
-      - Using Holor and HolorRef's iterators: tutorials/iterators.md
+    - Layout basics: tutorials/layout.md
+    - Holor basics: tutorials/holor.md
+    - HolorRef basics: tutorials/holorref.md
+    - Indexing a Holor or HolorRef container: tutorials/indexing.md
+    - Slicing a Holor or HolorRef container: tutorials/slicing.md
+    - Using Holor and HolorRef's iterators: tutorials/iterators.md
+  - C++ API:
+    - Classes: api/classes.md
 
 
 #Not editable
