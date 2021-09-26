@@ -91,7 +91,7 @@ theme:
 
 nav:
   - Home: index.md
-  - Getting Started:
+  - About HolorLib:
       - Origin of the word Holor: getting_started/origin_of_holor.md
       - What's a Holor container: getting_started/holor_containers.md
   - Quickstart:
