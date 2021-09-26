@@ -97,15 +97,15 @@ namespace impl{
  * are stored as a 1D data sequence following a row-major representation.
  * 
  * A layout contains three fundamental information: 
- *      - The \b offset is the offset in the contiguous memory of the first element indexed by the layout.  
- *      - The \b lengths are the numbers of elements along every dimension of the layout.
- *      - The \b strides are the distances in the 1D data sequence between successive elements in individual dimensions of the layout.
+ *      - The __offset__ is the offset in the contiguous memory of the first element indexed by the layout.  
+ *      - The __lengths__ are the numbers of elements along every dimension of the layout.
+ *      - The __strides__ are the distances in the 1D data sequence between successive elements in individual dimensions of the layout.
  *  For a Layout with `N` dimensions, both the length array and the stride array must be size `N`.
  * A Layout supports two fundamental operations:
- * - \i Indexing a single element: this operation provides a map from the coordinates in the container to the index in memory of the selected element;
- * - \i Indexing a slice of the container: this operation allows to select a subset of elements from a container by computing a new Layout that provides the needed information to index them. 
+ * - __Indexing__ a single element: this operation provides a map from the coordinates in the container to the index in memory of the selected element;
+ * - __Slicing__ the container: this operation allows to select a subset of elements from a container by computing a new Layout that provides the needed information to index them. 
  * 
- * \tparam N is the number of dimensions in the layout
+ * \tparam `N` is the number of dimensions in the layout
  */
 template<size_t N>
 class Layout{
