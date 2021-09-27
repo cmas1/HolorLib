@@ -214,6 +214,7 @@ class Layout{
 
         /*!
          * \brief Get a length of a dimension of the layout. This is a const function.
+         * \param dim dimension queried
          * \return the length along a dimension (number of elements in that dimension)
          */
         auto length(size_t dim) const{

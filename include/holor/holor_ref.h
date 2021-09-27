@@ -302,10 +302,10 @@ class HolorRef{
                 CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         HolorRef() = default;                           ///< \brief Default constructor
-        HolorRef(HolorRef&&) = default;                 ///< \brief Default move constructor.
-        HolorRef(const HolorRef&) = default;            ///< \brief Default copy constructor.
-        HolorRef& operator=(HolorRef&&) = default;      ///< \brief Default move assignement.
-        HolorRef& operator=(const HolorRef&) = default; ///< \brief Default copy assignement.
+        HolorRef(HolorRef<T, N>&& holor_ref) = default;                 ///< \brief Default move constructor.
+        HolorRef(const HolorRef<T, N>& holor_ref) = default;            ///< \brief Default copy constructor.
+        HolorRef& operator=(HolorRef<T, N>&& holor_ref) = default;      ///< \brief Default move assignement.
+        HolorRef& operator=(const HolorRef<T, N>& holor_ref) = default; ///< \brief Default copy assignement.
         ~HolorRef() = default;                          ///< \brief Default destructor.
 
         /*!

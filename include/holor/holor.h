@@ -67,12 +67,12 @@ class Holor{
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        Holor() = default;                          ///< \brief default constructor with zero elements in every dimension
-        Holor(Holor&&) = default;                   ///< \brief default move constructor
-        Holor(const Holor&) = default;              ///< \brief default copy constructor
-        Holor& operator=(Holor&&) = default;        ///< \brief default move assignment
-        Holor& operator=(const Holor&) = default;   ///< \brief default copy assignment
-        ~Holor() = default;                         ///< \brief default destructor
+        Holor() = default;                                      ///< \brief default constructor with zero elements in every dimension
+        Holor(Holor<T. N>&& holor) = default;                   ///< \brief default move constructor
+        Holor(const Holor<T, N>& holor) = default;              ///< \brief default copy constructor
+        Holor& operator=(Holor<T, N>&& holor) = default;        ///< \brief default move assignment
+        Holor& operator=(const Holor<T, N>& holor) = default;   ///< \brief default copy assignment
+        ~Holor() = default;                                     ///< \brief default destructor
     
         /*!
          * \brief Constructor that creates a Holor by specifying the length of each dimension
