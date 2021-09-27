@@ -51,6 +51,7 @@ struct range{
      * \param start beginning of the range
      * \param end end (last element) of the range
      * \param step step between two elements in the range. Defaults to 1.
+     * \exception holor::exception::HolorRuntimeError if the argeuments for the constructor do not implement a meaningful range of indices, i.e., if they do not satisfy `(start>=0) && (end>start) && (step>0)`. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to AssertionLevel::no_checks to exclude this check.
      */
     range(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
         assert::dynamic_assert( (start>=0) && (end>start) && (step>0) , EXCEPTION_MESSAGE("Invalid range!"));
