@@ -1,5 +1,5 @@
 # Indices and Ranges of Indices
-Defined in header  `holor/indexes.h`.
+Defined in header  `holor/indexes.h`, within the `#!cpp namespace holor`.
 
 
 The individual elements within a Holor or HolorRef container are identified by a set of indices. These indices indicate the position of the element along each axis of the container.

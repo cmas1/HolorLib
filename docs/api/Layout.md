@@ -1,6 +1,6 @@
-# holor::Layout
+# Layout
 
-Defined in header `holor/layout.h`.    
+Defined in header `holor/layout.h`, within the `#!cpp namespace holor`.    
 
 ``` cpp
     template<size_t N>
