@@ -168,8 +168,8 @@ class Holor{
         auto rbegin(){ return data_.rbegin(); } ///< \brief returns a reverse iterator to the beginning
         auto rend(){ return data_.rend(); } ///< \brief returns a reverse iterator to the end
 
-        auto crbegin(){ return data_.crbegin(); } ///< \brief returns a constant reverse iterator to the beginning
-        auto crend(){ return data_.crend(); } ///< \brief returns a constant reverse iterator to the end
+        auto crbegin() const{ return data_.crbegin(); } ///< \brief returns a constant reverse iterator to the beginning
+        auto crend() const{ return data_.crend(); } ///< \brief returns a constant reverse iterator to the end
 
 
 

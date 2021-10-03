@@ -105,7 +105,7 @@ nav:
     - Slicing a Holor or HolorRef container: tutorials/slicing.md
     - Using Holor and HolorRef's iterators: tutorials/iterators.md
   - C++ API:
-    - Indexes: api/Indexes.md
+    - Indices: api/Indexes.md
     - Layout: api/Layout.md
     - Holor: api/Holor.md
     - HolorRef: api/HolorRef.md

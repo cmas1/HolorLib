@@ -245,6 +245,7 @@ class Layout{
          * \brief Function for indexing a single element from the Layout
          * \tparam Dims are the types of the parameter pack. Dims must e a pack of `N` parameters, each indexing a single element along a dimension of the Layout
          * \param dims parameters pack containing the subscripts
+         * \exception holor::exception::HolorRuntimeError if the indices passed as arguments are invalid. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to AssertionLevel::no_checks to exclude this check.
          * \return the index in memory of the selected element.
          */
         template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
@@ -262,6 +263,7 @@ class Layout{
         size_t operator()(std::array<ID,N> dims) const{
             auto result = offset_;
             for (auto cnt = 0; cnt<N; cnt++){
+                assert::dynamic_assert(dims[cnt]>=0 && dims[cnt]<lengths_[cnt], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
                 result += dims[cnt]*strides_[cnt];
             }
             return result;
@@ -295,6 +297,7 @@ class Layout{
          * \endverbatim
          * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
          * \param args parameters pack. Each element of the pack indexes either an element or a range of elements along a dimension of the Layout.
+         * \exception holor::exception::HolorRuntimeError if the indices passed as arguments are invalid. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to AssertionLevel::no_checks to exclude this check.
          * \return the Layout containing the indexed range of elements
          */
         template<typename... Args> requires (impl::ranged_index_pack<Args...>() && (sizeof...(Args)==N) )
@@ -314,6 +317,7 @@ class Layout{
          * \endverbatim
          * \tparam Args are the types of the parameter pack. Dims must e a pack of `N` parameters, with at least one of them indexing a range of elements along a dimension of the Layout
          * \param args parameters pack. Each element of the pack indexes either an element or a range of elements along a dimension of the Layout.
+         * \exception holor::exception::HolorRuntimeError if the indices passed as arguments are invalid. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to AssertionLevel::no_checks to exclude this check.
          * \return the Layout containing the indexed range of elements. In this case the Layout has dimension `N`, i.e. the dimensionality is not reduced.
          */
         template<typename... Args> requires (impl::ranged_index_pack<Args...>() && (sizeof...(Args)==N) )
@@ -401,6 +405,7 @@ class Layout{
          * \tparam OtherArgs rest of the indices in the parameter pack
          * \param first is the index to be considered for the dimension `M`
          * \param other is the pack with the remaining indices that need to be unwind
+         * \exception holor::exception::HolorRuntimeError if `first` is not within the range [0, `lengths[M]). The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to AssertionLevel::no_checks to exclude this check.
          */
         template<size_t M, SingleIndex FirstArg, SingleIndex... OtherArgs>
         size_t single_element_indexing_helper(FirstArg first, OtherArgs&&... other) const{
@@ -423,6 +428,7 @@ class Layout{
          * \tparam OtherArgs rest of the indices in the parameter pack
          * \param first is the index to be considered for the dimension `Dim`
          * \param other is the pack with the remaining indices that need to be unwind
+         * \exception holor::exception::HolorRuntimeError if `coordinate` is not within the range [0, `lengths[Dim]). The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to AssertionLevel::no_checks to exclude this check.
          */
         template<size_t Dim, Index FirstArg, Index... OtherArgs>
         static void slice_unreduced_helper(Layout<N>& result, FirstArg coordinate, OtherArgs&&... other){

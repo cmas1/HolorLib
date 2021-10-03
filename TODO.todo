@@ -13,8 +13,11 @@
 ☐ Write License and unify license plate on all files
 ☐ Create repo and publish it
 
+holor.h and holor_ref.h:
+    ☐ rename the function lengths(dim) to length(dim), to make the difference with lenghts() more intuitive.
+
 holor.h and layout.h:
-    ☐ Now it is possible to create an empy holor without specifying its legnths or elements. To make this useful, we should add the functionality to later specify the lenghts of the holor (and its underlying layout), upadating the size and reserving the appropriate space in memory
+    ☐ RESIZE: Now it is possible to create an empy holor without specifying its legnths or elements. To make this useful, we should add the functionality to later specify the lenghts of the holor or resize it (and its underlying layout), upadating the size and reserving the appropriate space in memory
 
 holor_concepts.h:
     ☐ //SKIP Concept LayoutType (to be used in layout.h) => //NOTE: the indexing constraint (check that LayoutType supports indexing) requires to verify the existance of a variadic member function with N arguments. I cannot find a way to express this without adding other template parameters to the concept and probably it is not doable 
