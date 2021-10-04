@@ -1,16 +1,15 @@
-# holor::HolorRef
+# HolorRef class
 
-Defined in header `holor/holor?ref.h`.    
+Defined in header `holor/holor_ref.h`, within the `#!cpp namespace holor`.    
 
 ``` cpp
     template<typename T, size_t N>
     class HolorRef;
 ```
 
-Class implementing a general N-dimensional container that does not own the memory where the elements are stored.
-
-A HolorRef is intended as a general `N`-dimensional container, whose elements need not to be numerical types, but can be of a generic type `T`. 
-HolorRefs are implemented with a (row-major)[https://en.wikipedia.org/wiki/Row-_and_column-major_order] representation, i.e., the elements of last dimension of the container are contiguous.
+This class implements a general `N`-dimensional container that doesn't own the memory where the elements are stored.
+The elements in the container need not to be numerical types, but can be of a generic type `T`. 
+Holors are implemented with a [row-major](https://en.wikipedia.org/wiki/Row-_and_column-major_order) representation, i.e., the elements of the last dimension of the container are contiguous.
 
 
 
@@ -44,6 +43,7 @@ HolorRefs are implemented with a (row-major)[https://en.wikipedia.org/wiki/Row-_
 ## Public Member functions
 
 ### Constructors
+##### signature
 1. 
 ``` cpp
     HolorRef();
@@ -71,16 +71,16 @@ HolorRefs are implemented with a (row-major)[https://en.wikipedia.org/wiki/Row-_
     explicit HolorRef(T* dataptr, const Container& lengths);
 ```
 
-###### brief
+##### brief
 Create a HolorRef object, either as an empty HolorRef with 0-length dimensions (1), or initializing it from another HolorRef (2, 3), or creating it from a pointer to a memory location and a Layout (4), or by creating it from a pointer to a memory location and a container of lengths.
 
-###### parameters
+##### parameters
 * `holor_ref`:  HolorRef object used to initialize the created HolorRef. 
 * `dataptr`: pointer to the memory location where the elements are stored.
 * `layout`: Layout used to initialize the way coordinates are mapped to memory locations.
 * `lenghts`: number of elements along each individual dimension of the HolorRef container, given either as a compile-time size container (e.g. a `std::array`) or as a dynamic size container (e.g., a `std::vector`).
 
-###### return
+##### return
 A HolorRef container.
 
 <hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7"> </hr>
@@ -88,6 +88,7 @@ A HolorRef container.
 
 
 ### Assignments
+##### signature
 1. 
 ``` cpp
     HolorRef& operator=(HolorRef<T, N>&& holor_ref);
@@ -97,11 +98,14 @@ A HolorRef container.
     HolorRef& operator=(HolorRef<T, N>&& holor_ref);
 ```
 
-###### brief
+##### brief
 Assign to a HolorRef.
 
-###### parameters
+##### parameters
 * `holor_ref`: HolorRef object to assign from.
+
+##### return
+A reference to a HolorRef.
 
 <hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7"> </hr>
 
@@ -110,73 +114,81 @@ Assign to a HolorRef.
 ### Iterators
 
 #### begin
+##### signature
 ``` cpp    
     auto begin();
 ``` 
-###### brief
+##### brief
 Returns an iterator to the beginning.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 
 #### end
+##### signature
 ``` cpp
     auto end();
 ```
-###### brief
+##### brief
 Returns an iterator to the end.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 
 #### cbegin
+##### signature
 ``` cpp
     auto cbegin() const;
 ```
-###### brief 
+##### brief 
 Returns a constant iterator to the beginning.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 
 #### cend
+##### signature
 ``` cpp
     auto cend() const;
 ```
-###### brief
+##### brief
 Returns a constant iterator to the end.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 
 #### rbegin
+##### signature
 ``` cpp
     auto rbegin();
 ```
-###### brief
+##### brief
 Returns a reverse iterator to the beginning.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 
 #### rend
+##### signature
 ``` cpp
     auto rend();
 ```
-###### brief
+##### brief
 Returns a reverse iterator to the end.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 
 #### crebegin
+##### signature
 ``` cpp
-    auto crbegin();
+    auto crbegin() const;
 ```
-###### brief
+##### brief
 Returns a constant reverse iterator to the beginning.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 
 #### crend
+##### signature
 ``` cpp
-    auto crend();
+    auto crend() const;
 ```
-###### brief
+##### brief
 Returns a constant reverse iterator to the end.
 <hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7"> </hr>
 
@@ -185,18 +197,20 @@ Returns a constant reverse iterator to the end.
 ### Get/Set functions
 
 #### layout
+##### signature
 ``` cpp
     const Layout<N>& layout();
 ```
-###### brief 
+##### brief 
 Get the Layout used by the Holor to map indices to memory locations.
-###### return
+##### return
 a Layout.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%;">
 
 
 
 #### lengths
+##### signature
 1. 
 ``` cpp
     auto lengths() const;
@@ -205,29 +219,31 @@ a Layout.
 ``` cpp
     auto lengths(size_t dim) const;
 ```
-###### brief
+##### brief
 Get the lengths, i.e., the number of elements that the container has per each dimension.
-###### parameters
-* `dim`: request to get only the lenght for the `dim` dimension.
-###### return
+##### parameters
+* `dim`: request to get only the lenght for the `dim` dimension. There is no check on the validity of this argument.
+##### return
 When called without arguments, the function returns a `std::array` with the lenght of all dimensions ofthe container. When the argument `dim` is passed, the function returns a single legnth (a `size_t`).
 <hr style="background-color:#9999ff; opacity:0.4; width:50%;">
 
 
 
 #### size
+##### signature
 ``` cpp
     size_t size() const;
 ```
-###### brief
+##### brief
 Get the total number of elements in the container.
-###### return
+##### return
 Return the number of elements in the container, a `size_t`.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%;">
 
 
 
 #### dataptr
+##### signature
 1. 
 ``` cpp
     T* dataptr();
@@ -236,9 +252,9 @@ Return the number of elements in the container, a `size_t`.
 ``` cpp
     const T* dataptr();
 ```
-###### brief
+##### brief
 Get a flat access to the memory that stores the elements contained in the container.
-###### return
+##### return
 A pointer to the memory location where the elements are stored.
 
 <hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7"> </hr>
@@ -249,6 +265,7 @@ A pointer to the memory location where the elements are stored.
 ### Indexing functions
 
 #### operator()
+##### signature
 1. 
 ``` cpp
     template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
@@ -259,11 +276,15 @@ A pointer to the memory location where the elements are stored.
     template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
     const T operator()(Dims&&... dims) const;
 ```
-###### brief
+##### brief
 Access a single element in the container.
-###### parameters
-* `dims`: pack of indices, one per dimension of the Holor container. The coordinates must abide the `SingleIndex` concept.
-###### return
+##### parameters
+* `dims`: pack of indices, one per dimension of the Holor container, given either as a parameter pack or as an array of `SingleIndex` elements (Refer to [Indices](./Indexes.html) for more details).
+
+!!! warning
+    When indexing a Holor, the conversion from indices to a memory location performed by the Layout may throw an `holor::exception::HolorRuntimeError` if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.
+
+##### return
 The element in the Holor at the selected coordinates.
 
 
@@ -275,23 +296,28 @@ The element in the Holor at the selected coordinates.
 ### Slicing functions
 
 #### operator()
+##### signature
 ``` cpp
     template<typename... Args> requires (impl::ranged_index_pack<Args...>() && (sizeof...(Args)==N) )
     auto operator()(Args&&... args);
 ```
 
-###### brief 
+##### brief 
 Access a slice of the container.
-###### parameters
-* `args`: pack of indices and ranges, one per dimension of the Holor container. At least one argument of the pack must be a range.
+##### parameters
+* `args`: parameters pack. Each element of the pack must be either a `SingleIndex` or a `RangeIndex`, and at least one of them must be a `RangeIndex`. Refer to [Indices](./Indexes.html) for more details.
 
-###### return
+!!! warning
+    When slicing a Holor, the conversion from indices to a memory location performed by the Layout may throw an `holor::exception::HolorRuntimeError` if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.
+
+##### return
 A slice as a HolorRef. The number of dimensions of the returned holorRef depends on the input arguments, as each SingleIndex passed in the parameters pack collapses one dimension.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 
 
 #### row
+##### signature
 1. 
 ``` cpp
     HolorRef<T, N-1> row(size_t i);
@@ -300,17 +326,22 @@ A slice as a HolorRef. The number of dimensions of the returned holorRef depends
 ``` cpp
     const HolorRef<T, N-1> row(size_t i) const;
 ```
-###### brief 
+##### brief 
 Get a single row of the container.
-###### parameters
+##### parameters
 * `i`: selects the `i`-th row.
-###### return
+
+!!! warning
+    When slicing a row of the Holor an `holor::exception::HolorRuntimeError` exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.
+
+##### return
 the slice corresponding to the `i`-th row. This slice is a HolorRef with `N-1` dimensions.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 
 
 #### col
+##### signature
 1. 
 ``` cpp
     HolorRef<T, N-1> col(size_t i);
@@ -319,16 +350,21 @@ the slice corresponding to the `i`-th row. This slice is a HolorRef with `N-1` d
 ``` cpp
     const HolorRef<T, N-1> col(size_t i) const;
 ```
-###### brief 
+##### brief 
 Get a single column of the container.
-###### parameters
+##### parameters
 * `i`: selects the `i`-th column.
-###### return
+
+!!! warning
+    When slicing a column of the Holor an `holor::exception::HolorRuntimeError` exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.
+
+##### return
 The slice corresponding to the `i`-th column. This slice is a HolorRef with `N-1` dimensions.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 
 #### slice
+##### signature
 1. 
 ``` cpp
     template<size_t M>
@@ -339,13 +375,17 @@ The slice corresponding to the `i`-th column. This slice is a HolorRef with `N-1
     template<size_t M>
     const HolorRef<T, N-1> slice(size_t i) const;
 ```
-###### brief
+##### brief
 Get the `i`-th slice of a single dimension (e.g., the fifth row or the second column)
-###### template parameters
+##### template parameters
 * `M` is the dimension to be sliced. 0 is a row, 1 is a column, ...
-###### parameters
+##### parameters
 * `i` is the index of the slice to be taken along the `M`-th dimension.
-###### return
+
+!!! warning
+    When slicing a dimension of the Holor an `holor::exception::HolorRuntimeError` exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.
+    
+##### return
 The slice corresponding to the `i`-th coordinate along the `M`-th dimension. This slice is a HolorRef with `N-1` dimensions.
 
 

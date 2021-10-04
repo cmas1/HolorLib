@@ -397,8 +397,8 @@ class HolorRef{
         auto rbegin(){ return reverse_iterator(end()); } ///< \brief returns a reverse iterator to the beginning
         auto rend(){ return reverse_iterator(begin()); } ///< \brief returns a reverse iterator to the end
 
-        auto crbegin(){ return reverse_iterator(cend()); } ///< \brief returns a constant reverse iterator to the beginning
-        auto crend(){ return reverse_iterator(cbegin()); } ///< \brief returns a constant reverse iterator to the end
+        auto crbegin() const{ return reverse_iterator(cend()); } ///< \brief returns a constant reverse iterator to the beginning
+        auto crend() const{ return reverse_iterator(cbegin()); } ///< \brief returns a constant reverse iterator to the end
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
