@@ -3,8 +3,6 @@
     ☐ Icon
     ☐ clean up Installation section
     ☐ write examples section
-    ☐ write API section
-    ☐ fi
 ☐ Write benchmarks
 ☐ Write tests
 ☐ Write INSTALL
@@ -31,6 +29,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ write API section @done(21-10-04 10:22)
   ✔ remove documentation building script @done(21-09-27 18:37)
   ✔ clean up the Getting Started section @done(21-09-27 18:37)
   ✔ Landing page image @done(21-09-22 09:03)
