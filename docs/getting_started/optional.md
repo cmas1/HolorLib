@@ -93,7 +93,7 @@ The compiled binaries are located  in the directory `build/bin`.
 This very same documentation can be built locally to be accessed offline.
 
 !!! warning "Requirements"
-    The documentation is built using [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/). We recommend to install it using `pip`
+    The documentation is built using [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) 7.3.0 or superior. We recommend to install it using `pip`
     ``` bash
         pip install mkdocs-material
     ```

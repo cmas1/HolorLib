@@ -50,7 +50,7 @@ Structure that represents a range of indices.
 ```
 !!! important "exceptions"
     The constructor throws an `holor::exception::HolorRuntimeError` if its arguments do not implement a meaningful range of indices, i.e., if they do not satisfy `(start>=0) && (end>start) && (step>0)`. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.
-.
+
 !!! note 
     `range{1, 5, 1}` is equivalent to `1:5` in Matlab. `range{1, 5, 2}` yields the set of indices 1, 3, 5.
 

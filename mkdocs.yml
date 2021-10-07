@@ -61,7 +61,7 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     # - navigation.sections
-    # - navigation.indexes
+    - navigation.indexes
     - navigation.top
     # - search.highlight
     - search.share
@@ -92,9 +92,10 @@ theme:
 nav:
   - Home: index.md
   - About HolorLib:
-    - Origin of the word Holor: getting_started/origin_of_holor.md
-    - What's a Holor container: getting_started/holor_containers.md
+    - Origin of the word Holor: about/origin_of_holor.md
+    - What's a Holor container: about/holor_containers.md
   - Getting Started:
+    - getting_started/index.md
     - Installation: getting_started/install.md
     - Optional modules: getting_started/optional.md
   - Tutorials:
@@ -105,6 +106,7 @@ nav:
     - Slicing a Holor or HolorRef container: tutorials/slicing.md
     - Using Holor and HolorRef's iterators: tutorials/iterators.md
   - C++ API:
+    - api/index.md
     - Indices: api/Indexes.md
     - Layout: api/Layout.md
     - Holor: api/Holor.md
