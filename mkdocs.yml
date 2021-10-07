@@ -92,6 +92,7 @@ theme:
 nav:
   - Home: index.md
   - About HolorLib:
+    - about/index.md
     - Origin of the word Holor: about/origin_of_holor.md
     - What's a Holor container: about/holor_containers.md
   - Getting Started:
@@ -107,10 +108,10 @@ nav:
     - Using Holor and HolorRef's iterators: tutorials/iterators.md
   - C++ API:
     - api/index.md
-    - Indices: api/Indexes.md
     - Layout: api/Layout.md
     - Holor: api/Holor.md
     - HolorRef: api/HolorRef.md
+    - Indices: api/Indexes.md
     - Exceptions : api/Exceptions.md
 
 
