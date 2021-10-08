@@ -68,7 +68,7 @@ class Holor{
                 CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         Holor() = default;                                      ///< \brief default constructor with zero elements in every dimension
-        Holor(Holor<T. N>&& holor) = default;                   ///< \brief default move constructor
+        Holor(Holor<T, N>&& holor) = default;                   ///< \brief default move constructor
         Holor(const Holor<T, N>& holor) = default;              ///< \brief default copy constructor
         Holor& operator=(Holor<T, N>&& holor) = default;        ///< \brief default move assignment
         Holor& operator=(const Holor<T, N>& holor) = default;   ///< \brief default copy assignment

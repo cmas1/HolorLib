@@ -36,7 +36,16 @@ Some tests to verify the correct behavior of the library. The tests can be compi
 
 !!! warning "Requirements"
 
-    The tests require gtest.
+    The tests require [gtest](https://github.com/google/googletest), to be used in conjunction with CMake. We recommend checking the instructions on the gtest page. For a quick setup, go to the directory where you want to download the gtest repository and follow these instructions
+    ``` bash
+        git clone https://github.com/google/googletest.git 
+        cd googletest
+        mkdir build 
+        cd build
+        cmake ..
+        make
+        sudo make install
+    ```
 
 === "excplicit cmake"
     ``` bash
