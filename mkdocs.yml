@@ -104,9 +104,8 @@ nav:
     - Layout basics: tutorials/layout.md
     - Holor basics: tutorials/holor.md
     - HolorRef basics: tutorials/holorref.md
-    - Indexing a Holor or HolorRef container: tutorials/indexing.md
-    - Slicing a Holor or HolorRef container: tutorials/slicing.md
-    - Using Holor and HolorRef's iterators: tutorials/iterators.md
+    - Indexing and slicing: tutorials/indexing_slicing.md
+    - Iterators: tutorials/iterators.md
   - C++ API:
     - api/index.md
     - Layout: api/Layout.md

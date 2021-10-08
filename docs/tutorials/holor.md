@@ -2,17 +2,21 @@
 
 ## Construction and assignment of Holors
 A Holor container can be created from a nested list of elements
-``` cpp
+``` cpp hl_lines="3"
     #include <holor/holor_full.h>
     using namespace holor;
     Holor<int, 2> my_holor{{1, 2, 3}, {4, 5, 6}};
 
+    /* This creates a 2D matrix container 
+        |1   2   3|
+        |4   5   6|
+     */   
     std::cout << my_holor << std:endln; //prints the elements in my_holor, i.e., ((1, 2, 3), (4, 5, 6)).
 ```
-<hr style="background-color:#9999ff; opacity:0.4; width:50%"> 
+<hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 A Holor container can be created or assigned from another Holor or HolorRef
-```cpp
+```cpp hl_lines="5 6"
     #include <holor/holor_full.h>
     using namespace holor;
     Holor<int, 2> my_holor{{1, 2, 3}, {4, 5, 6}};
@@ -27,7 +31,7 @@ A Holor container can be created or assigned from another Holor or HolorRef
 
 
 A Holor container can be created by specifying the length of its dimensions with a  standard container. In this case its elements are not initialized.
-```cpp
+```cpp hl_lines="5 8"
     #include <holor/holor_full.h>
     using namespace holor;
 
@@ -41,7 +45,7 @@ A Holor container can be created by specifying the length of its dimensions with
 <hr style="background-color:#9999ff; opacity:0.4; width:50%"> 
 An empty holor can be constructed without specifying its elements or dimensions.
 
-``` cpp
+``` cpp hl_lines="10"
     #include <holor/holor_full.h>
     using namespace holor;
 
@@ -60,6 +64,20 @@ An empty holor can be constructed without specifying its elements or dimensions.
     std::cout << " ]\n\n";
 ```
 
-## Checking the number of elements
+
+## Using Holor's get functions
+The `Holor` class has few member functions that can be used to retrieve information regarding the container or to gain direct access to its memory.
 ``` cpp
+    #include <holor/holor_full.h>
+    using namespace holor;
+
+    Holor<float,2> hf{{1.1, -0.3}, {7.7, 9.12}}; //A 2-by-2 container of floats
+
+    auto hf_layout = hf.layout(); //get the layout of the Holor container
+    auto hf_lengths = hf.lengths(); // get the lengths of the Holor container as a std::array
+    auto hf_size = hf.size(); //get the number of elements in the container, i.e. 4
+    auto hf_data_vector = hf.data_vector(); // get a copy of the vector that internally stores the data
+    auto hf_data = hf.data(); // get a pointer to the memory where the data is stored
+    &(hf_data()+1) = 0.3; // we are manually changing the element at coordinates (0,1) in the container from -0.3 to 0.3
+    
 ```

@@ -3,7 +3,7 @@
 ## Construction and assignment of Layouts
 
 A layout can be constructed without arguments. In this case its lengths and strides are initalized to zero:
-```cpp
+```cpp hl_lines="3"
     #include <holor/holor_full.h>
     using namespace holor;
     Layout<2> my_layout;
@@ -16,12 +16,12 @@ A layout can be constructed without arguments. In this case its lengths and stri
 <hr style="background-color:#9999ff; opacity:0.4; width:50%"> 
 
 A layout can also be constructed specifying its lengths
-```cpp
+```cpp hl_lines="3 4 5"
     #include <holor/holor_full.h>
     using namespace holor;
     Layout<2> my_layout1{2, 3};
-    Layout<2> my_layout2(std::vector<size_t>(2, 3));
-    Layout<2> my_layout3(std::array<intt, 2>(2, 3));
+    Layout<2> my_layout2(std::vector<size_t>{2, 3});
+    Layout<2> my_layout3(std::array<int, 2>{2, 3});
 
     //These three examples of constructor yield the same result
 
@@ -34,7 +34,7 @@ A layout can also be constructed specifying its lengths
 <hr style="background-color:#9999ff; opacity:0.4; width:50%"> 
 
 A layout can also be constructed or assigned from another Layout
-```cpp
+```cpp hl_lines="4 5"
     #include <holor/holor_full.h>
     using namespace holor;
     Layout<3> my_layout1{2, 3, 4};
@@ -57,11 +57,11 @@ Consider a generic 2D Holor container as represented in figure.
 
 <figure>
   <img src="../images/layout_tutorial.png" width="500" />
-  <figcaption>Example of mapping between Holor coordinates and memory positions. The element indexed in red is stored in the position 3 of the memory. When slicing (grrne elements) a new Layout referencing to the same memory is created.</figcaption>
+  <figcaption>Example of mapping between Holor coordinates and memory positions. The element indexed in red is stored in the position 3 of the memory. When slicing (green elements) a new Layout referencing to the same memory is created.</figcaption>
 </figure>
 
-The container uses a Layout to map from from its indices to the position in the memory area where the element is stored.
-``` cpp
+The container uses a Layout to map from from its indices to the position in the memory area where the element is stored. The function that implements this mapping is the `#!cpp operator()`.
+``` cpp hl_lines="12 13"
     #include <holor/holor_full.h>
 
     using namespace holor;
@@ -73,8 +73,8 @@ The container uses a Layout to map from from its indices to the position in the 
     std::cout << lay.length(0) << " " << lay.length(1) << std::endln; // lay has lengths 3, 3
     std::cout << lay.strides(0) << " " << lay.strides(1) << std::endln; // lay has strides 3, 1
 
-    auto id = lay(0,1); // id is a size_t with value 1.
-    auto lay_slice = lay(range(1,2), range(0,1)); // lay_slice is a new layout that represents the slice with indices ([1, 2], [0, 1]).
+    auto id = lay(0,1); // indexing: id is a size_t with value 1.
+    auto lay_slice = lay(range(1,2), range(0,1)); // slicing: lay_slice is a new layout that represents the slice with indices ([1, 2], [0, 1]).
 
     std::cout << lay_slice.dimensions() << std::endln; // lay_slice has 2 dimensions
     std::cout << lay_slice.offset() << std::endln; // lay_slice has offset 3
