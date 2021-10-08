@@ -100,6 +100,7 @@ nav:
     - Installation: getting_started/install.md
     - Optional modules: getting_started/optional.md
   - Tutorials:
+    - tutorials/index.md
     - Layout basics: tutorials/layout.md
     - Holor basics: tutorials/holor.md
     - HolorRef basics: tutorials/holorref.md

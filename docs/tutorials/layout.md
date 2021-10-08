@@ -55,7 +55,10 @@ A layout can also be constructed or assigned from another Layout
 
 Consider a generic 2D Holor container as represented in figure.
 
-
+<figure>
+  <img src="../images/layout_tutorial.png" width="500" />
+  <figcaption>Example of mapping between Holor coordinates and memory positions. The element indexed in red is stored in the position 3 of the memory. When slicing (grrne elements) a new Layout referencing to the same memory is created.</figcaption>
+</figure>
 
 The container uses a Layout to map from from its indices to the position in the memory area where the element is stored.
 ``` cpp
