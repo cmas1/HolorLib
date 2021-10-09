@@ -14,6 +14,9 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 include_directories(include/)
 
+add_executable(test_layout src/test_layout.cpp)
+target_link_libraries(test_layout PUBLIC GTest::GTest GTest::Main Holor::Holor)
+
 add_executable(test_holor src/test_holor.cpp)
 target_link_libraries(test_holor PUBLIC GTest::GTest GTest::Main Holor::Holor)
 # add_test(test-1 test1)

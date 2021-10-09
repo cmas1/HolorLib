@@ -25,21 +25,33 @@
 
 #include <holor/holor_full.h>
 #include <gtest/gtest.h>
-#include "../include/holor_test_helper.h"
 
 
 using namespace holor;
 
 
-// ==============================================================================
-// =======================           TESTS          =============================
-// ==============================================================================
-// Tests polynomial constructors.
-TEST(TestHolor, CheckConstructors){
-    //test default constructor
+/*=================================================================================
+                                Static Aliases
+=================================================================================*/
+TEST(TestLayout, CheckAliases){
     {
-        Holor<int,1> vector;
-        EXPECT_EQ(decltype(vector)::dimensions, 1);
+        EXPECT_EQ(Layout<1>::order, 1);
+        EXPECT_EQ(Layout<2>::order, 2);
+        EXPECT_EQ(Layout<3>::order, 3);
+        EXPECT_EQ(Layout<100>::order, 100);
+    }
+}
+
+
+/*=================================================================================
+                                Constructors Tests
+=================================================================================*/
+
+TEST(TestLayout, CheckConstructors){
+    //test for default constructor
+    {
+        Layout<1> layout;
+        EXPECT_EQ(decltype(layout)::order, 1);
     }
 
     // //test constructor from lvalue std::initializer_list
