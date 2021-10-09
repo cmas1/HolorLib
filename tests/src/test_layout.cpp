@@ -22,10 +22,9 @@
 
 
 
-
+#include <algorithm>
 #include <holor/holor_full.h>
 #include <gtest/gtest.h>
-
 
 using namespace holor;
 
@@ -46,12 +45,30 @@ TEST(TestLayout, CheckAliases){
 /*=================================================================================
                                 Constructors Tests
 =================================================================================*/
-
 TEST(TestLayout, CheckConstructors){
     //test for default constructor
     {
-        Layout<1> layout;
-        EXPECT_EQ(decltype(layout)::order, 1);
+        {
+            Layout<1> layout;
+            EXPECT_EQ(layout.lengths().size(), 1);
+            EXPECT_EQ(layout.strides().size(), 1);
+            EXPECT_EQ(layout.offset(), 0);
+            EXPECT_TRUE(std::all_of(layout.lengths().begin(), layout.lengths().end(), [](size_t i){return i==0;}));
+            EXPECT_TRUE(std::all_of(layout.strides().begin(), layout.strides().end(), [](size_t i){return i==0;}));
+        }
+
+        {
+            Layout<5> layout;
+            EXPECT_EQ(layout.lengths().size(), 5);
+            EXPECT_EQ(layout.strides().size(), 5);
+            EXPECT_EQ(layout.offset(), 0);
+            for(auto&& l : layout.lengths()){
+                std::cout << l << ", ";
+            }
+            std::cout << std::endl;
+            EXPECT_TRUE(std::all_of(layout.lengths().begin(), layout.lengths().end(), [](size_t i){return i==0;}));
+            EXPECT_TRUE(std::all_of(layout.strides().begin(), layout.strides().end(), [](size_t i){return i==0;}));
+        }
     }
 
     // //test constructor from lvalue std::initializer_list
