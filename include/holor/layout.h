@@ -144,6 +144,7 @@ class Layout{
          */
         template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
         explicit Layout(const Container& lengths) {
+            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(positive_lengths(lengths), EXCEPTION_MESSAGE("Zero length is not allowed!"));
             offset_ = 0;
             std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
             update_strides_size();
@@ -158,6 +159,7 @@ class Layout{
         template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
         explicit Layout(const Container& lengths) {
             assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
+            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(positive_lengths(lengths), EXCEPTION_MESSAGE("Zero length is not allowed!"));
             offset_ = 0;
             std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
             update_strides_size();
@@ -478,14 +480,40 @@ class Layout{
          */
         template<size_t M, typename FirstLength, typename... OtherLengths> requires (std::convertible_to<FirstLength, size_t>)
         void single_length_copy(FirstLength arg, OtherLengths&&... other){
+            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(arg>0, EXCEPTION_MESSAGE("Zero length is not allowed!"));
             lengths_[M] = arg;
             single_length_copy<M+1>(std::forward<OtherLengths>(other)...);
         }
 
         template<size_t M, typename FirstLength> requires (std::convertible_to<FirstLength, size_t>)
         void single_length_copy(FirstLength arg){
+            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(arg>0, EXCEPTION_MESSAGE("Zero length is not allowed!"));
             lengths_[M] = arg;
         }
+
+
+        /*!
+         * \brief Helper function to verify that a container of lenghts passed to the constructors only has positive values (to prevent from passing zero lengths)
+         * \tparam Container is a resizable container of lenghts
+         * \param lenghts is the container of lengths
+         * \return true if all the lengths are > 0
+         */
+        template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
+        bool positive_lengths(const Container& lengths) {
+            return std::all_of(lengths.cbegin(), lengths.cend(), [](size_t i){return i>0;});
+        };
+
+
+        /*!
+         * \brief Helper function to verify that a container of lenghts passed to the constructors only has positive values (to prevent from passing zero lengths)
+         * \tparam Container is a resizable container of lenghts
+         * \param lenghts is the container of lengths
+         * \return true if all the lengths are > 0
+         */
+        template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
+        bool positive_lengths(const Container& lengths) {
+            return std::all_of(lengths.cbegin(), lengths.cend(), [](size_t i){return i>0;});
+        };
 
 }; //class Layout
 

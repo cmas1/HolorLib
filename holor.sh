@@ -40,7 +40,6 @@ function _usage() {
     ${BLUE}build_examples${NO_COLOR}: build the examples provided with the Holor library
     ${BLUE}build_benchmarks${NO_COLOR}: build the benchmarks provided with the Holor library. Requires 
     ${BLUE}build_tests${NO_COLOR}: build the tests provided with the Holor library. Requires ${YELLOW}gtest${NO_COLOR}.
-    ${BLUE}docs${NO_COLOR}: build documentation. Requires
     ${BLUE}clean${NO_COLOR}: remove installation, compiled units and clean build files
     ${BLUE}-h|--help ${NO_COLOR}: show this message and exit
     "
@@ -75,9 +74,6 @@ function main() {
             ;;
         clean)
             bash "${HOLOR_SCRIPTS_DIR}/holor_clean.sh"
-            ;;
-        docs)
-            bash "${HOLOR_SCRIPTS_DIR}/holor_build_docs.sh"
             ;;
         -h|--help)
             _usage
