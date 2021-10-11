@@ -22,196 +22,307 @@
 
 
 
-
+#include <algorithm>
+#include <array>
+#include <vector>
 #include <holor/holor_full.h>
 #include <gtest/gtest.h>
-#include "../include/holor_test_helper.h"
-
 
 using namespace holor;
 
 
-// ==============================================================================
-// =======================           TESTS          =============================
-// ==============================================================================
-// Tests polynomial constructors.
-TEST(TestHolor, CheckConstructors){
-    //test default constructor
+/*=================================================================================
+                                Static Aliases
+=================================================================================*/
+TEST(TestHolor, CheckAliases){
     {
-        Holor<int,1> vector;
-        EXPECT_EQ(decltype(vector)::dimensions, 1);
+        EXPECT_EQ(Layout<1>::order, 1);
+        EXPECT_EQ(Layout<2>::order, 2);
+        EXPECT_EQ(Layout<3>::order, 3);
+        EXPECT_EQ(Layout<100>::order, 100);
+    }
+}
+
+
+/*=================================================================================
+                                Constructors Tests
+=================================================================================*/
+TEST(TestHolor, CheckConstructors){
+    //test for default constructor
+    {
+        {
+            Layout<1> layout;
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 1);
+            EXPECT_EQ(strides.size(), 1);
+            EXPECT_EQ(offset, 0);
+            EXPECT_TRUE(std::ranges::all_of(lengths.cbegin(), lengths.cend(), [](int i){return i==0;}));
+            EXPECT_TRUE(std::ranges::all_of(strides.cbegin(), strides.cend(), [](size_t i){return i==0;}));
+        }
+
+        {
+            Layout<5> layout;
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 5);
+            EXPECT_EQ(strides.size(), 5);
+            EXPECT_EQ(offset, 0);
+            EXPECT_TRUE(std::ranges::all_of(lengths.cbegin(), lengths.cend(), [](int i){return i==0;}));
+            EXPECT_TRUE(std::ranges::all_of(strides.cbegin(), strides.cend(), [](size_t i){return i==0;}));
+        }
+
+        {
+            Layout<50> layout;
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 50);
+            EXPECT_EQ(strides.size(), 50);
+            EXPECT_EQ(offset, 0);
+            EXPECT_TRUE(std::ranges::all_of(lengths.cbegin(), lengths.cend(), [](int i){return i==0;}));
+            EXPECT_TRUE(std::ranges::all_of(strides.cbegin(), strides.cend(), [](size_t i){return i==0;}));
+        }
     }
 
-    // //test constructor from lvalue std::initializer_list
-    // {
-    //     std::initializer_list<double> init_list = {-1.0, 3.2, 0.0, -0.3, 0.7, 0.9};
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_poly_constructor(Polynomial<double>(init_list), init_list)) << "Constructor yield different results";
-    //     std::initializer_list<double> init_list2 = {-1.0, 3.2, 0.0, -0.3, 0.7, 0.0, 0.0};
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_poly_constructor(Polynomial<double>(init_list2), init_list2)) << "Constructor yield different results";
-    // }
+    //test for constructor from nested list
+    {
+        {
+            Layout<1> layout{4};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 1);
+            EXPECT_EQ(strides.size(), 1);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(0),4);
+            EXPECT_EQ(layout.stride(0),1); 
+        }
 
-    // //test constructor from rvalue std::initializer_list
-    // {
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_poly_constructor(Polynomial<double>{-1.0, 0.0, -0.3}, std::initializer_list<double>{-1.0, 0.0, -0.3})) << "Constructor yield different results";
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_poly_constructor(Polynomial<double>{-1.0, 0.0, -0.3, 0.0}, std::initializer_list<double>{-1.0, 0.0, -0.3, 0.0})) << "Constructor yield different results";
-    // }
+        {
+            Layout<3> layout{4, 5, 6};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 3);
+            EXPECT_EQ(strides.size(), 3);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(0),4);
+            EXPECT_EQ(layout.length(1),5);
+            EXPECT_EQ(layout.length(2),6);
+            EXPECT_EQ(layout.stride(0),30);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(2),1);
+        }
+
+        {
+            Layout<4> layout{2, 2, 2, 2};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_TRUE( std::all_of(lengths.cbegin(), lengths.cend(), [](size_t i){return i==2;}) );
+            EXPECT_EQ(layout.stride(0),8);
+            EXPECT_EQ(layout.stride(1),4);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(3),1);
+        }
+    }
 
 
-    // //test constructor from lvalue std::vector
-    // {
-    //     std::vector<double> init_vec{-1.0, 3.2, 0.0, -0.3, 0.7, 0.9};
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_poly_constructor(Polynomial<double>(init_vec), init_vec)) << "Constructor yield different results";
-    //     std::vector<double> init_vec2{-1.0, 3.2, 0.0, -0.3, 0.7, 0.0, 0.0};
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_poly_constructor(Polynomial<double>(init_vec2), init_vec2)) << "Constructor yield different results";
-    // }
+    //test for constructor from sized container
+    {
+        {
+            Layout<4> layout{std::array<size_t, 4>{5, 4, 3, 2}};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24);
+        }
+        {
+            std::array<size_t, 4> container_lenghts{5, 4, 3, 2};
+            Layout<4> layout{container_lenghts};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24); 
+        }
+    }
 
-    // //test constructor from rvalue std::vector
-    // {
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_poly_constructor(Polynomial<double>(std::vector<double>{-1.0, 0.0, -0.3}), std::vector<double>{-1.0, 0.0, -0.3})) << "Constructor yield different results";
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_poly_constructor(Polynomial<double>(std::vector<double>{-1.0, 0.0, -0.3, 0.0}), std::vector<double>{-1.0, 0.0, -0.3, 0.0})) << "Constructor yield different results";
-    // }
+    //test for constructor from resizeable container
+    {
+        {
+            Layout<4> layout{std::vector<size_t>{5, 4, 3, 2}};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24);
+        }
+        {
+            std::vector<size_t> container_lenghts{5, 4, 3, 2};
+            Layout<4> layout{container_lenghts};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24); 
+        }
+    }
 
-    // //test constructor from degree, value
-    // {
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_dv_constructor(3, 7.31)) << "Constructor yield different results";
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_dv_constructor(3, 0)) << "Constructor yield different results";
-    //     EXPECT_TRUE(PolyTestHelper<double>::check_dv_constructor(3)) << "Constructor yield different results";
-        
-    // }
+    // test copy/move constructors
+    {
+        {
+            Layout<4> og_layout(std::array<size_t, 4>{5, 4, 3, 2});
+            Layout<4> layout(og_layout);
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24);
+        }
+
+        {
+            Layout<4> layout(Layout<4> (std::array<size_t, 4>{5, 4, 3, 2}));
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24);
+        }
+    }
 
 };
 
 
+/*=================================================================================
+                                Assignment Tests
+=================================================================================*/
+TEST(TestHolor, CheckAssignments){
+    {
+        Layout<4> og_layout(std::array<size_t, 4>{5, 4, 3, 2});
+        Layout<4> layout = og_layout;
+        auto lengths = layout.lengths();
+        auto strides = layout.strides();
+        auto offset = layout.offset();
+        EXPECT_EQ(lengths.size(), 4);
+        EXPECT_EQ(strides.size(), 4);
+        EXPECT_EQ(offset, 0);
+        EXPECT_EQ(layout.length(3),2);
+        EXPECT_EQ(layout.length(2),3);
+        EXPECT_EQ(layout.length(1),4);
+        EXPECT_EQ(layout.length(0),5);
+        EXPECT_EQ(layout.stride(3),1);
+        EXPECT_EQ(layout.stride(2),2);
+        EXPECT_EQ(layout.stride(1),6);
+        EXPECT_EQ(layout.stride(0),24);
+    }
 
-
-// TEST(TestPolynomial, CheckEvalutation){
-//     {
-//         Polynomial<double> poly{1, -2, 0, 2};
-//         EXPECT_EQ(poly(0), 1);
-//         EXPECT_EQ(poly(-2), -11 );
-//         EXPECT_EQ(poly(1), 1);
-//     }
-//     {
-//         Polynomial<double> poly{0, 1};
-//         EXPECT_EQ(poly(0), 0);
-//         EXPECT_EQ(poly(2), 2);
-//         EXPECT_EQ(poly(-2), -2);
-//     }
-//     {
-//         Polynomial<double> poly{0, 0, 1};
-//         EXPECT_EQ(poly(0), 0);
-//         EXPECT_EQ(poly(2), 4);
-//         EXPECT_EQ(poly(-2), 4);
-//     }
-// }
-
-
-
-// TEST(TestPolynomial, CheckScalarOperations){
-//     {
-//         Polynomial<double> poly{1, -2, 0, 2};
-//         poly += 3;
-//         EXPECT_TRUE((poly  == Polynomial<double>{4, -2, 0, 2}));
-//         poly += -4;
-//         EXPECT_TRUE((poly  == Polynomial<double>{0, -2, 0, 2}));
-//         poly -= 5;
-//         EXPECT_TRUE((poly  == Polynomial<double>{-5, -2, 0, 2}));
-//         poly -= -7;
-//         EXPECT_TRUE((poly  == Polynomial<double>{2, -2, 0, 2}));
-//         poly *= 4;
-//         EXPECT_TRUE((poly  == Polynomial<double>{8, -8, 0, 8}));
-//         poly /= 8;
-//         EXPECT_TRUE((poly  == Polynomial<double>{1, -1, 0, 1}));
-//         poly *= 0;
-//         EXPECT_TRUE((poly  == Polynomial<double>{0}));
-//         EXPECT_FALSE((poly  != Polynomial<double>{0}));
-//         poly = Polynomial<double>{2, -2};
-//         EXPECT_TRUE((poly.div(2)  == Polynomial<double>{1, -1}));
-//         EXPECT_TRUE((poly.div(0)  == Polynomial<double>{0}));
-
-//         poly.div_inplace(2);
-//         EXPECT_TRUE((poly  == Polynomial<double>{1, -1}));
-//         poly.div_inplace(0);
-//         EXPECT_TRUE((poly  == Polynomial<double>{0}));
+    {
+        Layout<4> layout = Layout<4> (std::array<size_t, 4>{5, 4, 3, 2});
+        auto lengths = layout.lengths();
+        auto strides = layout.strides();
+        auto offset = layout.offset();
+        EXPECT_EQ(lengths.size(), 4);
+        EXPECT_EQ(strides.size(), 4);
+        EXPECT_EQ(offset, 0);
+        EXPECT_EQ(layout.length(3),2);
+        EXPECT_EQ(layout.length(2),3);
+        EXPECT_EQ(layout.length(1),4);
+        EXPECT_EQ(layout.length(0),5);
+        EXPECT_EQ(layout.stride(3),1);
+        EXPECT_EQ(layout.stride(2),2);
+        EXPECT_EQ(layout.stride(1),6);
+        EXPECT_EQ(layout.stride(0),24);
+    }
+}
 
 
 
-//         EXPECT_TRUE((Polynomial<double>{1, 0, -2}+3 == Polynomial<double>{4, 0, -2}));
-//         EXPECT_TRUE(( 3+Polynomial<double>{1, 0, -2} == Polynomial<double>{4, 0, -2}));
-//         EXPECT_TRUE((Polynomial<double>{1, 0, -2}+0 == Polynomial<double>{1, 0, -2}));
-//         EXPECT_TRUE((0+Polynomial<double>{1, 0, -2} == Polynomial<double>{1, 0, -2}));
-
-//         EXPECT_TRUE((Polynomial<double>{1, 0, -2}-3 == Polynomial<double>{-2, 0, -2}));
-//         EXPECT_TRUE((3-Polynomial<double>{1, 0, -2} == Polynomial<double>{2, 0, +2}));
-//         EXPECT_TRUE((Polynomial<double>{1, 0, -2}-0 == Polynomial<double>{1, 0, -2}));
-//         EXPECT_TRUE((0-Polynomial<double>{1, 0, -2} == Polynomial<double>{-1, 0, +2}));
-
-//         EXPECT_TRUE((Polynomial<double>{1, 0, -2}*3 == Polynomial<double>{3, 0, -6}));
-//         EXPECT_TRUE((3*Polynomial<double>{1, 0, -2} == Polynomial<double>{3, 0, -6}));
-//         EXPECT_TRUE((Polynomial<double>{1, 0, -2}*1 == Polynomial<double>{1, 0, -2}));
-//         EXPECT_TRUE((1*Polynomial<double>{1, 0, -2} == Polynomial<double>{1, 0, -2}));
-//         EXPECT_TRUE((Polynomial<double>{1, 0, -2}*0 == Polynomial<double>{0}));
-//         EXPECT_TRUE((0*Polynomial<double>{1, 0, -2} == Polynomial<double>{0}));
-
-//         EXPECT_TRUE((Polynomial<double>{4, 0, -2}/2 == Polynomial<double>{2, 0, -1}));
-//         EXPECT_TRUE((Polynomial<double>{4, 0, -2}/1 == Polynomial<double>{4, 0, -2}));
-
-//     }
-
-// }
-
-
-
-// TEST(TestPolynomial, CheckPolyOperations){
-//     EXPECT_TRUE( ( Polynomial<double>{0,2} + Polynomial<double>{-1,2,4} == Polynomial<double>{-1,4,4}) );
-//     EXPECT_TRUE( ( Polynomial<double>{-1,2,4} + Polynomial<double>{0,2} == Polynomial<double>{-1,4,4}) );
-//     EXPECT_TRUE( ( Polynomial<double>{-1,2,4} + Polynomial<double>{0,0,-4} == Polynomial<double>{-1,2}) );
-//     EXPECT_TRUE( ( Polynomial<double>{-1,2,4} + Polynomial<double>{1,-2,-4} == Polynomial<double>{0}) );
-//     EXPECT_TRUE( ( Polynomial<double>{1,2} + Polynomial<double>{0} == Polynomial<double>{1,2}) );
-//     EXPECT_TRUE( ( Polynomial<double>{0} + Polynomial<double>{1,2} == Polynomial<double>{1,2}) );
-
-//     EXPECT_TRUE( ( Polynomial<double>{0,2} - Polynomial<double>{-1,2,4} == Polynomial<double>{1,0,-4}) );
-//     EXPECT_TRUE( ( Polynomial<double>{-1,2,4} - Polynomial<double>{0,2} == Polynomial<double>{-1,0,4}) );
-//     EXPECT_TRUE( ( Polynomial<double>{-1,2,4} - Polynomial<double>{0,0,4} == Polynomial<double>{-1,2}) );
-//     EXPECT_TRUE( ( Polynomial<double>{-1,2,4} - Polynomial<double>{-1,2,4} == Polynomial<double>{0}) );
-//     EXPECT_TRUE( ( Polynomial<double>{1,2} - Polynomial<double>{0} == Polynomial<double>{1,2}) );
-//     EXPECT_TRUE( ( Polynomial<double>{0} - Polynomial<double>{1,2} == Polynomial<double>{-1,-2}) );
-
-//     EXPECT_TRUE( ( Polynomial<double>{-1,0,4} * Polynomial<double>{1,2} == Polynomial<double>{-1, -2, 4, 8}) );
-//     EXPECT_TRUE( ( Polynomial<double>{1,2} * Polynomial<double>{-1,0,4} == Polynomial<double>{-1, -2, 4, 8}) );
-//     EXPECT_TRUE( ( Polynomial<double>{1,2} * Polynomial<double>{0} == Polynomial<double>{0}) );
-//     EXPECT_TRUE( ( Polynomial<double>{0} * Polynomial<double>{1,2} == Polynomial<double>{0}) );
-//     EXPECT_TRUE( ( Polynomial<double>{1,2} * Polynomial<double>{1} == Polynomial<double>{1,2}) );
-//     EXPECT_TRUE( ( Polynomial<double>{1} * Polynomial<double>{1,2} == Polynomial<double>{1,2}) );
-// }
-
-
-// TEST(TestPolynomial, CheckOtherFunctions){
-//     //test power function
-//     Polynomial<double> poly{2,3,1};
-//     EXPECT_EQ(bst::pow(poly,0), Polynomial<double>{1});
-//     EXPECT_EQ(bst::pow(poly,1), poly);
-//     EXPECT_TRUE(  (bst::pow(poly,2) == Polynomial<double>{4,12,13,6,1})   );
-
-//     //test derivative function
-//     EXPECT_EQ( bst::der(poly,0), poly);
-//     EXPECT_TRUE(  (bst::der(poly,1) == Polynomial<double>{3,2})  );
-//     EXPECT_TRUE(  (bst::der(poly,2) == Polynomial<double>{2})  );
-//     EXPECT_TRUE(  (bst::der(poly,3) == Polynomial<double>{0})  );
-//     EXPECT_TRUE(  (bst::der(poly,14) == Polynomial<double>{0})  );
-
-//     //test integration function
-//     auto integral_poly = bst::indefinite_integral(poly);
-//     EXPECT_DOUBLE_EQ(integral_poly.coeffs()[0], 0);
-//     EXPECT_DOUBLE_EQ(integral_poly.coeffs()[1], 2);
-//     EXPECT_DOUBLE_EQ(integral_poly.coeffs()[2], 3.0/2.0);
-//     EXPECT_DOUBLE_EQ(integral_poly.coeffs()[3], 1.0/3.0);
-
-//     EXPECT_DOUBLE_EQ(bst::integral(poly, 2.0, 2.0), 0.0);
-//     EXPECT_DOUBLE_EQ(bst::integral(poly, 1.0, 2.0), 8.83333333333333333);
-// }
-
-
+/*=================================================================================
+                                Assignment Tests
+=================================================================================*/
+TEST(TestHolor, CheckGetSet){
+    {
+        Layout<4> layout(std::array<size_t, 4>{5, 4, 3, 2});
+        auto lengths = layout.lengths();
+        auto strides = layout.strides();
+        auto offset = layout.offset();
+        EXPECT_EQ(layout.dimensions(), 4);
+        EXPECT_EQ(layout.size(), 120);
+        EXPECT_EQ(offset, 0);
+        EXPECT_EQ(lengths.size(), 4);
+        EXPECT_EQ(strides.size(), 4);
+        EXPECT_EQ(layout.length(3),2); EXPECT_EQ(layout.length(3),lengths[3]);
+        EXPECT_EQ(layout.length(2),3); EXPECT_EQ(layout.length(2),lengths[2]);
+        EXPECT_EQ(layout.length(1),4); EXPECT_EQ(layout.length(1),lengths[1]);
+        EXPECT_EQ(layout.length(0),5); EXPECT_EQ(layout.length(0),lengths[0]);
+        EXPECT_EQ(layout.stride(3),1); EXPECT_EQ(layout.stride(3),strides[3]);
+        EXPECT_EQ(layout.stride(2),2); EXPECT_EQ(layout.stride(2),strides[2]);
+        EXPECT_EQ(layout.stride(1),6); EXPECT_EQ(layout.stride(1),strides[1]);
+        EXPECT_EQ(layout.stride(0),24); EXPECT_EQ(layout.stride(0),strides[0]);
+    }
+}
 
 
 int main(int argc, char **argv) {

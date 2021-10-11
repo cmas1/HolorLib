@@ -23,6 +23,8 @@
 
 
 #include <algorithm>
+#include <array>
+#include <vector>
 #include <holor/holor_full.h>
 #include <gtest/gtest.h>
 
@@ -134,12 +136,241 @@ TEST(TestLayout, CheckConstructors){
 
     //test for constructor from sized container
     {
-
+        {
+            Layout<4> layout{std::array<size_t, 4>{5, 4, 3, 2}};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24);
+        }
+        {
+            std::array<size_t, 4> container_lenghts{5, 4, 3, 2};
+            Layout<4> layout{container_lenghts};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24); 
+        }
     }
 
- 
+    //test for constructor from resizeable container
+    {
+        {
+            Layout<4> layout{std::vector<size_t>{5, 4, 3, 2}};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24);
+        }
+        {
+            std::vector<size_t> container_lenghts{5, 4, 3, 2};
+            Layout<4> layout{container_lenghts};
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24); 
+        }
+    }
+
+    // test copy/move constructors
+    {
+        {
+            Layout<4> og_layout(std::array<size_t, 4>{5, 4, 3, 2});
+            Layout<4> layout(og_layout);
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24);
+        }
+
+        {
+            Layout<4> layout(Layout<4> (std::array<size_t, 4>{5, 4, 3, 2}));
+            auto lengths = layout.lengths();
+            auto strides = layout.strides();
+            auto offset = layout.offset();
+            EXPECT_EQ(lengths.size(), 4);
+            EXPECT_EQ(strides.size(), 4);
+            EXPECT_EQ(offset, 0);
+            EXPECT_EQ(layout.length(3),2);
+            EXPECT_EQ(layout.length(2),3);
+            EXPECT_EQ(layout.length(1),4);
+            EXPECT_EQ(layout.length(0),5);
+            EXPECT_EQ(layout.stride(3),1);
+            EXPECT_EQ(layout.stride(2),2);
+            EXPECT_EQ(layout.stride(1),6);
+            EXPECT_EQ(layout.stride(0),24);
+        }
+    }
 
 };
+
+
+/*=================================================================================
+                                Assignment Tests
+=================================================================================*/
+TEST(TestLayout, CheckAssignments){
+    {
+        Layout<4> og_layout(std::array<size_t, 4>{5, 4, 3, 2});
+        Layout<4> layout = og_layout;
+        auto lengths = layout.lengths();
+        auto strides = layout.strides();
+        auto offset = layout.offset();
+        EXPECT_EQ(lengths.size(), 4);
+        EXPECT_EQ(strides.size(), 4);
+        EXPECT_EQ(offset, 0);
+        EXPECT_EQ(layout.length(3),2);
+        EXPECT_EQ(layout.length(2),3);
+        EXPECT_EQ(layout.length(1),4);
+        EXPECT_EQ(layout.length(0),5);
+        EXPECT_EQ(layout.stride(3),1);
+        EXPECT_EQ(layout.stride(2),2);
+        EXPECT_EQ(layout.stride(1),6);
+        EXPECT_EQ(layout.stride(0),24);
+    }
+
+    {
+        Layout<4> layout = Layout<4> (std::array<size_t, 4>{5, 4, 3, 2});
+        auto lengths = layout.lengths();
+        auto strides = layout.strides();
+        auto offset = layout.offset();
+        EXPECT_EQ(lengths.size(), 4);
+        EXPECT_EQ(strides.size(), 4);
+        EXPECT_EQ(offset, 0);
+        EXPECT_EQ(layout.length(3),2);
+        EXPECT_EQ(layout.length(2),3);
+        EXPECT_EQ(layout.length(1),4);
+        EXPECT_EQ(layout.length(0),5);
+        EXPECT_EQ(layout.stride(3),1);
+        EXPECT_EQ(layout.stride(2),2);
+        EXPECT_EQ(layout.stride(1),6);
+        EXPECT_EQ(layout.stride(0),24);
+    }
+}
+
+
+
+/*=================================================================================
+                                Assignment Tests
+=================================================================================*/
+TEST(TestLayout, CheckGetSet){
+    {
+        Layout<4> layout(std::array<size_t, 4>{5, 4, 3, 2});
+        auto lengths = layout.lengths();
+        auto strides = layout.strides();
+        auto offset = layout.offset();
+        EXPECT_EQ(layout.dimensions(), 4);
+        EXPECT_EQ(layout.size(), 120);
+        EXPECT_EQ(offset, 0);
+        EXPECT_EQ(lengths.size(), 4);
+        EXPECT_EQ(strides.size(), 4);
+        EXPECT_EQ(layout.length(3),2); EXPECT_EQ(layout.length(3),lengths[3]);
+        EXPECT_EQ(layout.length(2),3); EXPECT_EQ(layout.length(2),lengths[2]);
+        EXPECT_EQ(layout.length(1),4); EXPECT_EQ(layout.length(1),lengths[1]);
+        EXPECT_EQ(layout.length(0),5); EXPECT_EQ(layout.length(0),lengths[0]);
+        EXPECT_EQ(layout.stride(3),1); EXPECT_EQ(layout.stride(3),strides[3]);
+        EXPECT_EQ(layout.stride(2),2); EXPECT_EQ(layout.stride(2),strides[2]);
+        EXPECT_EQ(layout.stride(1),6); EXPECT_EQ(layout.stride(1),strides[1]);
+        EXPECT_EQ(layout.stride(0),24); EXPECT_EQ(layout.stride(0),strides[0]);
+    }
+}
+
+
+/*=================================================================================
+                                Indexing Tests
+=================================================================================*/
+TEST(TestLayout, CheckIndexing){
+    {
+        Layout<1> layout(3);
+        EXPECT_EQ(layout(2), 2);
+        EXPECT_EQ(layout(std::array<size_t, 1>{2}), 2);
+    }
+
+    {
+        Layout<2> layout(3, 3);
+        EXPECT_EQ(layout(2, 2), 8);
+        EXPECT_EQ(layout(std::array<size_t, 2>{2, 2}), 8);
+    }
+
+    {
+        Layout<3> layout(3, 3, 3);
+        EXPECT_EQ(layout(2, 2, 2), 26);
+        EXPECT_EQ(layout(std::array<size_t, 3>{2, 2, 2}), 26);
+    }
+
+    {
+        Layout<4> layout(3, 3, 3, 3);
+        EXPECT_EQ(layout(2, 2, 2, 2), 80);
+        EXPECT_EQ(layout(std::array<size_t, 4>{2, 2, 2, 2}), 80);
+    }
+
+    {
+        Layout<5> layout(3, 3, 3, 3, 3);
+        EXPECT_EQ(layout(2, 2, 2, 2, 2), 242);
+        EXPECT_EQ(layout(std::array<size_t, 5>{2, 2, 2, 2, 2}), 242);
+    }
+}
+
+
+/*=================================================================================
+                                Slicing Tests
+=================================================================================*/
+TEST(TestLayout, CheckSlicing){
+    {
+        Layout<4> layout(std::array<size_t, 4>{5, 4, 3, 2});
+
+        
+    }
+}
 
 
 
