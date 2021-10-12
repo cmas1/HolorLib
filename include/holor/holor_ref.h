@@ -95,11 +95,10 @@ class HolorRef{
                 explicit Iterator(holor_pointer holor, end_iterator_tag){
                     start_ptr_ = holor->dataptr_;
                     layout_ptr_ = &(holor->layout_);
-                    for (auto cnt = 0; cnt < (N-1) ; cnt++){
-                        coordinates_[cnt] = layout_ptr_->length(cnt) -1;
+                    for (auto cnt = 0; cnt <= (N-1) ; cnt++){
+                        coordinates_[cnt] = layout_ptr_->length(cnt) - 1;
                     }
-                    coordinates_[N-1] = layout_ptr_->length(N-1); //coordinates to one past the last element of the container
-                    iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
+                    iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_)+1; //one element past the last in the container
                 }
 
 

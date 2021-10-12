@@ -26,14 +26,37 @@
 
 
 #include "holor.h"
+#include "holor_ref.h"
 #include <concepts>
 #include <algorithm>
 
 using namespace holor; 
 
+/*!
+ * \brief Equality comparison for two Holor containers. Two Holor containers of the same dimension and type of elements are considered to be the same if they have the same layout and their elements have the same values.
+ * \tparam `T` is the type of the elements in the containers. `T` must be a type that supports an equality comparison
+ * \tparam `N` is the dimensionality of the Holor containers.
+ * \param h1 is the lhs in the comparison
+ * \param h2 is the rhs in the comparison
+ * \return true if the two Holors are equal, false otherwise
+ */
 template<typename T, size_t N> requires std::equality_comparable<T>
 bool operator==(const Holor<T,N>& h1, const Holor<T,N>& h2){
     return ( (h1.layout()==h2.layout()) && std::ranges::equal(h1.cbegin(), h1.cend(), h2.cbegin(), h2.cend()) );
+}
+
+
+/*!
+ * \brief Equality comparison for two HolorRef containers. Two HolorRef containers of the same dimension and type of elements are considered to be the same if they have the same lengths and their elements have the same values.
+ * \tparam `T` is the type of the elements in the containers. `T` must be a type that supports an equality comparison
+ * \tparam `N` is the dimensionality of the Holor containers.
+ * \param h1 is the lhs in the comparison
+ * \param h2 is the rhs in the comparison
+ * \return true if the two HolorsRefs are equal, false otherwise
+ */
+template<typename T, size_t N> requires std::equality_comparable<T>
+bool operator==(const HolorRef<T,N>& h1, const HolorRef<T,N>& h2){
+    return ( (h1.lengths()==h2.lengths()) && std::ranges::equal(h1.cbegin(), h1.cend(), h2.cbegin(), h2.cend()) );
 }
 
 
