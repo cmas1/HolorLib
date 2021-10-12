@@ -177,7 +177,14 @@ class Layout{
             single_length_copy<0>(std::forward<Lengths>(lengths)...);
             update_strides_size();
         }
-      
+
+
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                    COMPARISON FUNCTIONS
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        template<size_t M>
+        friend bool operator==(Layout<M> l1, Layout<M> l2);
+
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     GET/SET FUNCTIONS
@@ -581,6 +588,17 @@ template<SingleIndex Index>
 size_t Layout<4>::operator()(Index i, Index j, Index k, Index w) const{
     assert::dynamic_assert( (i>=0 && i<lengths_[0]) && (j>=0 && j<lengths_[1]) && (k>=0 && k<lengths_[2]) && (w>=0 && w<lengths_[3]), EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
     return offset_ + i*strides_[0] + j*strides_[1] + k*strides_[2] + w*strides_[3];
+}
+
+
+
+
+/*================================================================================================
+                                    COMPARISONS
+================================================================================================*/
+template<size_t M>
+inline bool operator==(const Layout<M> l1, const Layout<M> l2){
+    return ((l1.offset_ == l2.offset_) && (l1.size_==l2.size_) && (l1.strides_==l2.strides_) && (l1.lengths_==l2.lengths_) );
 }
 
 } //namespace holor

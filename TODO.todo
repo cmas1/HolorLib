@@ -21,6 +21,7 @@ holor_concepts.h:
     ☐ //SKIP Concept HolorType (to be used in holor_ref.h and holor_printer.h) => //NOTE HolorType requires LayoutType. Therefore, if LayoutType cannot be implemented  the indexing function requires a variadic template with size N. I cannot ind a way to express this
 
 layout.h:
+    ☐ Implement comparison operators.
     ☐ When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This seems inefficient. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation. //IMPROVEMENT!!
 
 indexes.h:
