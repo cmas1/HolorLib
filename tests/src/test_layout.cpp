@@ -453,6 +453,21 @@ TEST(TestLayout, CheckSlicing){
 
 
 
+/*=================================================================================
+                                Comparison Tests
+=================================================================================*/
+TEST(TestLayout, CheckComparisons){
+    Layout<2> l1{5,9};
+    Layout<2> l2(std::vector{5,9});
+    Layout<2> l3(std::vector{9,5});
+    EXPECT_TRUE( l1==l2);
+    EXPECT_FALSE( l1!=l2);
+    EXPECT_FALSE( l1==l3);
+    EXPECT_TRUE( l1!=l3);
+}
+
+
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

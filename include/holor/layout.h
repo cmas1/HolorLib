@@ -182,8 +182,15 @@ class Layout{
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                     COMPARISON FUNCTIONS
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        /*!
+        * \brief comperison operator that verifies the equality of Layout objects of the same order `M`
+        * \tparam M is the order of the two Kayouts
+        * \param l1 is the first Layout of the comparison
+        * \param l2 is the second Layout of the comparison
+        * \return true if the comparison is satisfied, false otherwise
+        */
         template<size_t M>
-        friend bool operator==(Layout<M> l1, Layout<M> l2);
+        friend bool operator==(const Layout<M>& l1, const Layout<M>& l2);
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -596,9 +603,29 @@ size_t Layout<4>::operator()(Index i, Index j, Index k, Index w) const{
 /*================================================================================================
                                     COMPARISONS
 ================================================================================================*/
+/*!
+* \brief comparison operator that verifies the equality of Layout objects of the same order `M`
+* \tparam M is the order of the two Kayouts
+* \param l1 is the first Layout of the comparison
+* \param l2 is the second Layout of the comparison
+* \return true if the comparison is satisfied, false otherwise
+*/
 template<size_t M>
-inline bool operator==(const Layout<M> l1, const Layout<M> l2){
+inline bool operator==(const Layout<M>& l1, const Layout<M>& l2){
     return ((l1.offset_ == l2.offset_) && (l1.size_==l2.size_) && (l1.strides_==l2.strides_) && (l1.lengths_==l2.lengths_) );
+}
+
+
+/*!
+* \brief comparison operator that verifies the inequality of Layout objects of the same order `M`
+* \tparam M is the order of the two Kayouts
+* \param l1 is the first Layout of the comparison
+* \param l2 is the second Layout of the comparison
+* \return true if the two Layous are not equal, false otherwise
+*/
+template<size_t M>
+inline bool operator!=(const Layout<M>& l1, const Layout<M>& l2){
+    return !(l1==l2);
 }
 
 } //namespace holor

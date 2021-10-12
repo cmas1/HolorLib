@@ -343,3 +343,51 @@ Function for indexing a single dimension of the Layout
 
 ##### return
 A new Layout with `N` or `N-1` dimensions, where the dimension `Dim` contains only the lements indexed by the `range` argument.
+
+
+
+
+
+<hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7"> </hr>
+
+
+
+## Non-Member functions
+
+#### equality operator==
+##### signature
+``` cpp
+    template<size_t M>
+    bool operator==(const Layout<M>& l1, const Layout<M>& l2);
+```
+##### brief 
+Comparison operator that verifies the equality of Layout objects of the same order `M`.
+##### template parameter
+* `M`: the order of the two Layouts to be compared.
+##### parameter
+* `l1`: first Layout object of the comparison.
+* `l2`: second Layout object of the comparison.
+
+##### return
+true if the two Layouts are equal, false otherwise
+<hr style="background-color:#9999ff; opacity:0.4; width:50%">
+
+
+
+#### inequality operator!=
+##### signature
+``` cpp
+    template<size_t M>
+    bool operator!=(const Layout<M>& l1, const Layout<M>& l2);
+```
+##### brief 
+Comparison operator that verifies the inequality of Layout objects of the same order `M`.
+##### template parameter
+* `M`: the order of the two Layouts to be compared.
+##### parameter
+* `l1`: first Layout object of the comparison.
+* `l2`: second Layout object of the comparison.
+
+##### return
+true if the two Layouts are unequal, false otherwise
+<hr style="background-color:#9999ff; opacity:0.4; width:50%">
