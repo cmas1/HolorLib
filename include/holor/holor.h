@@ -154,7 +154,6 @@ class Holor{
         template<typename U>
         Holor& operator=(std::initializer_list<U>) = delete;
 
-
         
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             ITERATORS

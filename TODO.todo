@@ -3,7 +3,7 @@
     ☐ Icon
     ☐ clean up Installation section
 ☐ Write benchmarks
-☐ Write tests
+☐ //WIP Write tests
 ☐ Write INSTALL
 ☐ Write Readme
 ☐ Rename include to holor?
@@ -11,6 +11,7 @@
 ☐ Create repo and publish it
 
 holor.h and holor_ref.h:
+    ☐ //WIP Add equality/inequality comparisons, also for cross comparisons between Holor and HolorRef contaiers. Should use std::ranges::equal from <algorithm> to compare the values of the elements, but this requires the type of the elements to support equality/inequality checks. Implement this using the std::equality_comparable concept from <concepts>, in conjunction with a static assert or a std:enable_if.
     ☐ rename the function lengths(dim) to length(dim), to make the difference with lenghts() more intuitive.
 
 holor.h and layout.h:

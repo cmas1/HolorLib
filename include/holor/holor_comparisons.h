@@ -1,4 +1,4 @@
-// This file is part of Holor, a C++ header-only template library for multi-dimensional containers
+// This file is part of Holor, a C++ template library for multi-dimensional containers
 
 // Copyright 2020 Carlo Masone
 
@@ -21,11 +21,20 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#ifndef HOLOR_FULL_H
-#define HOLOR_FULL_H
+#ifndef HOLOR_COMPARISON_H
+#define HOLOR_COMPARISON_H
+
 
 #include "holor.h"
-#include "holor_comparisons.h"
-#include "holor_printer.h"
+#include <concepts>
+#include <algorithm>
 
-#endif // HOLOR_FULL_H
+using namespace holor; 
+
+template<typename T, size_t N> requires std::equality_comparable<T>
+bool operator==(const Holor<T,N>& h1, const Holor<T,N>& h2){
+    return ( (h1.layout()==h2.layout()) && std::ranges::equal(h1.cbegin(), h1.cend(), h2.cbegin(), h2.cend()) );
+}
+
+
+#endif // HOLOR_COMPARISON_H

@@ -60,6 +60,16 @@ TEST(TestHolor, CheckConstructors){
             EXPECT_EQ( my_holor.size(), 0 );
             EXPECT_EQ( my_holor.lengths(0), 0 );
         }
+        {
+            Holor<int,3>my_holor;
+            Layout<3> tmp_layout;
+            auto my_layout = my_holor.layout();
+            EXPECT_EQ(tmp_layout, my_layout);
+            EXPECT_EQ( my_holor.size(), 0 );
+            EXPECT_EQ( my_holor.lengths(0), 0 );
+            EXPECT_EQ( my_holor.lengths(1), 0 );
+            EXPECT_EQ( my_holor.lengths(2), 0 );
+        }
     }
 };
 
