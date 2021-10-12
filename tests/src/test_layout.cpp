@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <array>
 #include <vector>
+#include <type_traits>
 #include <holor/holor_full.h>
 #include <gtest/gtest.h>
 
@@ -300,7 +301,7 @@ TEST(TestLayout, CheckAssignments){
 
 
 /*=================================================================================
-                                Assignment Tests
+                                Get/Set Tests
 =================================================================================*/
 TEST(TestLayout, CheckGetSet){
     {
@@ -365,10 +366,88 @@ TEST(TestLayout, CheckIndexing){
                                 Slicing Tests
 =================================================================================*/
 TEST(TestLayout, CheckSlicing){
+    // normal slicing
     {
-        Layout<4> layout(std::array<size_t, 4>{5, 4, 3, 2});
+        Layout<3> layout{3, 3, 3};
+        auto test_slice = layout(range(0,1), range(1,2), range(1,2));
+        EXPECT_TRUE( (std::is_same_v<decltype(test_slice),Layout<3>>) );
+        EXPECT_EQ(test_slice.offset(), 4);
+        EXPECT_EQ(test_slice.size(), 8);
+        EXPECT_EQ(test_slice.length(0), 2);
+        EXPECT_EQ(test_slice.length(1), 2);
+        EXPECT_EQ(test_slice.length(2), 2);
+        EXPECT_EQ(test_slice.stride(0), 9);
+        EXPECT_EQ(test_slice.stride(1), 3);
+        EXPECT_EQ(test_slice.stride(2), 1);
+    }
 
-        
+    {
+        Layout<3> layout{3, 3, 3};
+        auto test_slice = layout(1, range(1,2), range(1,2));
+        EXPECT_TRUE( (std::is_same_v<decltype(test_slice),Layout<2>>) );
+        EXPECT_EQ(test_slice.offset(), 13);
+        EXPECT_EQ(test_slice.size(), 4);
+        EXPECT_EQ(test_slice.length(0), 2);
+        EXPECT_EQ(test_slice.length(1), 2);
+        EXPECT_EQ(test_slice.stride(0), 3);
+        EXPECT_EQ(test_slice.stride(1), 1);
+    }
+
+    // slice unreduced
+    {
+        Layout<3> layout{3, 3, 3};
+        auto test_slice = layout.slice_unreduced(range(0,1), range(1,2), range(1,2));
+        EXPECT_TRUE( (std::is_same_v<decltype(test_slice),Layout<3>>) );
+        EXPECT_EQ(test_slice.offset(), 4);
+        EXPECT_EQ(test_slice.size(), 8);
+        EXPECT_EQ(test_slice.length(0), 2);
+        EXPECT_EQ(test_slice.length(1), 2);
+        EXPECT_EQ(test_slice.length(2), 2);
+        EXPECT_EQ(test_slice.stride(0), 9);
+        EXPECT_EQ(test_slice.stride(1), 3);
+        EXPECT_EQ(test_slice.stride(2), 1);
+    }
+
+    {
+        Layout<3> layout{3, 3, 3};
+        auto test_slice = layout.slice_unreduced(1, range(1,2), range(1,2));
+        EXPECT_TRUE( (std::is_same_v<decltype(test_slice),Layout<3>>) );
+        EXPECT_EQ(test_slice.offset(), 13);
+        EXPECT_EQ(test_slice.size(), 4);
+        EXPECT_EQ(test_slice.length(0), 1);
+        EXPECT_EQ(test_slice.length(1), 2);
+        EXPECT_EQ(test_slice.length(2), 2);
+        EXPECT_EQ(test_slice.stride(0), 0);
+        EXPECT_EQ(test_slice.stride(1), 3);
+        EXPECT_EQ(test_slice.stride(2), 1);
+    }
+
+    // slice_dimension
+    {
+        Layout<3> layout{3, 3, 3};
+        auto test_slice = layout.slice_dimension<0>(range(1,2));
+        EXPECT_TRUE( (std::is_same_v<decltype(test_slice),Layout<3>>) );
+        EXPECT_EQ(test_slice.offset(), 9);
+        EXPECT_EQ(test_slice.size(), 18);
+        EXPECT_EQ(test_slice.length(0), 2);
+        EXPECT_EQ(test_slice.length(1), 3);
+        EXPECT_EQ(test_slice.length(2), 3);
+        EXPECT_EQ(test_slice.stride(0), 9);
+        EXPECT_EQ(test_slice.stride(1), 3);
+        EXPECT_EQ(test_slice.stride(2), 1);
+    }
+
+    // slice_dimension
+    {
+        Layout<3> layout{3, 3, 3};
+        auto test_slice = layout.slice_dimension<0>(1);
+        EXPECT_TRUE( (std::is_same_v<decltype(test_slice),Layout<2>>) );
+        EXPECT_EQ(test_slice.offset(), 9);
+        EXPECT_EQ(test_slice.size(), 9);
+        EXPECT_EQ(test_slice.length(0), 3);
+        EXPECT_EQ(test_slice.length(1), 3);
+        EXPECT_EQ(test_slice.stride(0), 3);
+        EXPECT_EQ(test_slice.stride(1), 1);
     }
 }
 
