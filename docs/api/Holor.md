@@ -104,11 +104,6 @@ A Holor container.
 ```
 3. 
 ``` cpp
-    template<typename U> requires (std::convertible_to<U, T>)
-    Holor& operator=(const HolorRef<U,N>& ref);
-```
-4. 
-``` cpp
     Holor& operator=(holor::nested_list<T,N> init);
 ```
 
@@ -117,7 +112,6 @@ Assign to a Holor.
 
 ##### parameters
 * `holor`: Holor object to assign from.
-* `ref`: HolorRef object to assign from.
 * `init`: nested list of the elements to be assigned in the container.
 
 ##### return

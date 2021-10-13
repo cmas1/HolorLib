@@ -198,7 +198,13 @@ TEST(TestHolor, CheckConstructors){
         EXPECT_EQ(my_layout.stride(0), 3);
         EXPECT_EQ(my_layout.stride(1), 1);
         EXPECT_EQ(my_layout.offset(), 0);
-
+        auto my_data = h.data_vector();
+        EXPECT_DOUBLE_EQ(my_data[0], 1.1);
+        EXPECT_DOUBLE_EQ(my_data[1], 2.2);
+        EXPECT_DOUBLE_EQ(my_data[2], 3.3);
+        EXPECT_DOUBLE_EQ(my_data[3], 4.4);
+        EXPECT_DOUBLE_EQ(my_data[4], 5.5);
+        EXPECT_DOUBLE_EQ(my_data[5], 6.6);
     }
     
 };
@@ -207,8 +213,18 @@ TEST(TestHolor, CheckConstructors){
 /*=================================================================================
                                 Assignment Tests
 // =================================================================================*/
-// TEST(TestHolor, CheckAssignments){
-// }
+TEST(TestHolor, CheckAssignments){
+    {
+        Holor<int,2> h1{{1,2,3}, {4,5,6}};
+        Holor<int,2> h2= h1;
+        EXPECT_TRUE((h1==h2));
+    }
+    {
+        Holor<int,2> h1{{1,2,3}, {4,5,6}};
+        Holor<int,2> h2 = Holor<int,2> {{1,2,3}, {4,5,6}};
+        EXPECT_TRUE((h1==h2));
+    }
+}
 
 
 
