@@ -95,10 +95,11 @@ class HolorRef{
                 explicit Iterator(holor_pointer holor, end_iterator_tag){
                     start_ptr_ = holor->dataptr_;
                     layout_ptr_ = &(holor->layout_);
-                    for (auto cnt = 0; cnt <= (N-1) ; cnt++){
+                    for (auto cnt = 0; cnt < (N-1) ; cnt++){
                         coordinates_[cnt] = layout_ptr_->length(cnt) - 1;
                     }
-                    iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_)+1; //one element past the last in the container
+                    coordinates_[N-1] = layout_ptr_->length(N-1) - 1; //one element past the last in the container
+                    iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_); 
                 }
 
 
@@ -136,7 +137,7 @@ class HolorRef{
                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
                 //! \brief prefix ++
                 Iterator& operator++(){
-                    step_forward<N>();
+                    step_forward<N-1>();
                     iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
                     return *this;
                 }
@@ -150,7 +151,7 @@ class HolorRef{
 
                 //! \brief prefix --
                 Iterator& operator--(){
-                    step_back<N>();
+                    step_back<N-1>();
                     iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
                     return *this;
                 }
@@ -165,7 +166,7 @@ class HolorRef{
                 //! \brief advances the iterator by n positions
                 Iterator& operator+=(difference_type n){
                     for (auto cnt = 0; cnt < n; cnt++){
-                        step_forward<N>();
+                        step_forward<N-1>();
                     }
                     iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
                     return *this;
@@ -174,7 +175,7 @@ class HolorRef{
                 //! \brief decreases the iterator by n positions
                 Iterator& operator-=(difference_type n){
                     for (auto cnt = 0; cnt < n; cnt++){
-                        step_back<N>();
+                        step_back<N-1>();
                     }
                     iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
                     return *this;
@@ -245,7 +246,7 @@ class HolorRef{
                 }
 
                 template<>
-                void step_forward<1>(){
+                void step_forward<0>(){
                     if ( coordinates_[0] < (layout_ptr_->length(0) -1) ){
                         coordinates_[0] += 1;
                     } else{ //end of the container
@@ -268,7 +269,7 @@ class HolorRef{
                 }
 
                 template<>
-                void step_back<1>(){
+                void step_back<0>(){
                     if ( coordinates_[0] > 0 ){
                         coordinates_[0] -= 1;
                     } else{ //beginning of the container

@@ -52,18 +52,6 @@ int main(){
     HolorRef<int,2> h2(v2.data(), Layout<2>{2,3});
     HolorRef<int,2> h3(v3.data(), Layout<2>{2,3});
     HolorRef<int,2> h4(v2.data(), Layout<2>{3,2});
-
-    // std::cout << "h1==h2? " << (h1==h2) << "\n";
-    // std::cout << "h1==h3? " << (h1==h3) << "\n";
-    // std::cout << "h1==h4? " << (h1==h4) << "\n\n";
-
-    auto it = h1.end();
-    std::cout << (*it) << "\n\n";
-
-    // for(auto it = h1.begin(); it<h1.end(); it++){
-    //     std::cout << (*it) << " ";
-    // }
-    // std::cout << "\n";
-
+    
     return 0;
 }

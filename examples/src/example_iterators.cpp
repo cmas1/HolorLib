@@ -42,7 +42,5 @@ int main(){
     std::cout << "\033[1m A \033[0m = " << A << "\n\n";
 
 
-
-
     return 0;
 }

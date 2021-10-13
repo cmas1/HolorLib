@@ -8,10 +8,11 @@
 ☐ Write Readme
 ☐ Rename include to holor?
 ☐ Write License and unify license plate on all files
+☐ Lat check runnning all tests, benchmarks and examples
 ☐ Create repo and publish it
 
+
 holor.h and holor_ref.h:
-    ☐ //FIXME there is an error with HoloRef iterators. This must be fixed asap
     ☐ //WIP Add equality/inequality comparisons, also for cross comparisons between Holor and HolorRef contaiers. Should use std::ranges::equal from <algorithm> to compare the values of the elements, but this requires the type of the elements to support equality/inequality checks. Implement this using the std::equality_comparable concept from <concepts>, in conjunction with a static assert or a std:enable_if.
     ☐ rename the function lengths(dim) to length(dim), to make the difference with lenghts() more intuitive.
 
@@ -30,6 +31,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ //FIXME there is an error with HoloRef iterators. @done(21-10-13 10:18) @project(iterators)
   ✔ Implement comparison operators. @done(21-10-12 12:40) @project(layout.h)
   ✔ write examples section @done(21-10-08 16:37)
   ✔ write API section @done(21-10-04 10:22)

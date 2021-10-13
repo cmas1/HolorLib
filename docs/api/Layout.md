@@ -252,7 +252,7 @@ Get the position in memory of a single element according to the mapping describe
 * `dims`: the coordinates of the element accessed, given either as a parameter pack or as an array of `SingleIndex` elements (Refer to [Indices](./Indexes.html) for more details).
 
 !!! warning
-    When indexing a Layout an `holor::exception::HolorRuntimeError` exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.
+    When indexing a Layout using a parameter pack (signature 1.) an `holor::exception::HolorRuntimeError` exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details. This check is not performed when using the signature 2.
 
 ##### return
 The position of the element in the 1D data sequence.

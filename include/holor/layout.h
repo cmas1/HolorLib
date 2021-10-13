@@ -279,7 +279,6 @@ class Layout{
         size_t operator()(std::array<ID,N> dims) const{
             auto result = offset_;
             for (auto cnt = 0; cnt<N; cnt++){
-                assert::dynamic_assert(dims[cnt]>=0 && dims[cnt]<lengths_[cnt], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
                 result += dims[cnt]*strides_[cnt];
             }
             return result;
