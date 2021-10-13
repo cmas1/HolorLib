@@ -71,6 +71,136 @@ TEST(TestHolor, CheckConstructors){
             EXPECT_EQ( my_holor.lengths(2), 0 );
         }
     }
+
+    //test for constructor from nested list
+    {
+        {
+            Holor<int, 1> my_holor{1,2,3,4};
+            auto my_layout = my_holor.layout();
+            Layout<1> tmp_layout{4};
+            EXPECT_EQ(tmp_layout, my_layout);
+            EXPECT_EQ( my_holor.size(), 4 );
+            EXPECT_EQ( my_holor.lengths(0), 4 );
+            EXPECT_EQ( my_holor.data()[0], 1 );
+            EXPECT_EQ( my_holor.data()[1], 2 );
+            EXPECT_EQ( my_holor.data()[2], 3 );
+            EXPECT_EQ( my_holor.data()[3], 4 );
+        }
+
+        {
+            Holor<int, 2> my_holor{{1,2},{3,4}};
+            auto my_layout = my_holor.layout();
+            Layout<2> tmp_layout{2,2};
+            EXPECT_EQ(tmp_layout, my_layout);
+            EXPECT_EQ( my_holor.size(), 4 );
+            EXPECT_EQ( my_holor.lengths(0), 2 );
+            EXPECT_EQ( my_holor.lengths(1), 2 );
+            EXPECT_EQ( my_holor.data()[0], 1 );
+            EXPECT_EQ( my_holor.data()[1], 2 );
+            EXPECT_EQ( my_holor.data()[2], 3 );
+            EXPECT_EQ( my_holor.data()[3], 4 );
+        }
+
+        {
+            Holor<int, 3> my_holor{{{1,2},{3,4}}, {{5,6},{7,8}}};
+            auto my_layout = my_holor.layout();
+            Layout<3> tmp_layout{2,2,2};
+            EXPECT_EQ(tmp_layout, my_layout);
+            EXPECT_EQ( my_holor.size(), 8 );
+            EXPECT_EQ( my_holor.lengths(0), 2 );
+            EXPECT_EQ( my_holor.lengths(1), 2 );
+            EXPECT_EQ( my_holor.lengths(2), 2 );
+            EXPECT_EQ( my_holor.data()[0], 1 );
+            EXPECT_EQ( my_holor.data()[1], 2 );
+            EXPECT_EQ( my_holor.data()[2], 3 );
+            EXPECT_EQ( my_holor.data()[3], 4 );
+            EXPECT_EQ( my_holor.data()[4], 5 );
+            EXPECT_EQ( my_holor.data()[5], 6 );
+            EXPECT_EQ( my_holor.data()[6], 7 );
+            EXPECT_EQ( my_holor.data()[7], 8 );
+        }
+    }
+
+    //test for constructor from sized container of lengths
+    {
+        {
+            Holor<float, 3> my_holor( std::array<size_t,3>{2,2,2} );
+            auto my_layout = my_holor.layout();
+            Layout<3> tmp_layout{2,2,2};
+            EXPECT_EQ(tmp_layout, my_layout);
+            EXPECT_EQ( my_holor.size(), 8 );
+            EXPECT_EQ( my_holor.lengths(0), 2 );
+            EXPECT_EQ( my_holor.lengths(1), 2 );
+            EXPECT_EQ( my_holor.lengths(2), 2 );
+        }
+        {
+            std::array<size_t,3> my_lengths{2,2,2};
+            Holor<float, 3> my_holor( my_lengths );
+            auto my_layout = my_holor.layout();
+            Layout<3> tmp_layout{2,2,2};
+            EXPECT_EQ(tmp_layout, my_layout);
+            EXPECT_EQ( my_holor.size(), 8 );
+            EXPECT_EQ( my_holor.lengths(0), 2 );
+            EXPECT_EQ( my_holor.lengths(1), 2 );
+            EXPECT_EQ( my_holor.lengths(2), 2 );
+        }
+    }
+
+    //test for constructor from resizeable container
+    {
+        {
+            Holor<float, 3> my_holor( std::vector<size_t>{2,2,2} );
+            auto my_layout = my_holor.layout();
+            Layout<3> tmp_layout{2,2,2};
+            EXPECT_EQ(tmp_layout, my_layout);
+            EXPECT_EQ( my_holor.size(), 8 );
+            EXPECT_EQ( my_holor.lengths(0), 2 );
+            EXPECT_EQ( my_holor.lengths(1), 2 );
+            EXPECT_EQ( my_holor.lengths(2), 2 );
+        }
+        {
+            std::vector<size_t> my_lengths{2,2,2};
+            Holor<float, 3> my_holor( my_lengths );
+            auto my_layout = my_holor.layout();
+            Layout<3> tmp_layout{2,2,2};
+            EXPECT_EQ(tmp_layout, my_layout);
+            EXPECT_EQ( my_holor.size(), 8 );
+            EXPECT_EQ( my_holor.lengths(0), 2 );
+            EXPECT_EQ( my_holor.lengths(1), 2 );
+            EXPECT_EQ( my_holor.lengths(2), 2 );
+        }
+    }
+
+    //copy/move constructors
+    {
+        {
+            Holor<int,2> h1{{1,2,3}, {4,5,6}};
+            Holor<int,2> h2(h1);
+            EXPECT_TRUE((h1==h2));
+        }
+        {
+            Holor<int,2> h1{{1,2,3}, {4,5,6}};
+            Holor<int,2> h2( Holor<int,2> {{1,2,3}, {4,5,6}} );
+            EXPECT_TRUE((h1==h2));
+        }
+    }
+
+    //constructor from HolorRef
+    {
+        std::vector<double> my_vec{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
+        HolorRef<double,2> hr(my_vec.data(), Layout<2>{2,3});
+        Holor<double,2> h(hr);
+        EXPECT_TRUE( (h==hr) );
+        auto my_layout = h.layout();
+        EXPECT_EQ(h.size(), 6);
+        EXPECT_EQ(h.lengths(0), 2);
+        EXPECT_EQ(h.lengths(1), 3);
+        EXPECT_EQ(my_layout.stride(0), 3);
+        EXPECT_EQ(my_layout.stride(1), 1);
+        EXPECT_EQ(my_layout.offset(), 0);
+
+    }
+    
 };
 
 

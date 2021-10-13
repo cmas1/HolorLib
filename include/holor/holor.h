@@ -101,9 +101,10 @@ class Holor{
          * \return a Holor
          */
         template<typename U> requires (std::convertible_to<U, T>)
-        explicit Holor(const HolorRef<U,N>& ref): layout_{ref.layout_.lengths_} {
-            data_.reserve(layout_.size());
-            std::copy(ref.begin(), ref.end(), data_.begin());
+        explicit Holor(const HolorRef<U,N>& ref) {
+            layout_ = Layout<N>(ref.layout().lengths());
+            data_.resize(layout_.size());
+            std::copy(ref.cbegin(), ref.cend(), data_.begin());
         }
 
         /*!
@@ -113,9 +114,9 @@ class Holor{
          */
         template<typename U> requires (std::convertible_to<U, T>)
         Holor& operator=(const HolorRef<U,N>& ref){
-            layout_ = Layout<N>{ref.layout_.lengths_};
-            data_.reserve(ref.layout_.size());
-            std::copy(ref.begin(), ref.end(), data_.begin());
+            layout_ = Layout<N>{ref.layout().lengths()};
+            data_.resize(layout_.size());
+            std::copy(ref.cbegin(), ref.cend(), data_.begin());
             return *this;
         }
 

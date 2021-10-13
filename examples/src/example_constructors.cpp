@@ -119,5 +119,13 @@ int main(){
     myvec01[2] = 99;
     std::cout << "=> my_holor_ref_01 = " << my_holor_ref_01 << "\n";
     std::cout << "=> my_holor_ref_02 = " << my_holor_ref_02 << "\n\n";
+
+
+    // 6) Construct an Holor from an HolorRef
+    std::vector<double> my_vec2{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
+    HolorRef<double,2> hr(my_vec2.data(), Layout<2>{2,3});
+    Holor<double,2> h(hr);
+    std::cout << "h == " << h << "\n\n";
+
     return 0;
 }
