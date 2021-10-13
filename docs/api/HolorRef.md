@@ -390,3 +390,73 @@ The slice corresponding to the `i`-th coordinate along the `M`-th dimension. Thi
 
 
 
+## Non-Member functions
+
+#### equality operator==
+##### signature
+1. 
+``` cpp
+    template<typename T, size_t N> requires std::equality_comparable<T>
+    bool operator==(const HolorRef<T,N>& h1, const HolorRef<T,N>& h2);
+```
+2. 
+``` cpp
+    template<typename T, size_t N> requires std::equality_comparable<T>
+    bool operator==(const HolorRef<T,N>& h1, const Holor<T,N>& h2);
+```
+3. 
+``` cpp
+    template<typename T, size_t N> requires std::equality_comparable<T>
+    bool operator==(const Holor<T,N>& h1, const HolorRef<T,N>& h2);
+```
+##### brief 
+Comparison operator that verifies the equality of two HolorLib containers with the same dimension `N` and type of elements `T`.
+
+!!! note
+    Two HolorRef containers or a HolorRef and a Holor container are considered equal if they have the same lengths and contain the same elements (but their layouts may be different).
+
+##### template parameter
+* `N`: the dimension of the two container to be compared.
+* `T`: the type of the elements in the container.
+##### parameter
+* `h1`: left hand side of the comparison.
+* `h2`: right hand side of the comparison.
+
+##### return
+true if the two containers are equal, false otherwise
+<hr style="background-color:#9999ff; opacity:0.4; width:50%">
+
+
+
+#### inequality operator!=
+##### signature
+1. 
+``` cpp
+    template<typename T, size_t N> requires std::equality_comparable<T>
+    bool operator!=(const HolorRef<T,N>& h1, const HolorRef<T,N>& h2);
+```
+2. 
+``` cpp
+    template<typename T, size_t N> requires std::equality_comparable<T>
+    bool operator!=(const HolorRef<T,N>& h1, const Holor<T,N>& h2);
+```
+3. 
+``` cpp
+    template<typename T, size_t N> requires std::equality_comparable<T>
+    bool operator!=(const Holor<T,N>& h1, const HolorRef<T,N>& h2);
+```
+##### brief 
+Comparison operator that verifies the inequality of two HolorLib containers with the same dimension `N` and type of elements `T`.
+
+!!! note
+    Two HolorRef containers or a HolorRef and a Holor container are considered equal if they have the same lengths and contain the same elements (but their layouts may be different).
+
+##### template parameter
+* `N`: the dimension of the two container to be compared.
+* `T`: the type of the elements in the container.
+##### parameter
+* `h1`: left hand side of the comparison.
+* `h2`: right hand side of the comparison.
+
+##### return
+true if the two containers are not equal, false otherwise.

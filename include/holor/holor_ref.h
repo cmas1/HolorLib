@@ -98,7 +98,7 @@ class HolorRef{
                     for (auto cnt = 0; cnt < (N-1) ; cnt++){
                         coordinates_[cnt] = layout_ptr_->length(cnt) - 1;
                     }
-                    coordinates_[N-1] = layout_ptr_->length(N-1) - 1; //one element past the last in the container
+                    coordinates_[N-1] = layout_ptr_->length(N-1); //one element past the last in the container
                     iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_); 
                 }
 

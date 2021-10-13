@@ -43,15 +43,6 @@ int main(){
 
     std::cout << "The memory layout of A can be retrieved as A.layout() .\n";
     std::cout << "The layout contains the neccessary information to index a Holor, such as the strides and offset..\n";
-
-
-    std::vector<int> v1{1,2,3,4,5,6};
-    std::vector<int> v2{1,2,3,4,5,6};
-    std::vector<int> v3{1,2,3,4,7,7};
-    HolorRef<int,2> h1(v1.data(), Layout<2>{2,3});
-    HolorRef<int,2> h2(v2.data(), Layout<2>{2,3});
-    HolorRef<int,2> h3(v3.data(), Layout<2>{2,3});
-    HolorRef<int,2> h4(v2.data(), Layout<2>{3,2});
     
     return 0;
 }
