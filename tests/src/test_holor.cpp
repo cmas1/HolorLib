@@ -231,8 +231,62 @@ TEST(TestHolor, CheckAssignments){
 /*=================================================================================
                                 Get/Set Tests
 =================================================================================*/
-// TEST(TestHolor, CheckGetSet){
-// }
+TEST(TestHolor, CheckGetSet){
+    {
+        Holor<int, 3> my_holor{ {{1,2}, {3,4}}, {{5,6}, {7,8}} };
+        auto my_layout = my_holor.layout();
+        EXPECT_TRUE( (my_layout==Layout<3>{2,2,2}) );
+        EXPECT_EQ(my_holor.lengths(0),2);
+        EXPECT_EQ(my_holor.lengths(1),2);
+        EXPECT_EQ(my_holor.lengths(2),2);
+        std::array<size_t,3> tmp_lengths{2,2,2};
+        EXPECT_EQ(my_holor.lengths(), tmp_lengths);
+        EXPECT_EQ(my_holor.size(), 8);
+        std::vector<int> tmp_data{1,2,3,4,5,6,7,8};
+        EXPECT_EQ(my_holor.data_vector(), tmp_data);
+    }
+}
+
+
+
+
+/*=================================================================================
+                                Indexing Tests
+=================================================================================*/
+TEST(TestHolor, CheckIndexing){
+    Holor<char, 3> my_holor{ {{'a', 'b'}, {'c', 'd'}},  {{'e', 'f'}, {'g', 'h'}}  };
+    EXPECT_EQ(my_holor(0,0,0), 'a');
+    EXPECT_EQ(my_holor(0,0,1), 'b');
+    EXPECT_EQ(my_holor(0,1,0), 'c');
+    EXPECT_EQ(my_holor(0,1,1), 'd');
+    EXPECT_EQ(my_holor(1,0,0), 'e');
+    EXPECT_EQ(my_holor(1,0,1), 'f');
+    EXPECT_EQ(my_holor(1,1,0), 'g');
+    EXPECT_EQ(my_holor(1,1,1), 'h');
+}
+
+
+
+/*=================================================================================
+                                Slicing Tests
+=================================================================================*/
+TEST(TestHolor, CheckSlicing){
+    {
+        // normal slicing
+        {
+            Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
+            auto slice1 = h1(range(0,1), range(1,2), range(0,1));
+            EXPECT_TRUE( (std::is_same_v<decltype(slice1),HolorRef<int, 3>>) );
+            Holor<int,3> h2{ {{4,5}, {7,8}}, {{13,14}, {16,17}} };
+            EXPECT_EQ(slice1.length(0), 2);
+            EXPECT_EQ(slice1.length(1), 2);
+            EXPECT_EQ(slice1.length(2), 2);
+            EXPECT_TRUE( (slice1==h2) );
+        }
+    }
+}
+
+
 
 
 int main(int argc, char **argv) {

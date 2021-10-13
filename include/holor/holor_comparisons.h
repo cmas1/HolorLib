@@ -29,6 +29,8 @@
 #include "holor_ref.h"
 #include <concepts>
 #include <algorithm>
+#include <iostream>
+
 
 using namespace holor; 
 
@@ -115,7 +117,6 @@ template<typename T, size_t N> requires std::equality_comparable<T>
 bool operator!=(const Holor<T,N>& h1, const HolorRef<T,N>& h2){
     return !( h1==h2 );
 }
-
 
 
 /*!
