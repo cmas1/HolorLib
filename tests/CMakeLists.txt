@@ -23,8 +23,10 @@ target_link_libraries(test_holor PUBLIC GTest::GTest GTest::Main Holor::Holor)
 add_executable(test_holor_ref src/test_holor_ref.cpp)
 target_link_libraries(test_holor_ref PUBLIC GTest::GTest GTest::Main Holor::Holor)
 
+add_executable(test_comparisons src/test_comparisons.cpp)
+target_link_libraries(test_comparisons PUBLIC GTest::GTest GTest::Main Holor::Holor)
 
-set_target_properties( test_layout test_holor test_holor_ref
+set_target_properties( test_layout test_holor test_holor_ref test_comparisons
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/tests"
 )
