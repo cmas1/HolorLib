@@ -271,18 +271,98 @@ TEST(TestHolor, CheckIndexing){
                                 Slicing Tests
 =================================================================================*/
 TEST(TestHolor, CheckSlicing){
+    // normal slicing
     {
-        // normal slicing
-        {
-            Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
-            auto slice1 = h1(range(0,1), range(1,2), range(0,1));
-            EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 3>>) );
-            Holor<int,3> h2{ {{4,5}, {7,8}}, {{13,14}, {16,17}} };
-            EXPECT_EQ(slice1.length(0), 2);
-            EXPECT_EQ(slice1.length(1), 2);
-            EXPECT_EQ(slice1.length(2), 2);
-            EXPECT_TRUE( (slice1==h2) );
-        }
+        Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
+        auto slice1 = h1(range(0,1), range(1,2), range(0,1));
+        EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 3>>) );
+        Holor<int,3> h2{ {{4,5}, {7,8}}, {{13,14}, {16,17}} };
+        EXPECT_EQ(slice1.length(0), 2);
+        EXPECT_EQ(slice1.length(1), 2);
+        EXPECT_EQ(slice1.length(2), 2);
+        EXPECT_TRUE( (slice1==h2) );
+    }
+
+    {
+        Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
+        auto slice1 = h1(2, range(1,2), range(0,1));
+        EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 2>>) );
+        Holor<int,2> h2{ {22,23}, {25,26} };
+        EXPECT_EQ(slice1.length(0), 2);
+        EXPECT_EQ(slice1.length(1), 2);
+        EXPECT_TRUE( (slice1==h2) );
+    }
+
+    {
+        Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
+        auto slice1 = h1(2, 1, range(0,1));
+        EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 1>>) );
+        Holor<int,1> h2{22,23};
+        EXPECT_EQ(slice1.length(0), 2);
+        EXPECT_TRUE( (slice1==h2) );
+    }
+
+    // row slicing
+    {
+        Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
+        auto slice1 = h1.row(0);
+        EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 2>>) );
+        Holor<int,2> h2{{1,2,3}, {4,5,6}, {7,8,9}};
+        EXPECT_EQ(slice1.length(0), 3);
+        EXPECT_EQ(slice1.length(1), 3);
+        EXPECT_TRUE( (slice1==h2) );
+    }
+
+    {
+        Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
+        auto slice1 = h1.row(2);
+        EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 2>>) );
+        Holor<int,2> h2{{19,20,21}, {22,23,24}, {25,26,27}};
+        EXPECT_EQ(slice1.length(0), 3);
+        EXPECT_EQ(slice1.length(1), 3);
+        EXPECT_TRUE( (slice1==h2) );
+    }
+
+    // col slicing
+    {
+        Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
+        auto slice1 = h1.col(0);
+        EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 2>>) );
+        Holor<int,2> h2{ {1,2,3}, {10,11,12}, {19,20,21} };
+        EXPECT_EQ(slice1.length(0), 3);
+        EXPECT_EQ(slice1.length(1), 3);
+        EXPECT_TRUE( (slice1==h2) );
+    }
+
+    {
+        Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
+        auto slice1 = h1.col(2);
+        EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 2>>) );
+        Holor<int,2> h2{ {7,8,9}, {16,17,18}, {25,26,27} };
+        EXPECT_EQ(slice1.length(0), 3);
+        EXPECT_EQ(slice1.length(1), 3);
+        EXPECT_TRUE( (slice1==h2) );
+    }
+
+    // dimension slicing
+    {
+        Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
+        auto slice1 = h1.slice<1>(0);
+        EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 2>>) );
+        Holor<int,2> h2{ {1,2,3}, {10,11,12}, {19,20,21} };
+        EXPECT_EQ(slice1.length(0), 3);
+        EXPECT_EQ(slice1.length(1), 3);
+        EXPECT_TRUE( (slice1==h2) );
+    }
+
+    {
+        Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
+        auto slice1 = h1.slice<2>(2);
+        EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 2>>) );
+        Holor<int,2> h2{ {3, 6, 9}, {12, 15, 18}, {21, 24, 27} };
+        EXPECT_EQ(slice1.length(0), 3);
+        EXPECT_EQ(slice1.length(1), 3);
+        EXPECT_TRUE( (slice1==h2) );
     }
 }
 
