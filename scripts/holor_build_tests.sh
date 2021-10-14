@@ -64,7 +64,7 @@ function main() {
 
     parse_cmdline_arguments "$@"
     cmake ${HOLOR_ROOT_PATH} ${PARSED_OPTIONS} -DCMAKE_BUILD_TYPE=Release -DHOLOR_BUILD_TESTS=ON -DHOLOR_BUILD_BENCHMARKS=OFF -DHOLOR_BUILD_EXAMPLES=OFF -DHOLOR_INSTALL_LIBRARY=OFF
-    cmake --build .
+    cmake --build . --config Release
     cd ${HOLOR_ROOT_PATH}
 
     echo

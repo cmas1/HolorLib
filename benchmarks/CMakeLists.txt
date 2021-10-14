@@ -1,15 +1,20 @@
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+cmake_minimum_required(VERSION 3.12)
 
+project("Holor_Benchmarkss")
+
+find_package(Holor REQUIRED)
 find_package(benchmark REQUIRED)
 
-add_executable(bm_polynomial src/bm_polynomial.cpp)
-target_link_libraries(bm_polynomial benchmark::benchmark)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(bm_static_knot_sequence src/bm_static_knot_sequence.cpp)
-target_link_libraries(bm_static_knot_sequence benchmark::benchmark)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
-add_executable(bm_dynamic_knot_sequence src/bm_dynamic_knot_sequence.cpp)
-target_link_libraries(bm_dynamic_knot_sequence benchmark::benchmark)
 
-#add_executable(bm_bases src/bm_bases.cpp)
-#target_link_libraries(bm_bases benchmark::benchmark)
+add_executable(bm_holor src/bm_holor.cpp)
+target_link_libraries(bm_holor benchmark::benchmark Holor::Holor)
+
+set_target_properties( bm_holor
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/benchmarks"
+)

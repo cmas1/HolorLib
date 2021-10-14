@@ -10,7 +10,7 @@ Some examples that demonstrate few uses of the library, such as how to construct
 === "excplicit cmake"
     ``` bash
         cd build
-        cmake .. -DHOLOR_BUILD_EXAMPLES=ON [-DCMAKE_CXX_COMPILER=...]
+        cmake .. -DHOLOR_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release [-DCMAKE_CXX_COMPILER=...]
         make
     ```
 
@@ -50,7 +50,7 @@ Some tests to verify the correct behavior of the library. The tests can be compi
 === "excplicit cmake"
     ``` bash
         cd build
-        cmake .. -DHOLOR_BUILD_TESTS=ON [-DCMAKE_CXX_COMPILER=...]
+        cmake .. -DHOLOR_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release [-DCMAKE_CXX_COMPILER=...]
         make
     ```
 
@@ -80,7 +80,7 @@ Some benchmarks to evalaute the performance of the Holor containers. The benchma
 === "explicit"
     ``` bash
         cd build
-        cmake .. -DHOLOR_BUILD_BENCHMARKS=ON [-DCMAKE_CXX_COMPILER=...]
+        cmake .. -DHOLOR_BUILD_BENCHMARKS=ON -DCMAKE_BUILD_TYPE=Release [-DCMAKE_CXX_COMPILER=...]
         make
     ```
 === "script"
