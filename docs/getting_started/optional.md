@@ -75,7 +75,17 @@ Some benchmarks to evalaute the performance of the Holor containers. The benchma
 
 !!! warning "Requirements"
 
-    BLABLA 
+    The tests require [google benchmark](https://github.com/google/benchmark), to be used in conjunction with CMake. We recommend checking the instructions on the benchmark page. For a quick setup, go to the directory where you want to download the  repository and follow these instructions
+    ``` bash
+        git clone https://github.com/google/benchmark.git
+        cd benchmark
+        cmake -E make_directory "build"
+        cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
+        cmake -DCMAKE_BUILD_TYPE=Release -S . -B "build"
+        cmake --build "build" --config Release 
+        cd build
+        sudo make install
+    ```
 
 === "explicit"
     ``` bash
