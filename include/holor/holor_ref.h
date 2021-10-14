@@ -88,6 +88,7 @@ class HolorRef{
                     layout_ptr_ = &(holor->layout_);
                     coordinates_.fill(0);
                     iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_);
+                    compute_iterator_strides();
                 }
 
 
@@ -100,12 +101,13 @@ class HolorRef{
                     }
                     coordinates_[N-1] = layout_ptr_->length(N-1); //one element past the last in the container
                     iter_ptr_ = start_ptr_ + layout_ptr_->operator()(coordinates_); 
+                    compute_iterator_strides();
                 }
 
 
                 //! \brief copy constructor of  const_iterator from iterator
                 template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_>>
-                Iterator(const Iterator<false>& rhs): start_ptr_(rhs.start_ptr_), iter_ptr_(rhs.iter_ptr_), layout_ptr_(rhs.layout_ptr_), coordinates_(rhs.coordinates_){};
+                Iterator(const Iterator<false>& rhs): start_ptr_(rhs.start_ptr_), iter_ptr_(rhs.iter_ptr_), layout_ptr_(rhs.layout_ptr_), coordinates_(rhs.coordinates_), iterator_strides_(rhs.iterator_strides_){};
 
                 Iterator() = default;                           ///< \brief default constructible
                 Iterator(const Iterator&) = default;            ///< \brief copy constructible
@@ -206,7 +208,7 @@ class HolorRef{
                 friend difference_type operator-(const Iterator& a, const Iterator&b) {
                     difference_type result = 0;
                     for (auto cnt = 0; cnt<N; cnt++){
-                        result += a.coordinates_[cnt]*a.layout_ptr_->strides()[cnt] - b.coordinates_[cnt]*b.layout_ptr_->strides()[cnt];
+                        result += a.coordinates_[cnt]*a.iterator_strides_[cnt] - b.coordinates_[cnt]*b.iterator_strides_[cnt];
                     }
                     return result;
                 }
@@ -233,6 +235,20 @@ class HolorRef{
                 pointer iter_ptr_;                              ///< \brief pointer to current memory location addressed by the iterator
                 const Layout<N>* layout_ptr_;                   ///< \brief pointer to the layout of the Holor_Ref container that the iterator refers to. This is needed because the elements are not stored contiguously in memory
                 std::array<difference_type, N> coordinates_;    ///< \brief coordinates of the current iterator from the starting pointer. This is needed because the elements are not stored contiguously in memory
+                std::array<size_t, N> iterator_strides_;        ///< \brief internal strides of the iterator (they are different from the ones in the layout) which are used to compute the distance between two iterators, i.e., the nubmer of increments to go from an iterator to another one
+
+
+                /*!
+                * \brief Computes inner strides, needed to correctly implement the distance between two iterators
+                */
+                void compute_iterator_strides(){
+                    size_t tmp = 1;
+                    for(int i = N-1; i>=0; --i){
+                        iterator_strides_[i] = tmp;
+                        tmp *= layout_ptr_->length(i);
+                    }
+                }
+
 
                 //! \brief helper function to implement the ++ operator
                 template<size_t Coord>

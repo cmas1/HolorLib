@@ -276,7 +276,7 @@ TEST(TestHolor, CheckSlicing){
         {
             Holor<int,3> h1{ {{1,2,3}, {4,5,6}, {7,8,9}}, {{10,11,12}, {13,14,15}, {16,17,18}}, {{19,20,21}, {22,23,24}, {25,26,27}} };
             auto slice1 = h1(range(0,1), range(1,2), range(0,1));
-            EXPECT_TRUE( (std::is_same_v<decltype(slice1),HolorRef<int, 3>>) );
+            EXPECT_TRUE( (std::is_same_v<decltype(slice1), HolorRef<int, 3>>) );
             Holor<int,3> h2{ {{4,5}, {7,8}}, {{13,14}, {16,17}} };
             EXPECT_EQ(slice1.length(0), 2);
             EXPECT_EQ(slice1.length(1), 2);

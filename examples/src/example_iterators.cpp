@@ -41,6 +41,5 @@ int main(){
     std::cout << " \033[32m std::copy(temp_vec.begin(), temp_vec.end(), A.col(0).rbegin()); \033[0m \n";
     std::cout << "\033[1m A \033[0m = " << A << "\n\n";
 
-
     return 0;
 }
