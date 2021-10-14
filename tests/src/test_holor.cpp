@@ -263,6 +263,11 @@ TEST(TestHolor, CheckIndexing){
     EXPECT_EQ(my_holor(1,0,1), 'f');
     EXPECT_EQ(my_holor(1,1,0), 'g');
     EXPECT_EQ(my_holor(1,1,1), 'h');
+    my_holor(0,0,0) = 'z';
+    EXPECT_EQ(my_holor(0,0,0), 'z');
+    auto var = my_holor(0,0,1);
+    var = 'u';
+    EXPECT_EQ(my_holor(0,0,1), 'b');
 }
 
 
