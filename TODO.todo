@@ -1,7 +1,6 @@
 ☐ Write documentation:
     ☐ Logo
     ☐ Icon
-☐ //WIP Write benchmarks
 ☐ Write INSTALL
 ☐ Write Readme
 ☐ Rename include to holor?
@@ -28,6 +27,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ //WIP Write benchmarks @done(21-10-15 14:27)
   ✔ clean up Installation section @done(21-10-14 18:23)
   ✔ Write tests @done(21-10-14 14:00)
   ✔ //FIXME: HolorRef iterators are still broken. given a HolorRef h1, the ditsance std::distance(h1.cbegin(), h1.cend()) comes out wrong. @done(21-10-14 10:37) @project(iterators)
