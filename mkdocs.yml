@@ -24,8 +24,7 @@
 site_name: HolorLib
 site_url: https://cmas1.io/HolorLib/
 site_author: Carlo Masone
-site_description: >-
-  A C++ header-only library for generic multi-dimensional containers
+site_description: A C++ header-only library for generic multi-dimensional containers
 
 
 # Repository
@@ -119,12 +118,12 @@ nav:
 edit_uri: ""
 
 #Extras
-extra:
-  version:
-    provider: mike
-  # analytics:
-  #   provider: google
-  #   property: G-XXXXXXXXXX
+# extra:
+#   version:
+#     provider: mike
+#   # analytics:
+#   #   provider: google
+#   #   property: G-XXXXXXXXXX
 
 
 #to work with offline documentation
