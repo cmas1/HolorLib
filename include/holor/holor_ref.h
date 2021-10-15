@@ -331,6 +331,7 @@ class HolorRef{
          * \return a HolorRef
          */
         HolorRef(T* dataptr, const Layout<N>& layout): layout_{layout}, dataptr_{dataptr}{}
+        HolorRef(T* dataptr, Layout<N>&& layout): layout_{layout}, dataptr_{dataptr}{}
 
 
         /*!
@@ -426,13 +427,13 @@ class HolorRef{
          * \return the value of the Holor stored at the position indexed by the indices
          */
         template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
-        T& operator()(Dims... dims){
-            return *(dataptr_ + layout_(dims...));
+        T& operator()(Dims&&... dims){
+            return *(dataptr_ + layout_(std::forward<Dims>(dims)...));
         }
 
         template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
-        const T operator()(Dims... dims) const{
-            return *(dataptr_ + layout_(dims...));
+        const T operator()(Dims&&... dims) const{
+            return *(dataptr_ + layout_(std::forward<Dims>(dims)...));
         }
 
 

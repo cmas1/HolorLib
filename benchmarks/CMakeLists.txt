@@ -14,7 +14,10 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 add_executable(bm_holor src/bm_holor.cpp)
 target_link_libraries(bm_holor benchmark::benchmark Holor::Holor)
 
-set_target_properties( bm_holor
+add_executable(bm_holor_ref src/bm_holor_ref.cpp)
+target_link_libraries(bm_holor_ref benchmark::benchmark Holor::Holor)
+
+set_target_properties( bm_holor bm_holor_ref
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/benchmarks"
 )
