@@ -177,98 +177,108 @@ BENCHMARK(BM_HolorRefIndexing5D)->Args({0,0,0,0,0})->Args({7,7,7,7,7});
 /*=============================================================================
  ====================           SLICING                =======================
  ============================================================================*/
-// static void BM_HolorRefSlicing2D_1(benchmark::State& state) {
-//     Holor<int, 2> h(std::vector<size_t>{8,8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h(range(3,7), 4));
-//     }
-// }
-// BENCHMARK(BM_HolorRefSlicing2D_1);
+static void BM_HolorRefSlicing2D_1(benchmark::State& state) {
+    std::vector<int> vec(8^2,2);
+    HolorRef<int, 2> h(vec.data(), std::vector<size_t>{8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h(range(3,7), 4));
+    }
+}
+BENCHMARK(BM_HolorRefSlicing2D_1);
 
 
-// static void BM_HolorRefSlicing2D_2(benchmark::State& state) {
-//     Holor<int, 2> h(std::vector<size_t>{8,8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h(range(3,7), range(2,6)));
-//     }
-// }
-// BENCHMARK(BM_HolorRefSlicing2D_2);
+static void BM_HolorRefSlicing2D_2(benchmark::State& state) {
+    std::vector<int> vec(8^2,2);
+    HolorRef<int, 2> h(vec.data(), std::vector<size_t>{8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h(range(3,7), range(2,6)));
+    }
+}
+BENCHMARK(BM_HolorRefSlicing2D_2);
 
-// static void BM_HolorRefSlicing3D_1(benchmark::State& state) {
-//     Holor<int, 3> h(std::vector<size_t>{8,8,8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h(range(3,7), 4, 4));
-//     }
-// }
-// BENCHMARK(BM_HolorRefSlicing3D_1);
-
-
-// static void BM_HolorRefSlicing3D_2(benchmark::State& state) {
-//     Holor<int, 3> h(std::vector<size_t>{8,8,8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h(range(3,7), range(2,6), 4));
-//     }
-// }
-// BENCHMARK(BM_HolorRefSlicing3D_2);
-
-// static void BM_HolorRefSlicing3D_3(benchmark::State& state) {
-//     Holor<int, 3> h(std::vector<size_t>{8,8,8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h(range(3,7), range(2,6), range(1,5)));
-//     }
-// }
-// BENCHMARK(BM_HolorRefSlicing3D_3);
+static void BM_HolorRefSlicing3D_1(benchmark::State& state) {
+    std::vector<int> vec(8^3,2);
+    HolorRef<int, 3> h(vec.data(), std::vector<size_t>{8,8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h(range(3,7), 4, 4));
+    }
+}
+BENCHMARK(BM_HolorRefSlicing3D_1);
 
 
-// static void BM_HolorRefSlicing4D_1(benchmark::State& state) {
-//     Holor<int, 4> h(std::vector<size_t>{8,8,8,8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h(range(3,7), 4, 4, 4));
-//     }
-// }
-// BENCHMARK(BM_HolorRefSlicing4D_1);
+static void BM_HolorRefSlicing3D_2(benchmark::State& state) {
+    std::vector<int> vec(8^3,2);
+    HolorRef<int, 3> h(vec.data(), std::vector<size_t>{8,8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h(range(3,7), range(2,6), 4));
+    }
+}
+BENCHMARK(BM_HolorRefSlicing3D_2);
+
+static void BM_HolorRefSlicing3D_3(benchmark::State& state) {
+    std::vector<int> vec(8^3,2);
+    HolorRef<int, 3> h(vec.data(), std::vector<size_t>{8,8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h(range(3,7), range(2,6), range(1,5)));
+    }
+}
+BENCHMARK(BM_HolorRefSlicing3D_3);
 
 
-// static void BM_HolorRefSlicing4D_2(benchmark::State& state) {
-//     Holor<int, 4> h(std::vector<size_t>{8,8,8, 8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h(range(3,7), range(2,6), 4, 4));
-//     }
-// }
-// BENCHMARK(BM_HolorRefSlicing4D_2);
-
-// static void BM_HolorRefSlicing4D_3(benchmark::State& state) {
-//     Holor<int, 4> h(std::vector<size_t>{8,8,8,8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h(range(3,7), range(2,6), range(1,5), 4));
-//     }
-// }
-// BENCHMARK(BM_HolorRefSlicing4D_3);
+static void BM_HolorRefSlicing4D_1(benchmark::State& state) {
+    Holor<int, 4> h(std::vector<size_t>{8,8,8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h(range(3,7), 4, 4, 4));
+    }
+}
+BENCHMARK(BM_HolorRefSlicing4D_1);
 
 
-// static void BM_RowSlicing(benchmark::State& state) {
-//     Holor<int, 3> h(std::vector<size_t>{8,8,8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h.row(3));
-//     }
-// }
-// BENCHMARK(BM_RowSlicing);
+static void BM_HolorRefSlicing4D_2(benchmark::State& state) {
+    std::vector<int> vec(8^4,2);
+    HolorRef<int, 4> h(vec.data(), std::vector<size_t>{8,8,8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h(range(3,7), range(2,6), 4, 4));
+    }
+}
+BENCHMARK(BM_HolorRefSlicing4D_2);
 
-// static void BM_ColSlicing(benchmark::State& state) {
-//     Holor<int, 3> h(std::vector<size_t>{8,8,8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h.col(3));
-//     }
-// }
-// BENCHMARK(BM_ColSlicing);
+static void BM_HolorRefSlicing4D_3(benchmark::State& state) {
+    std::vector<int> vec(8^4,2);
+    HolorRef<int, 4> h(vec.data(), std::vector<size_t>{8,8,8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h(range(3,7), range(2,6), range(1,5), 4));
+    }
+}
+BENCHMARK(BM_HolorRefSlicing4D_3);
 
-// static void BM_DimSlicing(benchmark::State& state) {
-//     Holor<int, 3> h(std::vector<size_t>{8,8,8});
-//     for (auto _ : state){
-//         benchmark::DoNotOptimize(h.slice<2>(3));
-//     }
-// }
-// BENCHMARK(BM_DimSlicing);
+
+static void BM_RowSlicing(benchmark::State& state) {
+    std::vector<int> vec(8^3,2);
+    HolorRef<int, 3> h(vec.data(), std::vector<size_t>{8,8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h.row(3));
+    }
+}
+BENCHMARK(BM_RowSlicing);
+
+static void BM_ColSlicing(benchmark::State& state) {
+    std::vector<int> vec(8^3,2);
+    HolorRef<int, 3> h(vec.data(), std::vector<size_t>{8,8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h.col(3));
+    }
+}
+BENCHMARK(BM_ColSlicing);
+
+static void BM_DimSlicing(benchmark::State& state) {
+    std::vector<int> vec(8^3,2);
+    HolorRef<int, 3> h(vec.data(), std::vector<size_t>{8,8,8});
+    for (auto _ : state){
+        benchmark::DoNotOptimize(h.slice<2>(3));
+    }
+}
+BENCHMARK(BM_DimSlicing);
 
 
 
