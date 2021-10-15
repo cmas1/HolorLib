@@ -17,7 +17,10 @@ target_link_libraries(bm_holor benchmark::benchmark Holor::Holor)
 add_executable(bm_holor_ref src/bm_holor_ref.cpp)
 target_link_libraries(bm_holor_ref benchmark::benchmark Holor::Holor)
 
-set_target_properties( bm_holor bm_holor_ref
+add_executable(bm_layout src/bm_layout.cpp)
+target_link_libraries(bm_layout benchmark::benchmark Holor::Holor)
+
+set_target_properties( bm_holor bm_holor_ref bm_layout
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/benchmarks"
 )
