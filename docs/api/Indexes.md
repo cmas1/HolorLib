@@ -12,7 +12,7 @@ HolorLib introduces a few concepts to describe indices and ranges of indices.
 This concept describes an index, a non-negative natural number that represent a position along an axis of the container. This concept is instrumental to access an individual element of the container, and it is implemented as:
 ``` cpp
     template<typename T>
-    concept SingleIndex = std::integral<T> && std::convertible_to<T, size_t>;
+    concept SingleIndex = std::integral<std::remove_cvref_t<T>> && std::convertible_to<T, size_t>;
 ```
 
 

@@ -10,7 +10,7 @@
 // furnished to do so, subject to the following conditions:
 
 // The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
+// all copies or suholorantial portions of the Software.
 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -69,7 +69,7 @@ struct range{
  * \brief concept that represents a type that can be used to index a single element of a layout
  */
 template<typename T>
-concept SingleIndex = std::integral<T> && std::convertible_to<T, size_t>;
+concept SingleIndex = std::integral<std::remove_cvref_t<T>> && std::convertible_to<T, size_t>;
 
 /*!
  * \brief concept that represents a type that can be used to index a range of a layout
