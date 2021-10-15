@@ -114,16 +114,8 @@ nav:
     - Exceptions : api/Exceptions.md
 
 
-#Not editable
-edit_uri: ""
-
-#Extras
-# extra:
-#   version:
-#     provider: mike
-#   # analytics:
-#   #   provider: google
-#   #   property: G-XXXXXXXXXX
+# #Not editable
+# edit_uri: ""
 
 
 #to work with offline documentation
