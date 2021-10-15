@@ -39,6 +39,61 @@ static void BM_HolorNestedConstructor(benchmark::State& state) {
 BENCHMARK(BM_HolorNestedConstructor);
 
 
+template<size_t N>
+static void BM_ResizeableLenghtsConstructor(benchmark::State& state) {
+    std::vector<int> vec(N,2);
+    for (auto _ : state){
+        Holor<int, N> h(vec);
+    }
+}
+BENCHMARK_TEMPLATE(BM_ResizeableLenghtsConstructor,1);
+BENCHMARK_TEMPLATE(BM_ResizeableLenghtsConstructor,3);
+BENCHMARK_TEMPLATE(BM_ResizeableLenghtsConstructor,5);
+BENCHMARK_TEMPLATE(BM_ResizeableLenghtsConstructor,7);
+
+
+template<size_t N>
+static void BM_SizedLenghtsConstructor(benchmark::State& state) {
+    std::array<size_t,N> arr;
+    arr.fill(2);
+    for (auto _ : state){
+        Holor<int, N> h(arr);
+    }
+}
+BENCHMARK_TEMPLATE(BM_SizedLenghtsConstructor,1);
+BENCHMARK_TEMPLATE(BM_SizedLenghtsConstructor,3);
+BENCHMARK_TEMPLATE(BM_SizedLenghtsConstructor,5);
+BENCHMARK_TEMPLATE(BM_SizedLenghtsConstructor,7);
+
+
+
+template<size_t N>
+static void BM_CopyConstructor(benchmark::State& state) {
+    std::array<size_t,N> arr;
+    arr.fill(2);
+    for (auto _ : state){
+        Holor<int, N> h(arr);
+        Holor<int, N>h2(h);
+    }
+}
+BENCHMARK_TEMPLATE(BM_CopyConstructor,1);
+BENCHMARK_TEMPLATE(BM_CopyConstructor,3);
+BENCHMARK_TEMPLATE(BM_CopyConstructor,5);
+BENCHMARK_TEMPLATE(BM_CopyConstructor,7);
+
+
+template<size_t N>
+static void BM_MoveConstructor(benchmark::State& state) {
+    std::array<size_t,N> arr;
+    arr.fill(2);
+    for (auto _ : state){
+        Holor<int, N>h2( (Holor<int, N>(arr)) );
+    }
+}
+BENCHMARK_TEMPLATE(BM_MoveConstructor,1);
+BENCHMARK_TEMPLATE(BM_MoveConstructor,3);
+BENCHMARK_TEMPLATE(BM_MoveConstructor,5);
+BENCHMARK_TEMPLATE(BM_MoveConstructor,7);
 /*=============================================================================
  ====================           INDEXING                =======================
  ============================================================================*/
