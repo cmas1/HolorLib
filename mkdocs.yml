@@ -82,8 +82,8 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
-  logo: images/holor_logo.png
-  favicon: images/holor_logo.png
+  logo: images/holor_logo_new.png
+  favicon: images/holor_logo_new.png
 
   icon:
     repo: fontawesome/brands/github

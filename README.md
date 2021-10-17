@@ -4,7 +4,7 @@ Page under construction
 <!-- Logo -->
 <p align="center">
   <a href="https://cmas1.github.io/HolorLib/">
-    <img src="./docs/images/holor_logo.png" width="180" alt="HolorLib">
+    <img src="./docs/images/holor_logo_new.png" width="180" alt="HolorLib">
   </a>
 </p>
 
