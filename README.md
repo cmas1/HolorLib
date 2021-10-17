@@ -7,7 +7,7 @@
 
 
 HolorLib is a C++20 header only library that implements generic multi-dimensional containers. Want to create a vector of floats? A matrix of strings? A 5-dimensional container of some user defined type. HolorLib allows to do it and it provides functionalities to access and slice these containers.
-**HolorLib is not a mathematical library**: the objects stored in the containers can be any type, so it would not be 
+**HolorLib is not a mathematical library**: the objects stored in the containers can be any type.
 
 
 -----------------
