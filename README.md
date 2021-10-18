@@ -1,7 +1,7 @@
 <!-- Logo -->
 <p align="center">
   <a href="https://cmas1.github.io/HolorLib/">
-    <img src="./docs/images/holorlib_logo_small.png" width="320" alt="HolorLib">
+    <img src="./docs/images/holorlib_logo.png" width="320" alt="HolorLib">
   </a>
 </p>
 

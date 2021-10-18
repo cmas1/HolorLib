@@ -82,8 +82,8 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
-  logo: images/holorlib_logo_small.png
-  favicon: images/holorlib_logo_small.png
+  logo: images/holorlib_logo.png
+  favicon: images/holorlib_logo.png
 
   icon:
     repo: fontawesome/brands/github
