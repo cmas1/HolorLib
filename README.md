@@ -49,8 +49,8 @@ One can also slice these containers:
 ----------------
 
 
-## Ready to get started?
-Ready to get started using HolorLib? The official HolorLib [documentation page](https://cmas1.github.io/HolorLib) contains information on the library and how to install it, tutorials and a list of classes and functions from the public API.
+## Ready to start?
+Ready to start using HolorLib? The official HolorLib [documentation page](https://cmas1.github.io/HolorLib) contains information on the library and how to install it, tutorials and a list of classes and functions from the public API.
 ![](./docs/images/documentation.png)
 
 
