@@ -4,6 +4,10 @@
 holor.h and holor_ref.h:
     ☐ (Holor only) rename the function lengths(dim) to length(dim), to make the difference with lenghts() more intuitive.
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
+    ☐ In the constructor from containers of lengths, use the universal reference &&
+
+layout.h:
+    ☐ In the constructor from containers of lengths, use the universal reference &&
 
 holor.h and layout.h:
     ☐ RESIZE: Now it is possible to create an empy holor without specifying its legnths or elements. To make this useful, we should add the functionality to later specify the lenghts of the holor or resize it (and its underlying layout), upadating the size and reserving the appropriate space in memory
