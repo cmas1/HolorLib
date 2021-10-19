@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 project("Holor" VERSION 1.0
              DESCRIPTION "A C++ header-only template library for multi-dimensional containers."
-             HOMEPAGE_URL "https://github.com/cmas1/Holor")
+             HOMEPAGE_URL "https://github.com/cmas1/HolorLib")
 
 
 
