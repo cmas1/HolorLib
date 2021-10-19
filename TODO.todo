@@ -1,10 +1,7 @@
-☐ upload smaller logo and icon
-
 
 holor.h and holor_ref.h:
     ☐ (Holor only) rename the function lengths(dim) to length(dim), to make the difference with lenghts() more intuitive.
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
-    ☐ In the constructor from containers of lengths, use the universal reference &&
 
 layout.h:
     ☐ In the constructor from containers of lengths, use the universal reference &&
@@ -24,6 +21,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ upload smaller logo and icon @done(21-10-19 09:26)
   ✔ Write Readme @done(21-10-18 10:35)
   ✔ Create repo and publish it @done(21-10-18 10:35)
   ✔ Write documentation: @done(21-10-15 15:43)
