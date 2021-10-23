@@ -1,3 +1,5 @@
+static_assertions.h:
+    ☐ revisit container concepts (check BSTools)
 
 holor.h and holor_ref.h:
     ☐ (Holor only) rename the function lengths(dim) to length(dim), to make the difference with lenghts() more intuitive.
