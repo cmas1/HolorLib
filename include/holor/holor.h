@@ -81,7 +81,7 @@ class Holor{
          */
         template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
         explicit Holor(const Container& lengths): layout_{lengths}{
-            data_.reserve(layout_.size());
+            data_.resize(layout_.size());
         }
 
         /*!
@@ -91,7 +91,7 @@ class Holor{
          */
         template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
         explicit Holor(const Container& lengths): layout_{lengths}{
-            data_.reserve(layout_.size());
+            data_.resize(layout_.size());
         }
 
 
@@ -115,7 +115,7 @@ class Holor{
          */
         Holor(holor::nested_list<T,N> init) {
             layout_ = Layout<N>(impl::derive_lengths<N>(init));
-            data_.reserve(layout_.size());
+            data_.resize(layout_.size());
             impl::insert_flat(init, data_);
         }
 
@@ -127,7 +127,7 @@ class Holor{
          */
         Holor& operator=(holor::nested_list<T,N> init) {
             layout_ = Layout<N>{impl::derive_lengths<N>(init)};
-            data_.reserve(layout_.size());
+            data_.resize(layout_.size());
             impl::insert_flat(init, data_);
             return *this;
         }
