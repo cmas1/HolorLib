@@ -9,7 +9,7 @@ layout.h:
     ☐ In the constructor from containers of lengths, use the universal reference &&
 
 holor.h and layout.h:
-    ☐ //TODO: finalize the modifications added to holor.h!!
+    ☐ finalize the modifications added to holor.h!! //WIP
     ☐ RESIZE: Now it is possible to create an empy holor without specifying its legnths or elements. To make this useful, we should add the functionality to later specify the lenghts of the holor or resize it (and its underlying layout), upadating the size and reserving the appropriate space in memory
 
 holor_concepts.h:
