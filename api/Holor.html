@@ -874,6 +874,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#set_lengths" class="md-nav__link">
+    set_lengths
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#length" class="md-nav__link">
+    length
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_length" class="md-nav__link">
+    set_length
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#size" class="md-nav__link">
     size
   </a>
@@ -1264,59 +1285,99 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 
 <h4 id="lengths">lengths<a class="headerlink" href="#lengths" title="Permanent link">&para;</a></h4>
 <h5 id="signature_11">signature<a class="headerlink" href="#signature_11" title="Permanent link">&para;</a></h5>
-<ol>
-<li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">lengths</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
-</code></pre></div></li>
-<li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">lengths</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">dim</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
-</code></pre></div></li>
-</ol>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">lengths</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
 <h5 id="brief_11">brief<a class="headerlink" href="#brief_11" title="Permanent link">&para;</a></h5>
 <p>Get the lengths, i.e., the number of elements that the container has per each dimension.</p>
-<h5 id="parameters_2">parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h5>
-<ul>
-<li><code>dim</code>: request to get only the lenght for the <code>dim</code> dimension. There is no check on the validity of this argument.</li>
-</ul>
 <h5 id="return_3">return<a class="headerlink" href="#return_3" title="Permanent link">&para;</a></h5>
-<p>When called without arguments, the function returns a <code>std::array</code> with the length of all dimensions of the container. When the argument <code>dim</code> is passed, the function returns a single legnth (a <code>size_t</code>).</p>
+<p>A <code>std::array</code> with the length of all dimensions of the container.</p>
 <hr style="background-color:#9999ff; opacity:0.4; width:50%;">
 
-<h4 id="size">size<a class="headerlink" href="#size" title="Permanent link">&para;</a></h4>
+<h4 id="set_lengths">set_lengths<a class="headerlink" href="#set_lengths" title="Permanent link">&para;</a></h4>
 <h5 id="signature_12">signature<a class="headerlink" href="#signature_12" title="Permanent link">&para;</a></h5>
+<ol>
+<li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Lengths</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="p">((</span><span class="k">sizeof</span><span class="p">...(</span><span class="n">Lengths</span><span class="p">)</span><span class="o">==</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">assert</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_convertible_v</span><span class="o">&lt;</span><span class="n">Lengths</span><span class="p">,</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">...))</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">set_lengths</span><span class="p">(</span><span class="n">Lengths</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">lengths</span><span class="p">);</span><span class="w"></span>
+</code></pre></div></li>
+<li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Container</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="n">assert</span><span class="o">::</span><span class="n">SizedTypedContainer</span><span class="o">&lt;</span><span class="n">Container</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">set_lengths</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Container</span><span class="o">&amp;</span><span class="w"> </span><span class="n">lengths</span><span class="p">);</span><span class="w"></span>
+</code></pre></div></li>
+<li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Container</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="n">assert</span><span class="o">::</span><span class="n">ResizeableTypedContainer</span><span class="o">&lt;</span><span class="n">Container</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">set_lengths</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Container</span><span class="o">&amp;</span><span class="w"> </span><span class="n">lengths</span><span class="p">);</span><span class="w"></span>
+</code></pre></div></li>
+</ol>
+<h5 id="brief_12">brief<a class="headerlink" href="#brief_12" title="Permanent link">&para;</a></h5>
+<p>Set the lengths of the container, resizing it.</p>
+<h5 id="parameters_2">parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h5>
+<ul>
+<li><code>lengths</code>: number of elements per dimension ( either a container such as <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"></span></code> and <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"></span></code>, or a variadic argument.).</li>
+</ul>
+<hr style="background-color:#9999ff; opacity:0.4; width:50%">
+
+<h4 id="length">length<a class="headerlink" href="#length" title="Permanent link">&para;</a></h4>
+<h5 id="signature_13">signature<a class="headerlink" href="#signature_13" title="Permanent link">&para;</a></h5>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">dim</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h5 id="brief_13">brief<a class="headerlink" href="#brief_13" title="Permanent link">&para;</a></h5>
+<p>Get the number of elements that the container has along the dimension <code>dim</code>.</p>
+<h5 id="parameters_3">parameters<a class="headerlink" href="#parameters_3" title="Permanent link">&para;</a></h5>
+<ul>
+<li><code>dim</code>: the dimension queried. There is no check on the validity of this argument.</li>
+</ul>
+<h5 id="return_4">return<a class="headerlink" href="#return_4" title="Permanent link">&para;</a></h5>
+<p>The function returns a single legnth (a <code>size_t</code>).</p>
+<hr style="background-color:#9999ff; opacity:0.4; width:50%;">
+
+<h4 id="set_length">set_length<a class="headerlink" href="#set_length" title="Permanent link">&para;</a></h4>
+<h5 id="signature_14">signature<a class="headerlink" href="#signature_14" title="Permanent link">&para;</a></h5>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">set_length</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">dim</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h5 id="brief_14">brief<a class="headerlink" href="#brief_14" title="Permanent link">&para;</a></h5>
+<p>Change a single length of the container.</p>
+<h5 id="parameters_4">parameters<a class="headerlink" href="#parameters_4" title="Permanent link">&para;</a></h5>
+<ul>
+<li><code>dim</code>: the dimension queried.</li>
+<li><code>length</code>: the new value.</li>
+</ul>
+<hr style="background-color:#9999ff; opacity:0.4; width:50%">
+
+<h4 id="size">size<a class="headerlink" href="#size" title="Permanent link">&para;</a></h4>
+<h5 id="signature_15">signature<a class="headerlink" href="#signature_15" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="nf">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h5 id="brief_12">brief<a class="headerlink" href="#brief_12" title="Permanent link">&para;</a></h5>
+<h5 id="brief_15">brief<a class="headerlink" href="#brief_15" title="Permanent link">&para;</a></h5>
 <p>Get the total number of elements in the container.</p>
-<h5 id="return_4">return<a class="headerlink" href="#return_4" title="Permanent link">&para;</a></h5>
+<h5 id="return_5">return<a class="headerlink" href="#return_5" title="Permanent link">&para;</a></h5>
 <p>Return the number of elements in the container, as a <code>size_t</code>.</p>
 <hr style="background-color:#9999ff; opacity:0.4; width:50%;">
 
 <h4 id="data">data<a class="headerlink" href="#data" title="Permanent link">&para;</a></h4>
-<h5 id="signature_13">signature<a class="headerlink" href="#signature_13" title="Permanent link">&para;</a></h5>
+<h5 id="signature_16">signature<a class="headerlink" href="#signature_16" title="Permanent link">&para;</a></h5>
 <ol>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="nf">data</span><span class="p">();</span><span class="w"></span>
 </code></pre></div></li>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="nf">data</span><span class="p">();</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
-<h5 id="brief_13">brief<a class="headerlink" href="#brief_13" title="Permanent link">&para;</a></h5>
+<h5 id="brief_16">brief<a class="headerlink" href="#brief_16" title="Permanent link">&para;</a></h5>
 <p>Get a flat access to the data contained in the container.</p>
-<h5 id="return_5">return<a class="headerlink" href="#return_5" title="Permanent link">&para;</a></h5>
+<h5 id="return_6">return<a class="headerlink" href="#return_6" title="Permanent link">&para;</a></h5>
 <p>A pointer to the data stored in the container.</p>
 <hr style="background-color:#9999ff; opacity:0.4; width:50%;">
 
 <h4 id="data_vector">data_vector<a class="headerlink" href="#data_vector" title="Permanent link">&para;</a></h4>
-<h5 id="signature_14">signature<a class="headerlink" href="#signature_14" title="Permanent link">&para;</a></h5>
+<h5 id="signature_17">signature<a class="headerlink" href="#signature_17" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">data_vector</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h5 id="brief_14">brief<a class="headerlink" href="#brief_14" title="Permanent link">&para;</a></h5>
+<h5 id="brief_17">brief<a class="headerlink" href="#brief_17" title="Permanent link">&para;</a></h5>
 <p>Get a copy of the container's data.</p>
-<h5 id="return_6">return<a class="headerlink" href="#return_6" title="Permanent link">&para;</a></h5>
+<h5 id="return_7">return<a class="headerlink" href="#return_7" title="Permanent link">&para;</a></h5>
 <p>A <code>std::vector</code> with the data.</p>
 <hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7">
 </hr>
 <h3 id="indexing-functions">Indexing functions<a class="headerlink" href="#indexing-functions" title="Permanent link">&para;</a></h3>
 <h4 id="operator">operator()<a class="headerlink" href="#operator" title="Permanent link">&para;</a></h4>
-<h5 id="signature_15">signature<a class="headerlink" href="#signature_15" title="Permanent link">&para;</a></h5>
+<h5 id="signature_18">signature<a class="headerlink" href="#signature_18" title="Permanent link">&para;</a></h5>
 <ol>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="n">SingleIndex</span><span class="p">...</span><span class="w"> </span><span class="n">Dims</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="p">((</span><span class="k">sizeof</span><span class="p">...(</span><span class="n">Dims</span><span class="p">)</span><span class="o">==</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">Dims</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">dims</span><span class="p">);</span><span class="w"></span>
@@ -1325,9 +1386,9 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">Dims</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">dims</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
-<h5 id="brief_15">brief<a class="headerlink" href="#brief_15" title="Permanent link">&para;</a></h5>
+<h5 id="brief_18">brief<a class="headerlink" href="#brief_18" title="Permanent link">&para;</a></h5>
 <p>Access a single element in the container.</p>
-<h5 id="parameters_3">parameters<a class="headerlink" href="#parameters_3" title="Permanent link">&para;</a></h5>
+<h5 id="parameters_5">parameters<a class="headerlink" href="#parameters_5" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>dims</code>: pack of indices, one per dimension of the Holor container, given either as a parameter pack or as an array of <code>SingleIndex</code> elements (Refer to <a href="./Indexes.html">Indices</a> for more details).</li>
 </ul>
@@ -1335,19 +1396,19 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <p class="admonition-title">Warning</p>
 <p>When indexing a Holor, the conversion from indices to a memory location performed by the Layout may throw an <code>holor::exception::HolorRuntimeError</code> if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to <code>AssertionLevel::no_checks</code> to exclude this check. Refer to <a href="./Exceptions.html">Exceptions</a> for more details.</p>
 </div>
-<h5 id="return_7">return<a class="headerlink" href="#return_7" title="Permanent link">&para;</a></h5>
+<h5 id="return_8">return<a class="headerlink" href="#return_8" title="Permanent link">&para;</a></h5>
 <p>The element in the Holor at the selected coordinates.</p>
 <hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7">
 </hr>
 <h3 id="slicing-functions">Slicing functions<a class="headerlink" href="#slicing-functions" title="Permanent link">&para;</a></h3>
 <h4 id="operator_1">operator()<a class="headerlink" href="#operator_1" title="Permanent link">&para;</a></h4>
-<h5 id="signature_16">signature<a class="headerlink" href="#signature_16" title="Permanent link">&para;</a></h5>
+<h5 id="signature_19">signature<a class="headerlink" href="#signature_19" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="p">(</span><span class="n">impl</span><span class="o">::</span><span class="n">ranged_index_pack</span><span class="o">&lt;</span><span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="k">sizeof</span><span class="p">...(</span><span class="n">Args</span><span class="p">)</span><span class="o">==</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">);</span><span class="w"></span>
 </code></pre></div>
-<h5 id="brief_16">brief<a class="headerlink" href="#brief_16" title="Permanent link">&para;</a></h5>
+<h5 id="brief_19">brief<a class="headerlink" href="#brief_19" title="Permanent link">&para;</a></h5>
 <p>Access a slice of the container.</p>
-<h5 id="parameters_4">parameters<a class="headerlink" href="#parameters_4" title="Permanent link">&para;</a></h5>
+<h5 id="parameters_6">parameters<a class="headerlink" href="#parameters_6" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>args</code>: parameters pack. Each element of the pack must be either a <code>SingleIndex</code> or a <code>RangeIndex</code>, and at least one of them must be a <code>RangeIndex</code>. Refer to <a href="./Indexes.html">Indices</a> for more details.</li>
 </ul>
@@ -1355,21 +1416,21 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <p class="admonition-title">Warning</p>
 <p>When slicing a Holor, the conversion from indices to a memory location performed by the Layout may throw an <code>holor::exception::HolorRuntimeError</code> if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to <code>AssertionLevel::no_checks</code> to exclude this check. Refer to <a href="./Exceptions.html">Exceptions</a> for more details.</p>
 </div>
-<h5 id="return_8">return<a class="headerlink" href="#return_8" title="Permanent link">&para;</a></h5>
+<h5 id="return_9">return<a class="headerlink" href="#return_9" title="Permanent link">&para;</a></h5>
 <p>A slice as a HolorRef. The number of dimensions of the returned holorRef depends on the input arguments, as each SingleIndex passed in the parameters pack collapses one dimension.</p>
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 <h4 id="row">row<a class="headerlink" href="#row" title="Permanent link">&para;</a></h4>
-<h5 id="signature_17">signature<a class="headerlink" href="#signature_17" title="Permanent link">&para;</a></h5>
+<h5 id="signature_20">signature<a class="headerlink" href="#signature_20" title="Permanent link">&para;</a></h5>
 <ol>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">HolorRef</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="mi">-1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
 </code></pre></div></li>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">HolorRef</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="mi">-1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
-<h5 id="brief_17">brief<a class="headerlink" href="#brief_17" title="Permanent link">&para;</a></h5>
+<h5 id="brief_20">brief<a class="headerlink" href="#brief_20" title="Permanent link">&para;</a></h5>
 <p>Get a single row of the container.</p>
-<h5 id="parameters_5">parameters<a class="headerlink" href="#parameters_5" title="Permanent link">&para;</a></h5>
+<h5 id="parameters_7">parameters<a class="headerlink" href="#parameters_7" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>i</code>: selects the <code>i</code>-th row.</li>
 </ul>
@@ -1377,21 +1438,21 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <p class="admonition-title">Warning</p>
 <p>When slicing a row of the Holor an <code>holor::exception::HolorRuntimeError</code> exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to <code>AssertionLevel::no_checks</code> to exclude this check. Refer to <a href="./Exceptions.html">Exceptions</a> for more details.</p>
 </div>
-<h5 id="return_9">return<a class="headerlink" href="#return_9" title="Permanent link">&para;</a></h5>
+<h5 id="return_10">return<a class="headerlink" href="#return_10" title="Permanent link">&para;</a></h5>
 <p>the slice corresponding to the <code>i</code>-th row. This slice is a HolorRef with <code>N-1</code> dimensions.</p>
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 <h4 id="col">col<a class="headerlink" href="#col" title="Permanent link">&para;</a></h4>
-<h5 id="signature_18">signature<a class="headerlink" href="#signature_18" title="Permanent link">&para;</a></h5>
+<h5 id="signature_21">signature<a class="headerlink" href="#signature_21" title="Permanent link">&para;</a></h5>
 <ol>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">HolorRef</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="mi">-1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">col</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
 </code></pre></div></li>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">HolorRef</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="mi">-1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">col</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
-<h5 id="brief_18">brief<a class="headerlink" href="#brief_18" title="Permanent link">&para;</a></h5>
+<h5 id="brief_21">brief<a class="headerlink" href="#brief_21" title="Permanent link">&para;</a></h5>
 <p>Get a single column of the container.</p>
-<h5 id="parameters_6">parameters<a class="headerlink" href="#parameters_6" title="Permanent link">&para;</a></h5>
+<h5 id="parameters_8">parameters<a class="headerlink" href="#parameters_8" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>i</code>: selects the <code>i</code>-th column.</li>
 </ul>
@@ -1399,12 +1460,12 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <p class="admonition-title">Warning</p>
 <p>When slicing a column of the Holor an <code>holor::exception::HolorRuntimeError</code> exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to <code>AssertionLevel::no_checks</code> to exclude this check. Refer to <a href="./Exceptions.html">Exceptions</a> for more details.</p>
 </div>
-<h5 id="return_10">return<a class="headerlink" href="#return_10" title="Permanent link">&para;</a></h5>
+<h5 id="return_11">return<a class="headerlink" href="#return_11" title="Permanent link">&para;</a></h5>
 <p>The slice corresponding to the <code>i</code>-th column. This slice is a HolorRef with <code>N-1</code> dimensions.</p>
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 <h4 id="slice">slice<a class="headerlink" href="#slice" title="Permanent link">&para;</a></h4>
-<h5 id="signature_19">signature<a class="headerlink" href="#signature_19" title="Permanent link">&para;</a></h5>
+<h5 id="signature_22">signature<a class="headerlink" href="#signature_22" title="Permanent link">&para;</a></h5>
 <ol>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="w"></span>
 <span class="w">    </span><span class="n">HolorRef</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="mi">-1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
@@ -1413,13 +1474,13 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">HolorRef</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="mi">-1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
-<h5 id="brief_19">brief<a class="headerlink" href="#brief_19" title="Permanent link">&para;</a></h5>
+<h5 id="brief_22">brief<a class="headerlink" href="#brief_22" title="Permanent link">&para;</a></h5>
 <p>Get the <code>i</code>-th slice of a single dimension (e.g., the fifth row or the second column)</p>
 <h5 id="template-parameters_1">template parameters<a class="headerlink" href="#template-parameters_1" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>M</code> is the dimension to be sliced. 0 is a row, 1 is a column, ...</li>
 </ul>
-<h5 id="parameters_7">parameters<a class="headerlink" href="#parameters_7" title="Permanent link">&para;</a></h5>
+<h5 id="parameters_9">parameters<a class="headerlink" href="#parameters_9" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>i</code> is the index of the slice to be taken along the <code>M</code>-th dimension.</li>
 </ul>
@@ -1427,11 +1488,11 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <p class="admonition-title">Warning</p>
 <p>When slicing a dimension of the Holor an <code>holor::exception::HolorRuntimeError</code> exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to <code>AssertionLevel::no_checks</code> to exclude this check. Refer to <a href="./Exceptions.html">Exceptions</a> for more details.</p>
 </div>
-<h5 id="return_11">return<a class="headerlink" href="#return_11" title="Permanent link">&para;</a></h5>
+<h5 id="return_12">return<a class="headerlink" href="#return_12" title="Permanent link">&para;</a></h5>
 <p>The slice corresponding to the <code>i</code>-th coordinate along the <code>M</code>-th dimension. This slice is a HolorRef with <code>N-1</code> dimensions.</p>
 <h2 id="non-member-functions">Non-Member functions<a class="headerlink" href="#non-member-functions" title="Permanent link">&para;</a></h2>
 <h4 id="equality-operator">equality operator==<a class="headerlink" href="#equality-operator" title="Permanent link">&para;</a></h4>
-<h5 id="signature_20">signature<a class="headerlink" href="#signature_20" title="Permanent link">&para;</a></h5>
+<h5 id="signature_23">signature<a class="headerlink" href="#signature_23" title="Permanent link">&para;</a></h5>
 <ol>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">equality_comparable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"></span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Holor</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">h1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Holor</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">h2</span><span class="p">);</span><span class="w"></span>
@@ -1443,7 +1504,7 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Holor</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">h1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HolorRef</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">h2</span><span class="p">);</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
-<h5 id="brief_20">brief<a class="headerlink" href="#brief_20" title="Permanent link">&para;</a></h5>
+<h5 id="brief_23">brief<a class="headerlink" href="#brief_23" title="Permanent link">&para;</a></h5>
 <p>Comparison operator that verifies the equality of two HolorLib containers with the same dimension <code>N</code> and type of elements <code>T</code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1459,12 +1520,12 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <li><code>h1</code>: left hand side of the comparison.</li>
 <li><code>h2</code>: right hand side of the comparison.</li>
 </ul>
-<h5 id="return_12">return<a class="headerlink" href="#return_12" title="Permanent link">&para;</a></h5>
+<h5 id="return_13">return<a class="headerlink" href="#return_13" title="Permanent link">&para;</a></h5>
 <p>true if the two containers are equal, false otherwise</p>
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 <h4 id="inequality-operator">inequality operator!=<a class="headerlink" href="#inequality-operator" title="Permanent link">&para;</a></h4>
-<h5 id="signature_21">signature<a class="headerlink" href="#signature_21" title="Permanent link">&para;</a></h5>
+<h5 id="signature_24">signature<a class="headerlink" href="#signature_24" title="Permanent link">&para;</a></h5>
 <ol>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">equality_comparable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"></span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Holor</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">h1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Holor</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">h2</span><span class="p">);</span><span class="w"></span>
@@ -1476,7 +1537,7 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Holor</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">h1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">HolorRef</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">h2</span><span class="p">);</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
-<h5 id="brief_21">brief<a class="headerlink" href="#brief_21" title="Permanent link">&para;</a></h5>
+<h5 id="brief_24">brief<a class="headerlink" href="#brief_24" title="Permanent link">&para;</a></h5>
 <p>Comparison operator that verifies the inequality of two HolorLib containers with the same dimension <code>N</code> and type of elements <code>T</code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1492,7 +1553,7 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 <li><code>h1</code>: left hand side of the comparison.</li>
 <li><code>h2</code>: right hand side of the comparison.</li>
 </ul>
-<h5 id="return_13">return<a class="headerlink" href="#return_13" title="Permanent link">&para;</a></h5>
+<h5 id="return_14">return<a class="headerlink" href="#return_14" title="Permanent link">&para;</a></h5>
 <p>true if the two containers are not equal, false otherwise.</p>
                 
               

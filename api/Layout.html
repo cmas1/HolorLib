@@ -805,8 +805,22 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#set_lengths" class="md-nav__link">
+    set_lengths
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#length" class="md-nav__link">
     length
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_length" class="md-nav__link">
+    set_length
   </a>
   
 </li>
@@ -1153,13 +1167,38 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 <p>The lengths (number of elements per dimension) of the layout.</p>
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
-<h4 id="length">length<a class="headerlink" href="#length" title="Permanent link">&para;</a></h4>
+<h4 id="set_lengths">set_lengths<a class="headerlink" href="#set_lengths" title="Permanent link">&para;</a></h4>
 <h5 id="signature_6">signature<a class="headerlink" href="#signature_6" title="Permanent link">&para;</a></h5>
+<ol>
+<li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Lengths</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="p">((</span><span class="k">sizeof</span><span class="p">...(</span><span class="n">Lengths</span><span class="p">)</span><span class="o">==</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">assert</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_convertible_v</span><span class="o">&lt;</span><span class="n">Lengths</span><span class="p">,</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">...))</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">set_lengths</span><span class="p">(</span><span class="n">Lengths</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">lengths</span><span class="p">);</span><span class="w"></span>
+</code></pre></div></li>
+<li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Container</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="n">assert</span><span class="o">::</span><span class="n">SizedTypedContainer</span><span class="o">&lt;</span><span class="n">Container</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">set_lengths</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Container</span><span class="o">&amp;</span><span class="w"> </span><span class="n">lengths</span><span class="p">);</span><span class="w"></span>
+</code></pre></div></li>
+<li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">Container</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="n">assert</span><span class="o">::</span><span class="n">ResizeableTypedContainer</span><span class="o">&lt;</span><span class="n">Container</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">set_lengths</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Container</span><span class="o">&amp;</span><span class="w"> </span><span class="n">lengths</span><span class="p">);</span><span class="w"></span>
+</code></pre></div></li>
+</ol>
+<h5 id="brief_6">brief<a class="headerlink" href="#brief_6" title="Permanent link">&para;</a></h5>
+<p>Set the lengths of the layout.</p>
+<h5 id="parameters_2">parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h5>
+<ul>
+<li><code>lengths</code>: number of elements per dimension ( either a container such as <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"></span></code> and <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"></span></code>, or a variadic argument.).</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When constructing a Layout from a container of <code>lengths</code>, this container must have <code>N</code> elements. This check is performed as a static assert for fixed size containers ( e.g. a <code>std::array</code>) and as a runtime assert for dynamic size containers (e.g. a <code>std::vector</code>). In this second case, the constructor would throws an <code>holor::exception::HolorRuntimeError</code> exception . The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to <code>AssertionLevel::no_checks</code> to exclude this check. Refer to <a href="./Exceptions.html">Exceptions</a> for more details.</p>
+</div>
+<hr style="background-color:#9999ff; opacity:0.4; width:50%">
+
+<h4 id="length">length<a class="headerlink" href="#length" title="Permanent link">&para;</a></h4>
+<h5 id="signature_7">signature<a class="headerlink" href="#signature_7" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">dim</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h5 id="brief_6">brief<a class="headerlink" href="#brief_6" title="Permanent link">&para;</a></h5>
+<h5 id="brief_7">brief<a class="headerlink" href="#brief_7" title="Permanent link">&para;</a></h5>
 <p>Get a length of a dimension of the layout.</p>
-<h5 id="parameters_2">parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h5>
+<h5 id="parameters_3">parameters<a class="headerlink" href="#parameters_3" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>dim</code>: the dimension queried. There is no check to verify if the value <code>dim</code> is feasible.</li>
 </ul>
@@ -1167,23 +1206,40 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 <p>The length along a dimension (number of elements in that dimension).</p>
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
+<h4 id="set_length">set_length<a class="headerlink" href="#set_length" title="Permanent link">&para;</a></h4>
+<h5 id="signature_8">signature<a class="headerlink" href="#signature_8" title="Permanent link">&para;</a></h5>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">set_length</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">dim</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h5 id="brief_8">brief<a class="headerlink" href="#brief_8" title="Permanent link">&para;</a></h5>
+<p>Set a single length of the layout.</p>
+<h5 id="parameters_4">parameters<a class="headerlink" href="#parameters_4" title="Permanent link">&para;</a></h5>
+<ul>
+<li><code>dim</code>: the dimension queried.</li>
+<li><code>length</code>: the new value.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When changing a length, the dimension <code>dim</code> must be a valid dimension and the new value <code>length</code> msut be strictly positive. These checks are performed as a runtime assert for dynamic size containers and the function throws an <code>holor::exception::HolorRuntimeError</code> exception if the check fails. Refer to <a href="./Exceptions.html">Exceptions</a> for more details.</p>
+</div>
+<hr style="background-color:#9999ff; opacity:0.4; width:50%">
+
 <h4 id="strides">strides<a class="headerlink" href="#strides" title="Permanent link">&para;</a></h4>
-<h5 id="signature_7">signature<a class="headerlink" href="#signature_7" title="Permanent link">&para;</a></h5>
+<h5 id="signature_9">signature<a class="headerlink" href="#signature_9" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="n">strides</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h5 id="brief_7">brief<a class="headerlink" href="#brief_7" title="Permanent link">&para;</a></h5>
+<h5 id="brief_9">brief<a class="headerlink" href="#brief_9" title="Permanent link">&para;</a></h5>
 <p>Get the strides of the layout, i.e., the distances in the memory sequence between consecutive elements of the Holor along  its dimensions.</p>
 <h5 id="return_7">return<a class="headerlink" href="#return_7" title="Permanent link">&para;</a></h5>
 <p>The strides of the layout.</p>
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 <h4 id="stride">stride<a class="headerlink" href="#stride" title="Permanent link">&para;</a></h4>
-<h5 id="signature_8">signature<a class="headerlink" href="#signature_8" title="Permanent link">&para;</a></h5>
+<h5 id="signature_10">signature<a class="headerlink" href="#signature_10" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">strides</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">dim</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h5 id="brief_8">brief<a class="headerlink" href="#brief_8" title="Permanent link">&para;</a></h5>
+<h5 id="brief_10">brief<a class="headerlink" href="#brief_10" title="Permanent link">&para;</a></h5>
 <p>Get the stride along a single dimension of the layout, i.e., the distance in the memory sequence between consecutive elements of the Holor in a dimension.</p>
-<h5 id="parameters_3">parameters<a class="headerlink" href="#parameters_3" title="Permanent link">&para;</a></h5>
+<h5 id="parameters_5">parameters<a class="headerlink" href="#parameters_5" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>dim</code>: the dimension queried. There is no check to verify if the value <code>dim</code> is feasible.</li>
 </ul>
@@ -1193,7 +1249,7 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 </hr>
 <h3 id="indexing-functions">Indexing functions<a class="headerlink" href="#indexing-functions" title="Permanent link">&para;</a></h3>
 <h4 id="operator">operator()<a class="headerlink" href="#operator" title="Permanent link">&para;</a></h4>
-<h5 id="signature_9">signature<a class="headerlink" href="#signature_9" title="Permanent link">&para;</a></h5>
+<h5 id="signature_11">signature<a class="headerlink" href="#signature_11" title="Permanent link">&para;</a></h5>
 <ol>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="n">SingleIndex</span><span class="p">...</span><span class="w"> </span><span class="n">Dims</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="p">((</span><span class="k">sizeof</span><span class="p">...(</span><span class="n">Dims</span><span class="p">)</span><span class="o">==</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">Dims</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">dims</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
@@ -1202,9 +1258,9 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 <span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">ID</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dims</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
-<h5 id="brief_9">brief<a class="headerlink" href="#brief_9" title="Permanent link">&para;</a></h5>
+<h5 id="brief_11">brief<a class="headerlink" href="#brief_11" title="Permanent link">&para;</a></h5>
 <p>Get the position in memory of a single element according to the mapping described in the Layout.</p>
-<h5 id="parameters_4">parameters<a class="headerlink" href="#parameters_4" title="Permanent link">&para;</a></h5>
+<h5 id="parameters_6">parameters<a class="headerlink" href="#parameters_6" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>dims</code>: the coordinates of the element accessed, given either as a parameter pack or as an array of <code>SingleIndex</code> elements (Refer to <a href="./Indexes.html">Indices</a> for more details).</li>
 </ul>
@@ -1218,20 +1274,20 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 </hr>
 <h3 id="slicing-functions">Slicing functions<a class="headerlink" href="#slicing-functions" title="Permanent link">&para;</a></h3>
 <h4 id="operator_1">operator()<a class="headerlink" href="#operator_1" title="Permanent link">&para;</a></h4>
-<h5 id="signature_10">signature<a class="headerlink" href="#signature_10" title="Permanent link">&para;</a></h5>
+<h5 id="signature_12">signature<a class="headerlink" href="#signature_12" title="Permanent link">&para;</a></h5>
 <ol>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="p">(</span><span class="n">impl</span><span class="o">::</span><span class="n">ranged_index_pack</span><span class="o">&lt;</span><span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="k">sizeof</span><span class="p">...(</span><span class="n">Args</span><span class="p">)</span><span class="o">==</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
-<h5 id="brief_10">brief<a class="headerlink" href="#brief_10" title="Permanent link">&para;</a></h5>
+<h5 id="brief_12">brief<a class="headerlink" href="#brief_12" title="Permanent link">&para;</a></h5>
 <p>Function for extracting a slice from the Layout. Singleton dimensions (dimensions that are reduced to a single element) are removed.</p>
 <h5 id="example">example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">holor</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">Layout</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">my_layout</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span><span class="w"> </span><span class="c1">//two dimensional Layout describing a 2x2 container</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_layout</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">range</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">});</span><span class="w"> </span><span class="c1">// This operation computes the Layout corresponding to the first row. The result would is a Layout&lt;1&gt; with lengths = [2];</span>
 </code></pre></div>
-<h5 id="parameters_5">parameters<a class="headerlink" href="#parameters_5" title="Permanent link">&para;</a></h5>
+<h5 id="parameters_7">parameters<a class="headerlink" href="#parameters_7" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>args</code>: parameters pack. Each element of the pack must be either a <code>SingleIndex</code> or a <code>RangeIndex</code>, and at least one of them must be a <code>RangeIndex</code>. Refer to <a href="./Indexes.html">Indices</a> for more details.</li>
 </ul>
@@ -1244,11 +1300,11 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 <h4 id="slice_unreduced">slice_unreduced<a class="headerlink" href="#slice_unreduced" title="Permanent link">&para;</a></h4>
-<h5 id="signature_11">signature<a class="headerlink" href="#signature_11" title="Permanent link">&para;</a></h5>
+<h5 id="signature_13">signature<a class="headerlink" href="#signature_13" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="p">(</span><span class="n">impl</span><span class="o">::</span><span class="n">ranged_index_pack</span><span class="o">&lt;</span><span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="k">sizeof</span><span class="p">...(</span><span class="n">Args</span><span class="p">)</span><span class="o">==</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="n">Layout</span><span class="o">&lt;</span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_unreduced</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h5 id="brief_11">brief<a class="headerlink" href="#brief_11" title="Permanent link">&para;</a></h5>
+<h5 id="brief_13">brief<a class="headerlink" href="#brief_13" title="Permanent link">&para;</a></h5>
 <p>Function for extracting a slice from the Layout, but without removing singleton dimensions (dimensions with a single element).</p>
 <h5 id="example_1">example<a class="headerlink" href="#example_1" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">holor</span><span class="p">;</span><span class="w"></span>
@@ -1268,7 +1324,7 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 <h4 id="slice_dimension">slice_dimension<a class="headerlink" href="#slice_dimension" title="Permanent link">&para;</a></h4>
-<h5 id="signature_12">signature<a class="headerlink" href="#signature_12" title="Permanent link">&para;</a></h5>
+<h5 id="signature_14">signature<a class="headerlink" href="#signature_14" title="Permanent link">&para;</a></h5>
 <ol>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="w"> </span><span class="n">Dim</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="p">(</span><span class="n">Dim</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">Dim</span><span class="w"> </span><span class="o">&lt;</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="n">Layout</span><span class="o">&lt;</span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_dimension</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
@@ -1277,9 +1333,9 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 <span class="w">    </span><span class="n">Layout</span><span class="o">&lt;</span><span class="n">N</span><span class="mi">-1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_dimension</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">num</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
-<h5 id="brief_12">brief<a class="headerlink" href="#brief_12" title="Permanent link">&para;</a></h5>
+<h5 id="brief_14">brief<a class="headerlink" href="#brief_14" title="Permanent link">&para;</a></h5>
 <p>Function for indexing a single dimension of the Layout</p>
-<h5 id="parameters_6">parameters<a class="headerlink" href="#parameters_6" title="Permanent link">&para;</a></h5>
+<h5 id="parameters_8">parameters<a class="headerlink" href="#parameters_8" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>r</code>: the range of elements to be taken from the dimension <code>Dim</code>. <code>r</code> must indicate a valid range of indices in the dimension <code>Dim</code>.</li>
 <li><code>num</code>: the index of the element to be taken from the dimension <code>Dim</code>.</li>
@@ -1294,11 +1350,11 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 </hr>
 <h2 id="non-member-functions">Non-Member functions<a class="headerlink" href="#non-member-functions" title="Permanent link">&para;</a></h2>
 <h4 id="equality-operator">equality operator==<a class="headerlink" href="#equality-operator" title="Permanent link">&para;</a></h4>
-<h5 id="signature_13">signature<a class="headerlink" href="#signature_13" title="Permanent link">&para;</a></h5>
+<h5 id="signature_15">signature<a class="headerlink" href="#signature_15" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="w"></span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Layout</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">l1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Layout</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">l2</span><span class="p">);</span><span class="w"></span>
 </code></pre></div>
-<h5 id="brief_13">brief<a class="headerlink" href="#brief_13" title="Permanent link">&para;</a></h5>
+<h5 id="brief_15">brief<a class="headerlink" href="#brief_15" title="Permanent link">&para;</a></h5>
 <p>Comparison operator that verifies the equality of Layout objects of the same order <code>M</code>.</p>
 <h5 id="template-parameter">template parameter<a class="headerlink" href="#template-parameter" title="Permanent link">&para;</a></h5>
 <ul>
@@ -1314,11 +1370,11 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
 <h4 id="inequality-operator">inequality operator!=<a class="headerlink" href="#inequality-operator" title="Permanent link">&para;</a></h4>
-<h5 id="signature_14">signature<a class="headerlink" href="#signature_14" title="Permanent link">&para;</a></h5>
+<h5 id="signature_16">signature<a class="headerlink" href="#signature_16" title="Permanent link">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="w"></span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Layout</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">l1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Layout</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">l2</span><span class="p">);</span><span class="w"></span>
 </code></pre></div>
-<h5 id="brief_14">brief<a class="headerlink" href="#brief_14" title="Permanent link">&para;</a></h5>
+<h5 id="brief_16">brief<a class="headerlink" href="#brief_16" title="Permanent link">&para;</a></h5>
 <p>Comparison operator that verifies the inequality of Layout objects of the same order <code>M</code>.</p>
 <h5 id="template-parameter_1">template parameter<a class="headerlink" href="#template-parameter_1" title="Permanent link">&para;</a></h5>
 <ul>

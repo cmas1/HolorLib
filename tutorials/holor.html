@@ -627,6 +627,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#resizing-a-holor" class="md-nav__link">
+    Resizing a Holor
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#using-holors-get-functions" class="md-nav__link">
     Using Holor's get functions
   </a>
@@ -887,6 +894,16 @@
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; ]</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
+<h2 id="resizing-a-holor">Resizing a Holor<a class="headerlink" href="#resizing-a-holor" title="Permanent link">&para;</a></h2>
+<p>A <code>Holor</code> has a fixed number of dimensions, but the number of elements along each dimension can be changed. This is useful when the number of elements needs to be modified over time, or to create an empty container and resize it later.
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Holor/holor/holor_full.h&gt;</span><span class="cp"></span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">holor</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">Holor</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hf</span><span class="p">;</span><span class="w"> </span><span class="c1">//An empty container with 2 dimensions</span>
+<span class="w">    </span><span class="n">hf</span><span class="p">.</span><span class="n">set_lengths</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span><span class="w"> </span><span class="c1">//Now hf is a 3x2 container</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ranges</span><span class="o">::</span><span class="n">fill</span><span class="p">(</span><span class="n">hf</span><span class="p">,</span><span class="mf">1.2</span><span class="p">);</span><span class="w"> </span><span class="c1">//All the elements of hf are set to the value 1.2</span>
+<span class="w">    </span><span class="n">hf</span><span class="p">.</span><span class="n">set_lengts</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span><span class="w"> </span><span class="c1">//This operation modifies only the first length and sets it to 2. Now hf is a 2x2 container</span>
+</code></pre></div></p>
 <h2 id="using-holors-get-functions">Using Holor's get functions<a class="headerlink" href="#using-holors-get-functions" title="Permanent link">&para;</a></h2>
 <p>The <code>Holor</code> class has few member functions that can be used to retrieve information regarding the container or to gain direct access to its memory.
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;holor/holor_full.h&gt;</span><span class="cp"></span>
