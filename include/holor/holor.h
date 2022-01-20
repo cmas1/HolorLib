@@ -96,7 +96,8 @@ class Holor{
 
 
         //WIP
-        //TODO: test and add to documentation
+        //FIXME this construcotr conflicts with the construcotr from a nested list of size_t, it must be removed
+        //TODO instead, we need to add a set_lengths function!!!
         /*!
          * \brief Constructor from a variadic template of lengths.
          * \tparam Lengths parameter pack of lengths. There must be `N` arguments in the pack.   
