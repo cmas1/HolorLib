@@ -7,8 +7,6 @@ holor.h and holor_ref.h:
 layout.h:
     ☐ In the constructor from containers of lengths, use the universal reference &&
 
-holor.h and layout.h:
-    ☐ RESIZE: Now it is possible to create an empy holor without specifying its legnths or elements. To make this useful, we should add the functionality to later specify the lenghts of the holor or resize it (and its underlying layout), upadating the size and reserving the appropriate space in memory
 
 holor_concepts.h:
     ☐ //SKIP Concept LayoutType (to be used in layout.h) => //NOTE: the indexing constraint (check that LayoutType supports indexing) requires to verify the existance of a variadic member function with N arguments. I cannot find a way to express this without adding other template parameters to the concept and probably it is not doable 
@@ -22,6 +20,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ RESIZE: Now it is possible to create an empy holor without specifying its legnths or elements. To make this useful, we should add the functionality to later specify the lenghts of the holor or resize it (and its underlying layout), upadating the size and reserving the appropriate space in memory @done(22-01-20 12:39) @project(holor.h and layout.h)
   ✔ (Holor only) rename the function lengths(dim) to length(dim), to make the difference with lenghts() more intuitive. @done(22-01-20 11:40) @project(holor.h and holor_ref.h)
   ✘ finalize the constructor from a pack of size_t! //canceled because conflicting with constructor from nested list @cancelled(22-01-20 11:49) @project(holor.h and layout.h)
   ✔ upload smaller logo and icon @done(21-10-19 09:26)
