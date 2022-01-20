@@ -183,6 +183,36 @@ The lengths (number of elements per dimension) of the layout.
 
 
 
+#### set_lengths
+##### signature
+1. 
+``` cpp
+    template<typename... Lengths> requires ((sizeof...(Lengths)==N) && (assert::all(std::is_convertible_v<Lengths,size_t>...)) )
+    void set_lengths(Lengths&&... lengths);
+```
+2. 
+``` cpp
+    template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
+    void set_lengths(const Container& lengths);
+```
+3. 
+``` cpp
+    template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
+    void set_lengths(const Container& lengths);
+```    
+##### brief
+Set the lengths of the layout.
+
+##### parameters
+* `lengths`: number of elements per dimension ( either a container such as `#!cpp std::vector<size_t>` and `#!cpp std::array<size_t, N>`, or a variadic argument.).
+
+!!! warning
+    When constructing a Layout from a container of `lengths`, this container must have `N` elements. This check is performed as a static assert for fixed size containers ( e.g. a `std::array`) and as a runtime assert for dynamic size containers (e.g. a `std::vector`). In this second case, the constructor would throws an `holor::exception::HolorRuntimeError` exception . The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.
+
+<hr style="background-color:#9999ff; opacity:0.4; width:50%"> 
+
+
+
 #### length
 ##### signature
 ``` cpp
@@ -196,6 +226,25 @@ Get a length of a dimension of the layout.
 
 ##### return 
 The length along a dimension (number of elements in that dimension).
+        
+<hr style="background-color:#9999ff; opacity:0.4; width:50%"> 
+
+
+
+#### set_length
+##### signature
+``` cpp
+    void set_length(size_t dim, size_t length)
+```
+##### brief
+Set a single length of the layout.
+
+##### parameters
+* `dim`: the dimension queried.
+* `length`: the new value.
+
+!!! warning
+    When changing a length, the dimension `dim` must be a valid dimension and the new value `length` msut be strictly positive. These checks are performed as a runtime assert for dynamic size containers and the function throws an `holor::exception::HolorRuntimeError` exception if the check fails. Refer to [Exceptions](./Exceptions.html) for more details.
         
 <hr style="background-color:#9999ff; opacity:0.4; width:50%"> 
 

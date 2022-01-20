@@ -65,6 +65,19 @@ An empty holor can be constructed without specifying its elements or dimensions.
 ```
 
 
+## Resizing a Holor
+A `Holor` has a fixed number of dimensions, but the number of elements along each dimension can be changed. This is useful when the number of elements needs to be modified over time, or to create an empty container and resize it later.
+``` cpp
+    #include <Holor/holor/holor_full.h>
+    using namespace holor;
+
+    Holor<float,2> hf; //An empty container with 2 dimensions
+    hf.set_lengths(3,2); //Now hf is a 3x2 container
+    std::ranges::fill(hf,1.2); //All the elements of hf are set to the value 1.2
+    hf.set_lengts(0,2); //This operation modifies only the first length and sets it to 2. Now hf is a 2x2 container
+```
+
+
 ## Using Holor's get functions
 The `Holor` class has few member functions that can be used to retrieve information regarding the container or to gain direct access to its memory.
 ``` cpp

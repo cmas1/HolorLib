@@ -26,6 +26,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <algorithm>
 
 using namespace holor;
 
@@ -62,7 +63,7 @@ int main(){
     std::cout << "  \033[32m Holor<float, 3> empty_holor_01(length_01); \033[0m \n";
     std::cout << "  The lenghts of \033[1m empty_holor_01 \033[0m  along its dimensions are: [";
     for(auto cnt = 0; cnt<3; cnt++){
-        std::cout<< "  " << empty_holor_01.lengths(cnt);
+        std::cout<< "  " << empty_holor_01.length(cnt);
     }
     std::cout << " ]\n\n";
 
@@ -73,7 +74,7 @@ int main(){
     std::cout << "  \033[32m Holor<float, 4> empty_holor_02(length_02); \033[0m \n\n";
     std::cout << "  The lenghts of \033[1m empty_holor_02 \033[0m  along its dimensions are: [";
     for(auto cnt = 0; cnt<4; cnt++){
-        std::cout<< "  " << empty_holor_02.lengths(cnt);
+        std::cout<< "  " << empty_holor_02.length(cnt);
     }
     std::cout << " ]\n\n";
 
@@ -94,7 +95,7 @@ int main(){
     std::cout << "  \033[32m Holor<my_object, 3> empty_holor_03; \033[0m (my_object is a generic type, for example a struct) \n";
     std::cout << "  The lenghts of \033[1m empty_holor_03 \033[0m  along its dimensions are: [";
     for(auto cnt = 0; cnt<3; cnt++){
-        std::cout<< "  " << empty_holor_03.lengths(cnt);
+        std::cout<< "  " << empty_holor_03.length(cnt);
     }
     std::cout << " ]\n\n";
 
@@ -122,10 +123,31 @@ int main(){
 
 
     // 6) Construct an Holor from an HolorRef
+    std::cout << "\n\033[33m Example 6):\033[0m  Construct an Holor from an HolorRef\n\n";
     std::vector<double> my_vec2{1.1, 2.2, 3.3, 4.4, 5.5, 6.6};
     HolorRef<double,2> hr(my_vec2.data(), Layout<2>{2,3});
     Holor<double,2> h(hr);
-    std::cout << "h == " << h << "\n\n";
+    std::cout << "\033[32m std::vector<double> my_vec2{1.1, 2.2, 3.3, 4.4, 5.5, 6.6}; \033[0m \n";
+    std::cout << "\033[32m HolorRef<double,2> hr(my_vec2.data(), Layout<2>{2,3}); \033[0m \n";
+    std::cout << "\033[32m Holor<double,2> h(hr); \033[0m \n";
+    std::cout << "=> h = " << h << "\n\n";
+
+
+    // 7) Construct an empty Holor and resize it
+    std::cout << "\n\033[33m Example 7):\033[0m  Construct an empty Holor and resize it\n\n";
+    Holor<double,2>empty_holor;
+    empty_holor.set_lengths(2,3);
+    std::ranges::fill(empty_holor, 1.3);
+    std::cout << "\033[32m Holor<double,2>empty_holor; \033[0m \n";
+    std::cout << "\033[32m empty_holor.set_lengths(2,3); \033[0m \n";
+    std::cout << "\033[32m std::ranges::fill(empty_holor, 1.3); \033[0m \n";
+    std::cout << "=> empty_holor = " << empty_holor << "\n\n";
+    std::cout << "Now, let's resize the dimensions individually.\n";
+    empty_holor.set_length(0,5);
+    empty_holor.set_length(1,2);
+    std::cout << "\033[32m empty_holor.set_length(0,5); \033[0m \n";
+    std::cout << "\033[32m empty_holor.set_length(1,2); \033[0m \n";
+    std::cout << "=> empty_holor = " << empty_holor << "\n\n";
 
     return 0;
 }

@@ -58,17 +58,15 @@ TEST(TestHolor, CheckConstructors){
             auto my_layout = my_holor.layout();
             EXPECT_EQ(tmp_layout, my_layout);
             EXPECT_EQ( my_holor.size(), 0 );
-            EXPECT_EQ( my_holor.lengths(0), 0 );
-        }
-        {
-            Holor<int,3>my_holor;
+            EXPECT_EQ( my_holor.length(0), 0 );
+        }        {            Holor<int,3>my_holor;
             Layout<3> tmp_layout;
             auto my_layout = my_holor.layout();
             EXPECT_EQ(tmp_layout, my_layout);
             EXPECT_EQ( my_holor.size(), 0 );
-            EXPECT_EQ( my_holor.lengths(0), 0 );
-            EXPECT_EQ( my_holor.lengths(1), 0 );
-            EXPECT_EQ( my_holor.lengths(2), 0 );
+            EXPECT_EQ( my_holor.length(0), 0 );
+            EXPECT_EQ( my_holor.length(1), 0 );
+            EXPECT_EQ( my_holor.length(2), 0 );
         }
     }
 
@@ -80,7 +78,7 @@ TEST(TestHolor, CheckConstructors){
             Layout<1> tmp_layout{4};
             EXPECT_EQ(tmp_layout, my_layout);
             EXPECT_EQ( my_holor.size(), 4 );
-            EXPECT_EQ( my_holor.lengths(0), 4 );
+            EXPECT_EQ( my_holor.length(0), 4 );
             EXPECT_EQ( my_holor.data()[0], 1 );
             EXPECT_EQ( my_holor.data()[1], 2 );
             EXPECT_EQ( my_holor.data()[2], 3 );
@@ -93,8 +91,8 @@ TEST(TestHolor, CheckConstructors){
             Layout<2> tmp_layout{2,2};
             EXPECT_EQ(tmp_layout, my_layout);
             EXPECT_EQ( my_holor.size(), 4 );
-            EXPECT_EQ( my_holor.lengths(0), 2 );
-            EXPECT_EQ( my_holor.lengths(1), 2 );
+            EXPECT_EQ( my_holor.length(0), 2 );
+            EXPECT_EQ( my_holor.length(1), 2 );
             EXPECT_EQ( my_holor.data()[0], 1 );
             EXPECT_EQ( my_holor.data()[1], 2 );
             EXPECT_EQ( my_holor.data()[2], 3 );
@@ -107,9 +105,9 @@ TEST(TestHolor, CheckConstructors){
             Layout<3> tmp_layout{2,2,2};
             EXPECT_EQ(tmp_layout, my_layout);
             EXPECT_EQ( my_holor.size(), 8 );
-            EXPECT_EQ( my_holor.lengths(0), 2 );
-            EXPECT_EQ( my_holor.lengths(1), 2 );
-            EXPECT_EQ( my_holor.lengths(2), 2 );
+            EXPECT_EQ( my_holor.length(0), 2 );
+            EXPECT_EQ( my_holor.length(1), 2 );
+            EXPECT_EQ( my_holor.length(2), 2 );
             EXPECT_EQ( my_holor.data()[0], 1 );
             EXPECT_EQ( my_holor.data()[1], 2 );
             EXPECT_EQ( my_holor.data()[2], 3 );
@@ -129,9 +127,9 @@ TEST(TestHolor, CheckConstructors){
             Layout<3> tmp_layout{2,2,2};
             EXPECT_EQ(tmp_layout, my_layout);
             EXPECT_EQ( my_holor.size(), 8 );
-            EXPECT_EQ( my_holor.lengths(0), 2 );
-            EXPECT_EQ( my_holor.lengths(1), 2 );
-            EXPECT_EQ( my_holor.lengths(2), 2 );
+            EXPECT_EQ( my_holor.length(0), 2 );
+            EXPECT_EQ( my_holor.length(1), 2 );
+            EXPECT_EQ( my_holor.length(2), 2 );
         }
         {
             std::array<size_t,3> my_lengths{2,2,2};
@@ -140,9 +138,9 @@ TEST(TestHolor, CheckConstructors){
             Layout<3> tmp_layout{2,2,2};
             EXPECT_EQ(tmp_layout, my_layout);
             EXPECT_EQ( my_holor.size(), 8 );
-            EXPECT_EQ( my_holor.lengths(0), 2 );
-            EXPECT_EQ( my_holor.lengths(1), 2 );
-            EXPECT_EQ( my_holor.lengths(2), 2 );
+            EXPECT_EQ( my_holor.length(0), 2 );
+            EXPECT_EQ( my_holor.length(1), 2 );
+            EXPECT_EQ( my_holor.length(2), 2 );
         }
     }
 
@@ -154,9 +152,9 @@ TEST(TestHolor, CheckConstructors){
             Layout<3> tmp_layout{2,2,2};
             EXPECT_EQ(tmp_layout, my_layout);
             EXPECT_EQ( my_holor.size(), 8 );
-            EXPECT_EQ( my_holor.lengths(0), 2 );
-            EXPECT_EQ( my_holor.lengths(1), 2 );
-            EXPECT_EQ( my_holor.lengths(2), 2 );
+            EXPECT_EQ( my_holor.length(0), 2 );
+            EXPECT_EQ( my_holor.length(1), 2 );
+            EXPECT_EQ( my_holor.length(2), 2 );
         }
         {
             std::vector<size_t> my_lengths{2,2,2};
@@ -165,9 +163,9 @@ TEST(TestHolor, CheckConstructors){
             Layout<3> tmp_layout{2,2,2};
             EXPECT_EQ(tmp_layout, my_layout);
             EXPECT_EQ( my_holor.size(), 8 );
-            EXPECT_EQ( my_holor.lengths(0), 2 );
-            EXPECT_EQ( my_holor.lengths(1), 2 );
-            EXPECT_EQ( my_holor.lengths(2), 2 );
+            EXPECT_EQ( my_holor.length(0), 2 );
+            EXPECT_EQ( my_holor.length(1), 2 );
+            EXPECT_EQ( my_holor.length(2), 2 );
         }
     }
 
@@ -193,8 +191,8 @@ TEST(TestHolor, CheckConstructors){
         EXPECT_TRUE( (h==hr) );
         auto my_layout = h.layout();
         EXPECT_EQ(h.size(), 6);
-        EXPECT_EQ(h.lengths(0), 2);
-        EXPECT_EQ(h.lengths(1), 3);
+        EXPECT_EQ(h.length(0), 2);
+        EXPECT_EQ(h.length(1), 3);
         EXPECT_EQ(my_layout.stride(0), 3);
         EXPECT_EQ(my_layout.stride(1), 1);
         EXPECT_EQ(my_layout.offset(), 0);
@@ -236,14 +234,37 @@ TEST(TestHolor, CheckGetSet){
         Holor<int, 3> my_holor{ {{1,2}, {3,4}}, {{5,6}, {7,8}} };
         auto my_layout = my_holor.layout();
         EXPECT_TRUE( (my_layout==Layout<3>{2,2,2}) );
-        EXPECT_EQ(my_holor.lengths(0),2);
-        EXPECT_EQ(my_holor.lengths(1),2);
-        EXPECT_EQ(my_holor.lengths(2),2);
+        EXPECT_EQ(my_holor.length(0),2);
+        EXPECT_EQ(my_holor.length(1),2);
+        EXPECT_EQ(my_holor.length(2),2);
         std::array<size_t,3> tmp_lengths{2,2,2};
         EXPECT_EQ(my_holor.lengths(), tmp_lengths);
         EXPECT_EQ(my_holor.size(), 8);
         std::vector<int> tmp_data{1,2,3,4,5,6,7,8};
         EXPECT_EQ(my_holor.data_vector(), tmp_data);
+    }
+}
+
+
+TEST(TestHolor, Resize){
+    {
+        Holor<int, 3> my_holor;
+        my_holor.set_lengths(1,2,3);
+        EXPECT_EQ(my_holor.length(0),1);
+        EXPECT_EQ(my_holor.length(1),2);
+        EXPECT_EQ(my_holor.length(2),3);
+        my_holor.set_lengths(std::vector<size_t>{1,1,1});
+        EXPECT_EQ(my_holor.length(0),1);
+        EXPECT_EQ(my_holor.length(1),1);
+        EXPECT_EQ(my_holor.length(2),1);
+        my_holor.set_lengths(std::array<size_t,3>{2,2,2});
+        EXPECT_EQ(my_holor.length(0),2);
+        EXPECT_EQ(my_holor.length(1),2);
+        EXPECT_EQ(my_holor.length(2),2);
+        my_holor.set_length(0,5);
+        EXPECT_EQ(my_holor.length(0),5);
+        EXPECT_EQ(my_holor.length(1),2);
+        EXPECT_EQ(my_holor.length(2),2);
     }
 }
 

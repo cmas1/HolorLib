@@ -95,22 +95,6 @@ class Holor{
         }
 
 
-        //WIP
-        //FIXME this construcotr conflicts with the construcotr from a nested list of size_t, it must be removed
-        //TODO instead, we need to add a set_lengths function!!!
-        /*!
-         * \brief Constructor from a variadic template of lengths.
-         * \tparam Lengths parameter pack of lengths. There must be `N` arguments in the pack.   
-         * \param lengths variadic arguments denoting the number of elements along each dimension of the container.
-         * \return a Layout
-         */
-        template<typename... Lengths> requires ((sizeof...(Lengths)==N) && (assert::all(std::is_convertible_v<Lengths,size_t>...)) )
-        explicit Holor(Lengths&&... lengths): layout_(std::forward<Lengths>(lengths)...){
-            data_.resize(layout_.size());
-        }
-        //TODO: check back all constructors, where there is data.resize and where there is data,reserve
-    
-
         /*!
          * \brief Constructor from a HolorRef object. Only copy is allowed, because the HolorRef does not own the objects it contains.
          * \param ref a HolorRef object
@@ -119,7 +103,7 @@ class Holor{
         template<typename U> requires (std::convertible_to<U, T>)
         Holor(const HolorRef<U,N>& ref) {
             layout_ = Layout<N>(ref.layout().lengths());
-            data_.reserve(layout_.size());
+            data_.resize(layout_.size());
             std::copy(ref.cbegin(), ref.cend(), data_.begin());
         }
 
@@ -195,13 +179,48 @@ class Holor{
             return layout_.lengths();
         }
 
+
+        /*!
+         * \brief Function changes the number of elements along each of the container's dimensions. This operation may destroy some elements or create new elements with unspecified values
+         * \param lengths the lengths of each dimension of the Holor container 
+         */
+        template<typename... Lengths> requires ((sizeof...(Lengths)==N) && (assert::all(std::is_convertible_v<Lengths,size_t>...)) )
+        void set_lengths(Lengths&&... lengths) {
+            layout_.set_lengths(std::forward<Lengths>(lengths)...);
+            data_.resize(layout_.size());
+        }
+
+        template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
+        void set_lengths(const Container& lengths){
+            layout_.set_lengths(lengths);
+            data_.resize(layout_.size());
+        }
+
+        template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
+        void set_lengths(const Container& lengths){
+            layout_.set_lengths(lengths);
+            data_.resize(layout_.size());
+        }
+
+
         /*!
          * \brief Function that returns the number of elements along a specific dimension of the container
          * \param dim the dimension to be inquired for its length
          * \return the length of the selected dimension
          */
-        auto lengths(size_t dim) const{
+        auto length(size_t dim) const{
             return layout_.length(dim);
+        }
+
+
+        /*!
+         * \brief Function changes the number of elements along a single dimension of the container. This operation may destroy some elements or create new elements with unspecified values
+         * \param dim the dimension to modify
+         * \param length the new length of the dimension
+         */
+        void set_length(size_t dim, size_t length){
+            layout_.set_length(dim, length);
+            data_.resize(layout_.size());
         }
 
         /*!

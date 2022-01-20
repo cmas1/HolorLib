@@ -229,12 +229,49 @@ class Layout{
         }
 
         /*!
+         * \brief Function changes the number of elements along each of the container's dimensions. This operation may destroy some elements or create new elements with unspecified values
+         * \param lengths the lengths of each dimension of the Holor container 
+         */
+        template<typename... Lengths> requires ((sizeof...(Lengths)==N) && (assert::all(std::is_convertible_v<Lengths,size_t>...)) )
+        void set_lengths(Lengths&&... lengths) {
+            single_length_copy<0>(std::forward<Lengths>(lengths)...);
+            update_strides_size();
+        }
+
+        template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
+        void set_lengths(const Container& lengths){
+            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(positive_lengths(lengths), EXCEPTION_MESSAGE("Zero length is not allowed!"));
+            std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
+            update_strides_size();
+        }
+
+        template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
+        void set_lengths(const Container& lengths){
+            assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
+            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(positive_lengths(lengths), EXCEPTION_MESSAGE("Zero length is not allowed!"));
+            std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
+            update_strides_size();
+        }
+
+        /*!
          * \brief Get a length of a dimension of the layout. This is a const function.
          * \param dim dimension queried
          * \return the length along a dimension (number of elements in that dimension)
          */
         auto length(size_t dim) const{
             return lengths_[dim];
+        }
+
+        /*!
+         * \brief Function changes the number of elements along a single dimension of the container. This operation may destroy some elements or create new elements with unspecified values
+         * \param dim the dimension to modify
+         * \param length the new length of the dimension
+         */
+        void set_length(size_t dim, size_t length){
+            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(length>0, EXCEPTION_MESSAGE("Zero length is not allowed!"));
+            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(dim>=0 && dim <N, EXCEPTION_MESSAGE("Invalid dimension!"));
+            lengths_[dim] = length;
+            update_strides_size();
         }
 
         /*!

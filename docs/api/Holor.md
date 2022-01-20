@@ -221,21 +221,72 @@ A Layout.
 
 #### lengths
 ##### signature
-1. 
 ``` cpp
     auto lengths() const;
 ```
-2. 
-``` cpp
-    auto lengths(size_t dim) const;
-```
 ##### brief
 Get the lengths, i.e., the number of elements that the container has per each dimension.
-##### parameters
-* `dim`: request to get only the lenght for the `dim` dimension. There is no check on the validity of this argument.
 ##### return
-When called without arguments, the function returns a `std::array` with the length of all dimensions of the container. When the argument `dim` is passed, the function returns a single legnth (a `size_t`).
+A `std::array` with the length of all dimensions of the container.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%;">
+
+
+
+#### set_lengths
+##### signature
+1. 
+``` cpp
+    template<typename... Lengths> requires ((sizeof...(Lengths)==N) && (assert::all(std::is_convertible_v<Lengths,size_t>...)) )
+    void set_lengths(Lengths&&... lengths);
+```
+2. 
+``` cpp
+    template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
+    void set_lengths(const Container& lengths);
+```
+3. 
+``` cpp
+    template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
+    void set_lengths(const Container& lengths);
+```    
+##### brief
+Set the lengths of the container, resizing it.
+
+##### parameters
+* `lengths`: number of elements per dimension ( either a container such as `#!cpp std::vector<size_t>` and `#!cpp std::array<size_t, N>`, or a variadic argument.).
+
+<hr style="background-color:#9999ff; opacity:0.4; width:50%"> 
+
+
+
+#### length
+##### signature
+``` cpp
+    auto length(size_t dim) const;
+```
+##### brief
+Get the number of elements that the container has along the dimension `dim`.
+##### parameters
+* `dim`: the dimension queried. There is no check on the validity of this argument.
+##### return
+The function returns a single legnth (a `size_t`).
+<hr style="background-color:#9999ff; opacity:0.4; width:50%;">
+
+
+
+#### set_length
+##### signature
+``` cpp
+    void set_length(size_t dim, size_t length)
+```
+##### brief
+Change a single length of the container.
+
+##### parameters
+* `dim`: the dimension queried.
+* `length`: the new value.
+        
+<hr style="background-color:#9999ff; opacity:0.4; width:50%"> 
 
 
 

@@ -326,6 +326,28 @@ TEST(TestLayout, CheckGetSet){
 }
 
 
+TEST(TestLayout, Resize){
+    {
+        Layout<3> my_layout;
+        my_layout.set_lengths(1,2,3);
+        EXPECT_EQ(my_layout.length(0),1);
+        EXPECT_EQ(my_layout.length(1),2);
+        EXPECT_EQ(my_layout.length(2),3);
+        my_layout.set_lengths(std::vector<size_t>{1,1,1});
+        EXPECT_EQ(my_layout.length(0),1);
+        EXPECT_EQ(my_layout.length(1),1);
+        EXPECT_EQ(my_layout.length(2),1);
+        my_layout.set_lengths(std::array<size_t,3>{2,2,2});
+        EXPECT_EQ(my_layout.length(0),2);
+        EXPECT_EQ(my_layout.length(1),2);
+        EXPECT_EQ(my_layout.length(2),2);
+        my_layout.set_length(0,5);
+        EXPECT_EQ(my_layout.length(0),5);
+        EXPECT_EQ(my_layout.length(1),2);
+        EXPECT_EQ(my_layout.length(2),2);
+    }
+}
+
 /*=================================================================================
                                 Indexing Tests
 =================================================================================*/

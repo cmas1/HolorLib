@@ -36,9 +36,9 @@ int main(){
     std::cout << "A = " << A << "\n";
     std::cout << "A has " << A.dimensions << " dimensions.\n\n";
 
-    std::cout << "A has " << A.lengths(0) << " elements along the first dimension.\n";
-    std::cout << "A has " << A.lengths(1) << " elements along the second dimension.\n";
-    std::cout << "A has " << A.lengths(2) << " elements along the third dimension.\n";
+    std::cout << "A has " << A.length(0) << " elements along the first dimension.\n";
+    std::cout << "A has " << A.length(1) << " elements along the second dimension.\n";
+    std::cout << "A has " << A.length(2) << " elements along the third dimension.\n";
     std::cout << "A has " << A.size() << " total elements.\n\n";
 
     std::cout << "The memory layout of A can be retrieved as A.layout() .\n";

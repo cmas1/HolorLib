@@ -4,7 +4,7 @@
 
 A layout can be constructed without arguments. In this case its lengths and strides are initalized to zero:
 ```cpp hl_lines="3"
-    #include <holor/holor_full.h>
+    #include <Holor/holor/holor_full.h>
     using namespace holor;
     Layout<2> my_layout;
 
@@ -17,7 +17,7 @@ A layout can be constructed without arguments. In this case its lengths and stri
 
 A layout can also be constructed specifying its lengths
 ```cpp hl_lines="3 4 5"
-    #include <holor/holor_full.h>
+    #include <Holor/holor/holor_full.h>
     using namespace holor;
     Layout<2> my_layout1{2, 3};
     Layout<2> my_layout2(std::vector<size_t>{2, 3});
@@ -35,7 +35,7 @@ A layout can also be constructed specifying its lengths
 
 A layout can also be constructed or assigned from another Layout
 ```cpp hl_lines="4 5"
-    #include <holor/holor_full.h>
+    #include <Holor/holor/holor_full.h>
     using namespace holor;
     Layout<3> my_layout1{2, 3, 4};
     Layout<3> my_layout2(my_layout1);
@@ -49,6 +49,16 @@ A layout can also be constructed or assigned from another Layout
     std::cout << "the size of the layout is " << my_layout2.size() << std::endl; // This prints 6
 ```
 
+## Resizing a Holor
+A `Layout` has a fixed number of dimensions, but the number of elements along each dimension can be changed. This is useful when the number of elements needs to be modified over time, or to create an empty container and resize it later.
+``` cpp
+    #include <Holor/holor/holor_full.h>
+    using namespace holor;
+
+    Layout<2> lay; //A Layout with 2 dimensions
+    lay.set_lengths(3,2); //Now lay has lengths 3, 2
+    lay.set_length(0,2); //This operation modifies only the first length and sets it to 2. Now the lengths are 2, 2
+```
 
 
 ## Mapping from indices to location in a memory sequence
@@ -62,7 +72,7 @@ Consider a generic 2D Holor container as represented in figure.
 
 The container uses a Layout to map from from its indices to the position in the memory area where the element is stored. The function that implements this mapping is the `#!cpp operator()`.
 ``` cpp hl_lines="12 13"
-    #include <holor/holor_full.h>
+    #include <Holor/holor/holor_full.h>
 
     using namespace holor;
     
