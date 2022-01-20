@@ -172,7 +172,6 @@ namespace holor{
     }
 
 
-
     template<typename T, typename Vec>
     void impl::insert_flat(std::initializer_list<T> list, Vec& vec){
         add_list(list.begin(), list.end(), vec);

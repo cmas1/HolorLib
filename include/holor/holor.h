@@ -113,6 +113,13 @@ class Holor{
          * \param init nested list of the elements to be inserted in the container
          * \return a Holor containing the elements in the list
          */
+        template<typename U> //requires (std::convertible_to<U, T>)
+        Holor(holor::nested_list<U,N> init) {
+            layout_ = Layout<N>(impl::derive_lengths<N>(init));
+            data_.reserve(layout_.size());
+            impl::insert_flat(init, data_);
+        }
+
         Holor(holor::nested_list<T,N> init) {
             layout_ = Layout<N>(impl::derive_lengths<N>(init));
             data_.reserve(layout_.size());
@@ -125,6 +132,14 @@ class Holor{
          * \param init nested list of the elements to be inserted in the container
          * \return a reference to a Holor containing the elements in the list
          */
+        template<typename U> //requires (std::convertible_to<U, T>)
+        Holor& operator=(holor::nested_list<U,N> init) {
+            layout_ = Layout<N>{impl::derive_lengths<N>(init)};
+            data_.reserve(layout_.size());
+            impl::insert_flat(init, data_);
+            return *this;
+        }
+
         Holor& operator=(holor::nested_list<T,N> init) {
             layout_ = Layout<N>{impl::derive_lengths<N>(init)};
             data_.reserve(layout_.size());
@@ -136,11 +151,11 @@ class Holor{
         /*!
          * \brief Remove the constructor and assignment from a std::initializer_list, in order to allow using the constructor from holor::nested_list
          */
-        template<typename U> 
-        Holor(std::initializer_list<U>) = delete;
+        // template<typename U>
+        // Holor(std::initializer_list<U>) = delete;
 
-        template<typename U>
-        Holor& operator=(std::initializer_list<U>) = delete;
+        // template<typename U>
+        // Holor& operator=(std::initializer_list<U>) = delete;
 
         
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
