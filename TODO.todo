@@ -9,7 +9,7 @@ layout.h:
 
 
 holor_concepts.h:
-    ☐ //SKIP Concept LayoutType (to be used in layout.h) => //NOTE: the indexing constraint (check that LayoutType supports indexing) requires to verify the existance of a variadic member function with N arguments. I cannot find a way to express this without adding other template parameters to the concept and probably it is not doable 
+    ☐ //SKIP Concept LayoutType (to be used in layout.h) => //WIP //NOTE: the indexing constraint (check that LayoutType supports indexing) requires to verify the existance of a variadic member function with N arguments. I cannot find a way to express this without adding other template parameters to the concept and probably it is not doable 
     ☐ //SKIP Concept HolorType (to be used in holor_ref.h and holor_printer.h) => //NOTE HolorType requires LayoutType. Therefore, if LayoutType cannot be implemented  the indexing function requires a variadic template with size N. I cannot ind a way to express this
 
 layout.h:
