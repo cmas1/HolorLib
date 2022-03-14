@@ -33,6 +33,7 @@
 #include <algorithm>
 
 #include "./indexes.h"
+#include "./layout_types.h"
 #include "../common/static_assertions.h"
 #include "../common/runtime_assertions.h"
 
@@ -112,7 +113,7 @@ class Layout{
 
     
     /*!
-     * \brief Layout<N> is made friend of Layout<M> so that we can modify its private ariables when slicing a layout (and reducing its dimension)
+     * \brief Layout<N> is made friend of Layout<M> so that we can modify its private variables when slicing a layout (and reducing its dimension)
      */
     template<size_t M>
     friend class Layout;
@@ -123,6 +124,8 @@ class Layout{
                                     ALIASES
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         static constexpr size_t order = N; ///< \brief number of dimensions in the reference container 
+        using layout_type = holor::impl::LayoutType; ///<!  \brief tags a Layout type
+        
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
@@ -184,7 +187,7 @@ class Layout{
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         /*!
         * \brief comperison operator that verifies the equality of Layout objects of the same order `M`
-        * \tparam M is the order of the two Kayouts
+        * \tparam M is the order of the two Layouts
         * \param l1 is the first Layout of the comparison
         * \param l2 is the second Layout of the comparison
         * \return true if the comparison is satisfied, false otherwise

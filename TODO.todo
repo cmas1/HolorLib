@@ -2,6 +2,7 @@ static_assertions.h:
     ☐ revisit container concepts (check BSTools)
 
 holor.h and holor_ref.h:
+    ☐ //FIXME: now Holors can have 0 dimensions. This may not be optimal. Check if it shoud be constrained (and all the methods inside holor and holor_ref)
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
 
 layout.h:
@@ -9,10 +10,11 @@ layout.h:
 
 
 holor_concepts.h:
-    ☐ //SKIP Concept LayoutType (to be used in layout.h) => //WIP //NOTE: the indexing constraint (check that LayoutType supports indexing) requires to verify the existance of a variadic member function with N arguments. I cannot find a way to express this without adding other template parameters to the concept and probably it is not doable 
-    ☐ //SKIP Concept HolorType (to be used in holor_ref.h and holor_printer.h) => //NOTE HolorType requires LayoutType. Therefore, if LayoutType cannot be implemented  the indexing function requires a variadic template with size N. I cannot ind a way to express this
+    ☐ Concept LayoutType //WIP 
+    ☐ Concept HolorType
 
 layout.h:
+    ☐ //WIP //FIXME: check the file layout.h. Now it is possible to have a Layout<0>. Shall it be removed?
     ☐ //IMPROVEMENT!! When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This is inefficient, as confirmed by the benchmark BM_HolorSlicing. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation. 
 
 indexes.h:

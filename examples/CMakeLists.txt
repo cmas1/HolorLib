@@ -19,7 +19,10 @@ target_link_libraries(example_access PUBLIC Holor::Holor)
 add_executable(example_iterators src/example_iterators.cpp)
 target_link_libraries(example_iterators PUBLIC Holor::Holor)
 
-set_target_properties( example_constructors example_interface example_access example_iterators
+add_executable(example_concepts src/example_concepts.cpp)
+target_link_libraries(example_concepts PUBLIC Holor::Holor)
+
+set_target_properties( example_constructors example_interface example_access example_iterators example_concepts
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/examples"
 )

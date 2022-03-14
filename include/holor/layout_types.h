@@ -25,6 +25,13 @@
 #define LAYOUT_TYPES_H
 
 
+#include <type_traits>
+#include <concepts>
+#include <utility>
+
+#include "indexes.h"
+#include "../common/static_assertions.h"
+
 namespace holor{
 
 
@@ -32,9 +39,83 @@ namespace holor{
                                     Layout Concepts
 ================================================================================================*/
 
+namespace impl{
+
+    struct LayoutType{};  ///< \brief type that is used to tag a layout
+
+
+    /*!
+     * \brief Helper function that is used to check the presence of an indexing operation from a pack of indices
+     */
+    template<typename Obj, size_t... Indices>
+    auto layout_variadic_indexing(Obj& obj, std::index_sequence<Indices ...>){
+        return obj.operator()(Indices ...);
+    };
+
+    /*!
+     * \brief Constraints Layouts to have a suitable indexing function
+     */
+    template<typename T>
+    concept IndexableLayout = requires (T layout){
+        {impl::layout_variadic_indexing(layout, std::make_index_sequence<T::order>{})}->std::same_as<size_t>;
+        {layout(std::array<size_t,T::order>{})}->std::same_as<size_t>;
+    };
+
+    /*!
+     * \brief Helper function that is used to check the presence of an indexing operation from a pack of indices
+     */
+    template<typename Obj, size_t... Indices>
+    void layout_variadic_set_lengths(Obj& obj, std::index_sequence<Indices ...>){
+        obj.set_lengths()(Indices ...);
+    };
+
+    /*!
+     * \brief Constraints Layouts to have a resizeable lengths
+     */
+    template<typename T>
+    concept ResizeableLayout = requires (T layout){
+        impl::layout_variadic_set_lengths(layout, std::make_index_sequence<T::order>{});
+        layout.set_lengths(std::array<size_t, T::order>());
+        layout.set_lengths(std::vector<size_t>());
+    };
+
+    /*!
+     * \brief Constraints Layouts to have a order
+     */
+    template<typename T>
+    concept LayoutWithOrder = requires (T layout){
+        T::order;
+    };
+
+
+    /*!
+     * \brief Constraints Layouts to have a resizeable lengths
+     */
+    //FIXME : check constraints on the size of the Layout, to make sure it is sliceable
+    //FIXME: check the file layout.h. Now it is possible to have a Layout<0>. Shall it be removed?
+    template<typename T>
+    concept SliceableLayout = requires (T layout){
+        {layout.template slice_dimension<0>(holor::range(0,1))}->std::same_as<T>;
+        {layout.template slice_dimension<T::order -1>(holor::range(0,1))}->std::same_as<T>;
+        layout.template slice_dimension<0>(0); //IMPROVE: need a constraint on the dimensionality of the output
+        layout.template slice_dimension<T::order -1>(0); //IMPROVE: need a constraint on the dimensionality of the output
+    };
+}
+
+
+
 template<typename T>
-concept LayoutType = requires (T layout){
-    // {point1-=point2}->std::same_as<T&>;
+concept LayoutType = impl::IndexableLayout<T> && impl::ResizeableLayout<T> && impl::SliceableLayout<T> && impl::LayoutWithOrder<T> && requires (T layout){
+    std::is_same<typename T::layout_type, impl::LayoutType>(); ///<! \brief it has a layout_type tag;
+    layout == layout; //<! it has an equality operator
+    //it has various get functions
+    {layout.dimensions()}->std::same_as<size_t>;
+    {layout.size()}->std::same_as<size_t>;
+    {layout.offset()}->std::same_as<size_t>;
+    {layout.lengths()}->std::same_as<std::array<size_t,T::order>>;
+    {layout.length(0)}->std::same_as<size_t>;
+    {layout.strides()}->std::same_as<std::array<size_t,T::order>>;
+    {layout.stride(0)}->std::same_as<size_t>;
 };
 
 
