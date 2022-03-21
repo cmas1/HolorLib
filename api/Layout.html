@@ -1016,7 +1016,7 @@
                 
                 <h1 id="layout-class">Layout class<a class="headerlink" href="#layout-class" title="Permanent link">&para;</a></h1>
 <p>Defined in header <code>holor/layout.h</code>, within the <code class="highlight"><span class="k">namespace</span><span class="w"> </span><span class="nn">holor</span><span class="w"></span></code>.    </p>
-<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="p">(</span><span class="n">N</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="k">class</span> <span class="nc">Layout</span><span class="w"></span>
 </code></pre></div>
 <p>This class implements the mapping between the indices a Holor container and the locations in the memory where the elements are stored.
@@ -1050,7 +1050,7 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 <tbody>
 <tr>
 <td><code>N</code></td>
-<td>number of dimensions in the layout</td>
+<td>number of dimensions in the layout. It must be <code>N&gt;0</code></td>
 </tr>
 </tbody>
 </table>
@@ -1330,7 +1330,7 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 <span class="w">    </span><span class="n">Layout</span><span class="o">&lt;</span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_dimension</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div></li>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="w"> </span><span class="n">Dim</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="p">(</span><span class="n">Dim</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">Dim</span><span class="w"> </span><span class="o">&lt;</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="n">Layout</span><span class="o">&lt;</span><span class="n">N</span><span class="mi">-1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_dimension</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">num</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">slice_dimension</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">num</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 </code></pre></div></li>
 </ol>
 <h5 id="brief_14">brief<a class="headerlink" href="#brief_14" title="Permanent link">&para;</a></h5>
@@ -1346,6 +1346,10 @@ are stored as a 1D data sequence following a <a href="https://en.wikipedia.org/w
 </div>
 <h5 id="return_12">return<a class="headerlink" href="#return_12" title="Permanent link">&para;</a></h5>
 <p>A new Layout with <code>N</code> or <code>N-1</code> dimensions, where the dimension <code>Dim</code> contains only the lements indexed by the <code>range</code> argument.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When slicing a Layout with a single number rather than with a range, the returned Layout as <code>N-1</code> dimensions. Thus, the Layout being sliced must have <code>N&gt;1</code> dimensions.</p>
+</div>
 <hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7">
 </hr>
 <h2 id="non-member-functions">Non-Member functions<a class="headerlink" href="#non-member-functions" title="Permanent link">&para;</a></h2>
