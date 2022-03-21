@@ -2,19 +2,14 @@ static_assertions.h:
     ☐ revisit container concepts (check BSTools)
 
 holor.h and holor_ref.h:
-    ☐ //FIXME: now Holors can have 0 dimensions. This may not be optimal. Check if it shoud be constrained (and all the methods inside holor and holor_ref)
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
-
-layout.h:
-    ☐ In the constructor from containers of lengths, use the universal reference &&
-
 
 holor_concepts.h:
     ☐ Concept LayoutType //WIP 
     ☐ Concept HolorType
 
 layout.h:
-    ☐ //WIP //FIXME: check the file layout.h. Now it is possible to have a Layout<0>. Shall it be removed?
+    ☐ In the constructor from containers of lengths, use the universal reference &&
     ☐ //IMPROVEMENT!! When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This is inefficient, as confirmed by the benchmark BM_HolorSlicing. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation. 
 
 indexes.h:
@@ -22,6 +17,10 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ //WIP //FIXME: now Holors can have 0 dimensions. This may not be optimal. Check if it shoud be constrained (and all the methods inside holor and holor_ref) @done(22-03-21 10:51) @project(holor.h and holor_ref.h)
+  ✔  Add constraint that N>0 to the documentation, and update the api for the functions, explaining how some of them do not apply, depending on N (e.g., row requires N>1, etc.) @done(22-03-21 10:51) @project(holor.h and holor_ref.h)
+  ✔ //WIP //FIXME: check the file layout.h. Now it is possible to have a Layout<0>. Shall it be removed? @done(22-03-21 10:51) @project(layout.h)
+  ✔  Add constraint that N>0 to the documentation. Also update the api for slice_dimension with a single num, also explaining that it is not available for a Layout with N=1 @done(22-03-21 10:51) @project(layout.h)
   ✔ RESIZE: Now it is possible to create an empy holor without specifying its legnths or elements. To make this useful, we should add the functionality to later specify the lenghts of the holor or resize it (and its underlying layout), upadating the size and reserving the appropriate space in memory @done(22-01-20 12:39) @project(holor.h and layout.h)
   ✔ (Holor only) rename the function lengths(dim) to length(dim), to make the difference with lenghts() more intuitive. @done(22-01-20 11:40) @project(holor.h and holor_ref.h)
   ✘ finalize the constructor from a pack of size_t! //canceled because conflicting with constructor from nested list @cancelled(22-01-20 11:49) @project(holor.h and layout.h)

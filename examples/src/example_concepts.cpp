@@ -32,5 +32,10 @@ int main(){
     Layout<2> simple_layout;
     static_assert(LayoutType<decltype(simple_layout)>);
 
+    Layout<1> pippo{6};
+    pippo.slice_dimension<0>({1,2});
+
+    Holor<int,2> pluto;
+    pluto.row(0);
     return 0;
 }

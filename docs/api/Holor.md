@@ -3,7 +3,7 @@
 Defined in header `holor/holor.h`, within the `#!cpp namespace holor`.       
 
 ``` cpp
-    template<typename T, size_t N>
+    template<typename T, size_t N> requires (N>0)
     class Holor;
 ```
 
@@ -20,7 +20,7 @@ Holors are implemented with a [row-major](https://en.wikipedia.org/wiki/Row-_and
 
 |Name | Description                        |
 |-----|------------------------------------|
-| `N` | number of dimensions in the layout |
+| `N` | number of dimensions of the container. It must be `N>0` |
 | `T` | type of the elements stored in the container |
 
 <hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7"> </hr>
@@ -394,11 +394,11 @@ A slice as a HolorRef. The number of dimensions of the returned holorRef depends
 ##### signature
 1. 
 ``` cpp
-    HolorRef<T, N-1> row(size_t i);
+    auto row(size_t i);
 ```
 2. 
 ``` cpp
-    const HolorRef<T, N-1> row(size_t i) const;
+    const auto row(size_t i) const;
 ```
 ##### brief 
 Get a single row of the container.
@@ -412,17 +412,19 @@ Get a single row of the container.
 the slice corresponding to the `i`-th row. This slice is a HolorRef with `N-1` dimensions.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
+!!! warning
+    Since the slice has `N-1` dimensions, this function is available only for Holor containers with `N>1`.
 
 
 #### col
 ##### signature
 1. 
 ``` cpp
-    HolorRef<T, N-1> col(size_t i);
+    auto col(size_t i);
 ```
 2. 
 ``` cpp
-    const HolorRef<T, N-1> col(size_t i) const;
+    const auto col(size_t i) const;
 ```
 ##### brief 
 Get a single column of the container.
@@ -436,18 +438,21 @@ Get a single column of the container.
 The slice corresponding to the `i`-th column. This slice is a HolorRef with `N-1` dimensions.
 <hr style="background-color:#9999ff; opacity:0.4; width:50%">
 
+!!! warning
+    Since the slice has `N-1` dimensions, this function is available only for Holor containers with `N>1`.
+
 
 #### slice
 ##### signature
 1. 
 ``` cpp
-    template<size_t M>
-    HolorRef<T, N-1> slice(size_t i);
+    template<size_t M> requires (M<N)
+    auto slice(size_t i);
 ```
 2. 
 ``` cpp
-    template<size_t M>
-    const HolorRef<T, N-1> slice(size_t i) const;
+    template<size_t M> requires (M<N)
+    const auto slice(size_t i) const;
 ```
 ##### brief
 Get the `i`-th slice of a single dimension (e.g., the fifth row or the second column)
@@ -462,7 +467,8 @@ Get the `i`-th slice of a single dimension (e.g., the fifth row or the second co
 ##### return
 The slice corresponding to the `i`-th coordinate along the `M`-th dimension. This slice is a HolorRef with `N-1` dimensions.
 
-
+!!! warning
+    Since the slice has `N-1` dimensions, this function is available only for Holor containers with `N>1`. Moreover, it must be `M<N`.
 
 ## Non-Member functions
 

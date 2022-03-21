@@ -47,7 +47,7 @@ namespace holor{
  * \tparam N the number of dimensions of the container. For example, for a matrix-like container it is `N-2`.
  * \tparam T the type of the elements stored in the container.
  */
-template<typename T, size_t N>
+template<typename T, size_t N> requires (N>0)
 class HolorRef{   
 
     public:
@@ -454,11 +454,11 @@ class HolorRef{
          * \param i index of the row to be indexed
          * \return a reference container to the row 
          */
-        HolorRef<T, N-1> row(size_t i){
+        auto row(size_t i){
             return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<0>(i));
         }
 
-        const HolorRef<T, N-1> row(size_t i) const{
+        const auto row(size_t i) const{
             return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<0>(i));
         }
 
@@ -468,11 +468,11 @@ class HolorRef{
          * \param i index of the column to be indexed
          * \return a reference container to the column 
          */
-        HolorRef<T, N-1> col(size_t i){
+        auto col(size_t i){
             return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<1>(i));
         }
 
-        const HolorRef<T, N-1> col(size_t i) const{
+        const auto col(size_t i) const{
             return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<1>(i));
         }
 
@@ -483,13 +483,13 @@ class HolorRef{
          * \param i index of the slice alonge the `M-th` dimension
          * \return a reference container to the slice 
          */
-        template<size_t M>
-        HolorRef<T, N-1> slice(size_t i){
+        template<size_t M> requires (M<N)
+        auto slice(size_t i){
             return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<M>(i));
         }
 
-        template<size_t M>
-        const HolorRef<T, N-1> slice(size_t i) const{
+        template<size_t M> requires (M<N)
+        const auto slice(size_t i) const{
             return HolorRef<T, N-1>(dataptr_, layout_.template slice_dimension<M>(i));
         }
 

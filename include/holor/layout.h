@@ -43,7 +43,7 @@ namespace holor{
 /*================================================================================================
                                     HELPER FUNCTIONS FOR SLICING A LAYOUT
 ================================================================================================*/
-template<size_t N>
+template<size_t N> requires (N>0)
 class Layout;
  
 namespace impl{
@@ -108,14 +108,14 @@ namespace impl{
  * 
  * \tparam `N` is the number of dimensions in the layout
  */
-template<size_t N>
+template<size_t N> requires (N>0)
 class Layout{
 
     
     /*!
      * \brief Layout<N> is made friend of Layout<M> so that we can modify its private variables when slicing a layout (and reducing its dimension)
      */
-    template<size_t M>
+    template<size_t M> requires (M>0)
     friend class Layout;
     
     
@@ -395,7 +395,7 @@ class Layout{
          * \exception holor::exception::HolorRuntimeError if `range` does not satisfy their constraints. The exception level is `release`.
          * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
          */
-        template<size_t Dim> requires ( (Dim>=0) && (Dim <N) )
+        template<size_t Dim> requires ( (Dim>=0) && (Dim <N))
         Layout<N> slice_dimension(range range) const{
             assert::dynamic_assert( range.end_ < lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid range.") );
             Layout<N> res = *this;
@@ -410,12 +410,12 @@ class Layout{
          * \brief Function for indexing a single dimension of the Layout
          * \tparam Dim dimension to be sliced. `Dim` must be a value in the range `[0, N-1]`.
          * \param num the index of the element to be taken from the dimension `Dim`.
-         * \return a new Layout with `N-1` dimensions, where the dimension `Dim` is reduced to a single element indexed by the argument `num`. `num` must be a valid value with respect to the number of elements in the dimension `Dim`.
+         * \return a new Layout with `N-1` dimensions, where the dimension `Dim` is reduced to a single element indexed by the argument `num`. `num` must be a valid value with respect to the number of elements in the    Layout<0> simple_layout0; dimension `Dim`.
          * \exception holor::exception::HolorRuntimeError if `num` does not satisfy their constraints. The exception level is `release`.
          * \b Note: the level of dynamic checks is by default set on `release`, and can be changed by setting the compiler directive `DEFINE_ASSERT_LEVEL`. For example, setting in the CMakeLists file '-DDEFINE_ASSERT_LEVEL=no_checks` disables all dynamic checks.
          */
-        template<size_t Dim> requires ( (Dim>=0) && (Dim <N) )
-        Layout<N-1> slice_dimension(size_t num) const{
+        template<size_t Dim> requires ( (Dim>=0) && (Dim <N))
+        auto slice_dimension(size_t num) const{
             assert::dynamic_assert(num>=0 && num<lengths_[Dim], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
             Layout<N-1> res;
             size_t i = 0;
@@ -644,7 +644,7 @@ size_t Layout<4>::operator()(Index i, Index j, Index k, Index w) const{
 ================================================================================================*/
 /*!
 * \brief comparison operator that verifies the equality of Layout objects of the same order `M`
-* \tparam M is the order of the two Kayouts
+* \tparam M is the order of the two Layouts
 * \param l1 is the first Layout of the comparison
 * \param l2 is the second Layout of the comparison
 * \return true if the comparison is satisfied, false otherwise
@@ -657,7 +657,7 @@ inline bool operator==(const Layout<M>& l1, const Layout<M>& l2){
 
 /*!
 * \brief comparison operator that verifies the inequality of Layout objects of the same order `M`
-* \tparam M is the order of the two Kayouts
+* \tparam M is the order of the two Layouts
 * \param l1 is the first Layout of the comparison
 * \param l2 is the second Layout of the comparison
 * \return true if the two Layous are not equal, false otherwise

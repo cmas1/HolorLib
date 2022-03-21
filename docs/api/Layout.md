@@ -3,7 +3,7 @@
 Defined in header `holor/layout.h`, within the `#!cpp namespace holor`.    
 
 ``` cpp
-    template<size_t N>
+    template<size_t N> requires (N>0)
     class Layout
 ```
 
@@ -32,9 +32,9 @@ A Layout supports two fundamental operations:
 
 ## Template parameters
 
-|Name | Description                        |
-|-----|------------------------------------|
-| `N` | number of dimensions in the layout |
+|Name | Description                                          |
+|-----|------------------------------------------------------|
+| `N` | number of dimensions in the layout. It must be `N>0` |
 
 <hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7"> </hr>
 
@@ -377,7 +377,7 @@ the Layout containing the indexed range of elements. In this case the Layout has
 2. 
 ``` cpp
     template<size_t Dim> requires ( (Dim>=0) && (Dim <N) )
-    Layout<N-1> slice_dimension(size_t num) const;
+    auto slice_dimension(size_t num) const;
 ```
 
 ##### brief
@@ -393,7 +393,8 @@ Function for indexing a single dimension of the Layout
 ##### return
 A new Layout with `N` or `N-1` dimensions, where the dimension `Dim` contains only the lements indexed by the `range` argument.
 
-
+!!! warning
+    When slicing a Layout with a single number rather than with a range, the returned Layout as `N-1` dimensions. Thus, the Layout being sliced must have `N>1` dimensions.
 
 
 
