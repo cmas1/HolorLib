@@ -41,7 +41,7 @@ namespace holor{
 
 namespace impl{
 
-    struct LayoutType{};  ///< \brief type that is used to tag a layout
+    struct LayoutTypeTag{};  ///< \brief type that is used to tag a layout
 
 
     /*!
@@ -52,6 +52,7 @@ namespace impl{
         return obj.operator()(Indices ...);
     };
 
+
     /*!
      * \brief Constraints Layouts to have a suitable indexing function
      */
@@ -61,6 +62,7 @@ namespace impl{
         {layout(std::array<size_t,T::order>{})}->std::same_as<size_t>;
     };
 
+
     /*!
      * \brief Helper function that is used to check the presence of an indexing operation from a pack of indices
      */
@@ -68,6 +70,7 @@ namespace impl{
     void layout_variadic_set_lengths(Obj& obj, std::index_sequence<Indices ...>){
         obj.set_lengths()(Indices ...);
     };
+
 
     /*!
      * \brief Constraints Layouts to have a resizeable lengths
@@ -79,35 +82,43 @@ namespace impl{
         layout.set_lengths(std::vector<size_t>());
     };
 
+
     /*!
-     * \brief Constraints Layouts to have a order
+     * \brief Constraints Layouts to have a order and a LayoutType tag
      */
     template<typename T>
-    concept LayoutWithOrder = requires (T layout){
-        T::order;
+    concept LayoutWithOrder = (T::order > 0) && requires (T layout){
+        std::is_same<typename T::layout_type, impl::LayoutTypeTag>(); ///<! \brief it has a layout_type tag;
     };
 
 
     /*!
-     * \brief Constraints Layouts to have a resizeable lengths
+     * \brief Constraints Layouts to be sliceable
      */
-    //FIXME : check constraints on the size of the Layout, to make sure it is sliceable
-    //FIXME: check the file layout.h. Now it is possible to have a Layout<0>. Shall it be removed?
     template<typename T>
-    concept SliceableLayout = requires (T layout){
+    concept SliceableLayoutByRange = requires (T layout){
         {layout.template slice_dimension<0>(holor::range(0,1))}->std::same_as<T>;
         {layout.template slice_dimension<T::order -1>(holor::range(0,1))}->std::same_as<T>;
-        layout.template slice_dimension<0>(0); //IMPROVE: need a constraint on the dimensionality of the output
-        layout.template slice_dimension<T::order -1>(0); //IMPROVE: need a constraint on the dimensionality of the output
     };
+
+    template<typename T>
+    concept SliceableLayoutByDim = (T::order==1) || requires (T layout){
+        layout.template slice_dimension<0>(0);
+        layout.template slice_dimension<T::order -1>(0);
+        requires ( decltype(layout.template slice_dimension<0>(0))::order == T::order-1);
+        requires ( decltype(layout.template slice_dimension<T::order -1>(0))::order == T::order-1);
+    };
+
+    template<typename T>
+    concept SliceableLayout = SliceableLayoutByRange<T> && SliceableLayoutByDim<T>;
+
+
 }
 
 
 
 template<typename T>
-concept LayoutType = impl::IndexableLayout<T> && impl::ResizeableLayout<T> && impl::SliceableLayout<T> && impl::LayoutWithOrder<T> && requires (T layout){
-    std::is_same<typename T::layout_type, impl::LayoutType>(); ///<! \brief it has a layout_type tag;
-    layout == layout; //<! it has an equality operator
+concept LayoutType = impl::LayoutWithOrder<T> && impl::IndexableLayout<T> && impl::ResizeableLayout<T> && impl::SliceableLayout<T> && std::equality_comparable<T> && requires (T layout){
     //it has various get functions
     {layout.dimensions()}->std::same_as<size_t>;
     {layout.size()}->std::same_as<size_t>;

@@ -34,6 +34,7 @@ int main(){
 
     Layout<1> pippo{6};
     pippo.slice_dimension<0>({1,2});
+    static_assert(LayoutType<decltype(pippo)>);
 
     Holor<int,2> pluto;
     pluto.row(0);

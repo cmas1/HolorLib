@@ -124,7 +124,7 @@ class Layout{
                                     ALIASES
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         static constexpr size_t order = N; ///< \brief number of dimensions in the reference container 
-        using layout_type = holor::impl::LayoutType; ///<!  \brief tags a Layout type
+        using layout_type = holor::impl::LayoutTypeTag; ///<!  \brief tags a Layout type
         
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
