@@ -58,7 +58,7 @@ namespace impl{
 template<typename T>
 concept HolorType = impl::HolorWithDimensions<T> && requires (T holor){
     //it has various get functions
-    {holor.layout()}->LayoutType<>; //TODO check return type is a layout
+    {holor.layout()}->DecaysToLayoutType<>; //TODO check return type is a layout
     // {layout.dimensions()}->std::same_as<size_t>;
     // {layout.size()}->std::same_as<size_t>;
     // {layout.offset()}->std::same_as<size_t>;

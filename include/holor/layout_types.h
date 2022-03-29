@@ -129,6 +129,9 @@ concept LayoutType = impl::LayoutWithOrder<T> && impl::IndexableLayout<T> && imp
 };
 
 
+template<typename T>
+concept DecaysToLayoutType = LayoutType<std::decay_t<T>>;
+
 } //namespace holor
 
 #endif // LAYOUT_TYPES_H
