@@ -58,14 +58,19 @@ namespace impl{
 template<typename T>
 concept HolorType = impl::HolorWithDimensions<T> && requires (T holor){
     //it has various get functions
-    {holor.layout()}->DecaysToLayoutType<>; //TODO check return type is a layout
-    // {layout.dimensions()}->std::same_as<size_t>;
-    // {layout.size()}->std::same_as<size_t>;
-    // {layout.offset()}->std::same_as<size_t>;
-    // {layout.lengths()}->std::same_as<std::array<size_t,T::order>>;
-    // {layout.length(0)}->std::same_as<size_t>;
-    // {layout.strides()}->std::same_as<std::array<size_t,T::order>>;
-    // {layout.stride(0)}->std::same_as<size_t>;
+    {holor.layout()}->DecaysToLayoutType<>;
+    {holor.size()}->std::same_as<size_t>;
+    {holor.lengths()}->std::same_as<std::array<size_t,T::dimensions>>;
+    {holor.length(0)}->std::same_as<size_t>;
+    holor.data();
+    holor.begin();
+    holor.end();
+    holor.cbegin();
+    holor.cend();
+    holor.rbegin();
+    holor.rend();
+    holor.crbegin();
+    holor.crend();
 };
 
 } //namespace holor

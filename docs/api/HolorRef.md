@@ -242,15 +242,15 @@ Return the number of elements in the container, a `size_t`.
 
 
 
-#### dataptr
+#### datap
 ##### signature
 1. 
 ``` cpp
-    T* dataptr();
+    T* data();
 ```
 2. 
 ``` cpp
-    const T* dataptr();
+    const T* data();
 ```
 ##### brief
 Get a flat access to the memory that stores the elements contained in the container.

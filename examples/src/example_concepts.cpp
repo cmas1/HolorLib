@@ -39,8 +39,12 @@ int main(){
     Holor<int,2> pluto;
     pluto.row(0);
 
+    std::vector<int> datavec{1,2,3,4};
+    HolorRef<int,2> minni(datavec.data(), Layout<2>{2,2});
+
 
     static_assert(HolorType<decltype(pluto)>);
+    static_assert(HolorType<decltype(minni)>);
 
     return 0;
 

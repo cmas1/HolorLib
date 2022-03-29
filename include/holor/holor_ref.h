@@ -395,11 +395,11 @@ class HolorRef{
          * \brief Get a flat access to the data contained in the container
          * \return a pointer to the data stored in the container
          */
-        T* dataptr(){
+        T* data(){
             return dataptr_;
         }
         
-        const T* dataptr() const{
+        const T* data() const{
             return dataptr_;
         }
 
@@ -416,8 +416,8 @@ class HolorRef{
         auto rbegin(){ return reverse_iterator(end()); } ///< \brief returns a reverse iterator to the beginning
         auto rend(){ return reverse_iterator(begin()); } ///< \brief returns a reverse iterator to the end
 
-        auto crbegin() const{ return reverse_iterator(cend()); } ///< \brief returns a constant reverse iterator to the beginning
-        auto crend() const{ return reverse_iterator(cbegin()); } ///< \brief returns a constant reverse iterator to the end
+        auto crbegin() const{ return const_reverse_iterator(cbegin()); } ///< \brief returns a constant reverse iterator to the beginning
+        auto crend() const{ return const_reverse_iterator(cend()); } ///< \brief returns a constant reverse iterator to the end
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
