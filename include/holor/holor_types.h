@@ -24,6 +24,13 @@
 #ifndef HOLOR_TYPES_H
 #define HOLOR_TYPES_H
 
+#include <type_traits>
+#include <concepts>
+#include <utility>
+
+#include "indexes.h"
+#include "../common/static_assertions.h"
+#include "layout_types.h"
 
 namespace holor{
 
@@ -32,6 +39,34 @@ namespace holor{
                                     Holor Concepts
 ================================================================================================*/
 
+namespace impl{
+
+    struct HolorTypeTag{};  ///<! \brief type that is used to tag a holor container
+
+
+    /*!
+     * \brief Constraints Holor Containers to have a order and a HolorTypeTag
+     */
+    template<typename T>
+    concept HolorWithDimensions = (T::dimensions > 0) && requires (T holor){
+        std::is_same<typename T::holor_type, impl::HolorTypeTag>();
+    };
+
+}
+
+
+template<typename T>
+concept HolorType = impl::HolorWithDimensions<T> && requires (T holor){
+    //it has various get functions
+    {holor.layout()}->LayoutType<>; //TODO check return type is a layout
+    // {layout.dimensions()}->std::same_as<size_t>;
+    // {layout.size()}->std::same_as<size_t>;
+    // {layout.offset()}->std::same_as<size_t>;
+    // {layout.lengths()}->std::same_as<std::array<size_t,T::order>>;
+    // {layout.length(0)}->std::same_as<size_t>;
+    // {layout.strides()}->std::same_as<std::array<size_t,T::order>>;
+    // {layout.stride(0)}->std::same_as<size_t>;
+};
 
 } //namespace holor
 

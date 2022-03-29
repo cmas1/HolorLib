@@ -1,3 +1,6 @@
+license:
+    ☐ update license in all files, correcting also the typo suholorantial //TODO next
+
 static_assertions.h:
     ☐ revisit container concepts (check BSTools)
 
@@ -5,11 +8,15 @@ holor.h and holor_ref.h:
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
 
 Concepts:
+    ☐ //FIXME add decay to layout type constraints
     ☐ Add Documentation for the LayoutType Concept //TODO next
-    ☐ Concept HolorType
+    ☐ Concept HolorType //WIP
+    ☐ Add Documentation for the HolorType Concept //TODO next
 
 Code Organization:
-    ☐ Put the layout stuff in another folder and reorganize the documentation accordingly
+    ☐ Put the layout stuff in another folder and reorganize the documentation accordingly //TODO next
+    ☐ in layout_types.h and holor_types.h may leave only the tag, moving the rest into layout_concepts.h and holor_concepts. //TODO next
+
 
 layout.h:
     ☐ In the constructor from containers of lengths, use the universal reference &&

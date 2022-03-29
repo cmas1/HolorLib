@@ -1,6 +1,6 @@
-// This file is part of Holor, a C++ template library for multi-dimensional containers
+// This file is part of Holor, a C++ header-only template library for multi-dimensional containers
 
-// Copyright 2020-2021 Carlo Masone
+// Copyright 2020-2022 Carlo Masone
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to 
@@ -10,7 +10,7 @@
 // furnished to do so, subject to the following conditions:
 
 // The above copyright notice and this permission notice shall be included in
-// all copies or suholorantial portions of the Software.
+// all copies or substantial portions of the Software.
 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -41,7 +41,16 @@ namespace holor{
 
 namespace impl{
 
-    struct LayoutTypeTag{};  ///< \brief type that is used to tag a layout
+    struct LayoutTypeTag{};  ///< \brief type that is used to tag a layout 
+
+
+    /*!
+     * \brief Constraints Layouts to have a order and a LayoutType tag
+     */
+    template<typename T>
+    concept LayoutWithOrder = (T::order > 0) && requires (T layout){
+        std::is_same<typename T::layout_type, impl::LayoutTypeTag>(); ///<! \brief it has a layout_type tag;
+    };
 
 
     /*!
@@ -81,16 +90,6 @@ namespace impl{
         layout.set_lengths(std::array<size_t, T::order>());
         layout.set_lengths(std::vector<size_t>());
     };
-
-
-    /*!
-     * \brief Constraints Layouts to have a order and a LayoutType tag
-     */
-    template<typename T>
-    concept LayoutWithOrder = (T::order > 0) && requires (T layout){
-        std::is_same<typename T::layout_type, impl::LayoutTypeTag>(); ///<! \brief it has a layout_type tag;
-    };
-
 
     /*!
      * \brief Constraints Layouts to be sliceable
