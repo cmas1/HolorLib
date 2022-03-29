@@ -8,7 +8,6 @@ holor.h and holor_ref.h:
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
 
 Concepts:
-    ☐ //FIXME add decay to layout type constraints
     ☐ Add Documentation for the LayoutType Concept //TODO next
     ☐ Concept HolorType //WIP
     ☐ Add Documentation for the HolorType Concept //TODO next
@@ -16,7 +15,6 @@ Concepts:
 Code Organization:
     ☐ Put the layout stuff in another folder and reorganize the documentation accordingly //TODO next
     ☐ in layout_types.h and holor_types.h may leave only the tag, moving the rest into layout_concepts.h and holor_concepts. //TODO next
-
 
 layout.h:
     ☐ In the constructor from containers of lengths, use the universal reference &&
@@ -27,6 +25,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ //FIXME add decay to layout type constraints @done(22-03-29 16:48) @project(Concepts)
   ✔ Concept LayoutType @done(22-03-22 09:22) @project(Concepts)
   ✔ //WIP //FIXME: now Holors can have 0 dimensions. This may not be optimal. Check if it shoud be constrained (and all the methods inside holor and holor_ref) @done(22-03-21 10:51) @project(holor.h and holor_ref.h)
   ✔  Add constraint that N>0 to the documentation, and update the api for the functions, explaining how some of them do not apply, depending on N (e.g., row requires N>1, etc.) @done(22-03-21 10:51) @project(holor.h and holor_ref.h)
