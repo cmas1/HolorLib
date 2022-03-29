@@ -52,25 +52,35 @@ namespace impl{
         std::is_same<typename T::holor_type, impl::HolorTypeTag>();
     };
 
+    /*!
+     * \brief Constraints Holor Containers to have iterators
+     */
+    template<typename T>
+    concept IterableHolor = requires (T holor){
+        holor.data();
+        holor.begin();
+        holor.end();
+        holor.cbegin();
+        holor.cend();
+        holor.rbegin();
+        holor.rend();
+        holor.crbegin();
+        holor.crend();
+    };
+
 }
 
 
 template<typename T>
-concept HolorType = impl::HolorWithDimensions<T> && requires (T holor){
+concept HolorType = impl::HolorWithDimensions<T> && impl::IterableHolor<T> && requires (T holor){
+    //TODO: it must have access functions
+    //TODO: it must be sliceable
+    //TODO: it can set _lengths if it is a Holor
     //it has various get functions
     {holor.layout()}->DecaysToLayoutType<>;
     {holor.size()}->std::same_as<size_t>;
     {holor.lengths()}->std::same_as<std::array<size_t,T::dimensions>>;
     {holor.length(0)}->std::same_as<size_t>;
-    holor.data();
-    holor.begin();
-    holor.end();
-    holor.cbegin();
-    holor.cend();
-    holor.rbegin();
-    holor.rend();
-    holor.crbegin();
-    holor.crend();
 };
 
 } //namespace holor
