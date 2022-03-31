@@ -2,97 +2,102 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://cmas1.io/HolorLib/index.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/about/index.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/about/holor_containers.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/about/origin_of_holor.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/api/index.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://cmas1.io/HolorLib/api/Concepts.html</loc>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/api/Exceptions.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/api/Holor.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/api/HolorRef.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/api/Indexes.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/api/Layout.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/getting_started/index.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/getting_started/install.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/getting_started/optional.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/tutorials/index.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/tutorials/holor.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/tutorials/holorref.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/tutorials/indexing_slicing.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/tutorials/iterators.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cmas1.io/HolorLib/tutorials/layout.html</loc>
-         <lastmod>2022-03-29</lastmod>
+         <lastmod>2022-03-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
