@@ -312,7 +312,7 @@ class HolorRef{
         using const_iterator = typename HolorRef<T,N>::Iterator<true>;          ///< \brief type of the const_iterator for the container
         using reverse_iterator = std::reverse_iterator<iterator>;               ///< \brief type of the reverse_iterator for the container
         using const_reverse_iterator = std::reverse_iterator<const_iterator>;   ///< \brief type of the const_reverse_iterator for the container
-        using holor_type = holor::impl::HolorTypeTag;                           ///< \brief tags a Holor type
+        using holor_type = holor::impl::HolorNonOwningTypeTag;                  ///< \brief tags a Holor type without ownership over its data
 
 
 

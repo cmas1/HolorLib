@@ -41,7 +41,8 @@ namespace holor{
 
 namespace impl{
 
-    struct HolorTypeTag{};  ///<! \brief type that is used to tag a holor container
+    struct HolorOwningTypeTag{};  ///<! \brief type that is used to tag a holor container that has ownership over its data (Holor)
+    struct HolorNonOwningTypeTag{};  ///<! \brief type that is used to tag a holor container that does not have ownership over its data (HolorRef)
 
 
     /*!
@@ -49,7 +50,7 @@ namespace impl{
      */
     template<typename T>
     concept HolorWithDimensions = (T::dimensions > 0) && requires (T holor){
-        std::is_same<typename T::holor_type, impl::HolorTypeTag>();
+        std::is_same<typename T::holor_type, impl::HolorOwningTypeTag>() || std::is_same<typename T::holor_type, impl::HolorNonOwningTypeTag>();
     };
 
     /*!
@@ -68,14 +69,82 @@ namespace impl{
         holor.crend();
     };
 
+
+    
+    /*!
+     * \brief Helper function that is used to check the presence of a single element access operation from a pack of indices
+     */
+    template<typename Obj, size_t... Indices>
+    auto holor_variadic_element_access(Obj& obj, std::index_sequence<Indices ...>){
+        return obj.operator()(Indices ...);
+    };
+
+    /*!
+     * \brief Helper function that is used to check the presence of a slice access operation from a pack of indices/ranges
+     */
+    template<typename Obj, size_t... Indices>
+    auto holor_variadic_slice_access(Obj& obj, std::index_sequence<Indices ...>){
+        return obj.operator()(holor::range{0,1}, Indices ...);
+    };
+
+    /*!
+     * \brief Constraints Holor to have access functions
+     */
+    template<typename T>
+    concept AccessibleHolor = requires (T holor){
+        {impl::holor_variadic_element_access(holor, std::make_index_sequence<T::dimensions>{})}->std::same_as<typename T::value_type>;
+        {impl::holor_variadic_slice_access(holor, std::make_index_sequence<T::dimensions-1>{})}->impl::HolorWithDimensions<>;
+    };
+
+
+    /*!
+     * \brief Constraints Holor to be sliceable
+     */
+    template<typename T>
+    concept SliceableHolorByDim = (T::dimensions==1) || requires (T holor){
+        {holor.template slice<0>(0)}->HolorWithDimensions<>;
+        {holor.template slice<T::dimensions-1>(0)}->HolorWithDimensions<>;
+    };
+
+    template<typename T>
+    concept SliceableHolorByRow = (T::dimensions==1) || requires (T holor){
+        {holor.row(0)}->HolorWithDimensions<>;
+    };
+
+    template<typename T>
+    concept SliceableHolorByCol = (T::dimensions<2) || requires (T holor){
+        {holor.col(0)}->HolorWithDimensions<>;
+    };
+
+    template<typename T>
+    concept SliceableHolor = SliceableHolorByDim<T> && SliceableHolorByRow<T> && SliceableHolorByCol<T>;
+
+
+
+    /*!
+     * \brief Helper function that is used to check the presence of an set_length operation from a pack of indices
+     */
+    template<typename Obj, size_t... Indices>
+    void holor_variadic_set_lengths(Obj& obj, std::index_sequence<Indices ...>){
+        obj.set_lengths()(Indices ...);
+    };
+
+
+    /*!
+     * \brief Constraints Layouts to have a resizeable lengths
+     */
+    template<typename T>
+    concept ResizeableHolor = std::is_same_v<typename T::holor_type, impl::HolorNonOwningTypeTag> || requires (T holor){
+        impl::holor_variadic_set_lengths(holor, std::make_index_sequence<T::dimensions>{});
+        holor.set_lengths(std::array<size_t, T::dimensions>());
+        holor.set_lengths(std::vector<size_t>());
+    };
+
 }
 
 
 template<typename T>
-concept HolorType = impl::HolorWithDimensions<T> && impl::IterableHolor<T> && requires (T holor){
-    //TODO: it must have access functions
-    //TODO: it must be sliceable
-    //TODO: it can set _lengths if it is a Holor
+concept HolorType = impl::HolorWithDimensions<T> && impl::IterableHolor<T> && impl::AccessibleHolor<T> && impl::SliceableHolor<T> && impl::ResizeableHolor<T> && requires (T holor){
     //it has various get functions
     {holor.layout()}->DecaysToLayoutType<>;
     {holor.size()}->std::same_as<size_t>;

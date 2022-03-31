@@ -73,7 +73,7 @@ namespace impl{
 
 
     /*!
-     * \brief Helper function that is used to check the presence of an indexing operation from a pack of indices
+     * \brief Helper function that is used to check the presence of an set_lengths operation from a pack of indices
      */
     template<typename Obj, size_t... Indices>
     void layout_variadic_set_lengths(Obj& obj, std::index_sequence<Indices ...>){

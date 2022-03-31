@@ -63,7 +63,7 @@ class Holor{
         using const_iterator = typename std::vector<T>::const_iterator;                 ///< \brief type of the const_iterator for the container
         using reverse_iterator = typename std::vector<T>::reverse_iterator;             ///< \brief type of the reverse_iterator for the container
         using const_reverse_iterator = typename std::vector<T>::const_reverse_iterator; ///< \brief type of the const_reverse_iterator for the container
-        using holor_type = holor::impl::HolorTypeTag;                                   ///< \brief tags a Holor type
+        using holor_type = holor::impl::HolorOwningTypeTag;                             ///< \brief tags a Holor type with ownership over its data
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

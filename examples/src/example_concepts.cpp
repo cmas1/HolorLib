@@ -43,8 +43,11 @@ int main(){
     HolorRef<int,2> minni(datavec.data(), Layout<2>{2,2});
 
 
+    Holor<int,1> paperino;
+
     static_assert(HolorType<decltype(pluto)>);
     static_assert(HolorType<decltype(minni)>);
+    static_assert(HolorType<decltype(paperino)>);
 
     return 0;
 

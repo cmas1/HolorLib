@@ -9,7 +9,6 @@ holor.h and holor_ref.h:
 
 Concepts:
     ☐ Add Documentation for the LayoutType Concept //TODO next
-    ☐ Concept HolorType //WIP
     ☐ Add Documentation for the HolorType Concept //TODO next
 
 Code Organization:
@@ -22,9 +21,11 @@ layout.h:
 
 indexes.h:
     ☐ So far the step in range is not supported to create ranges with gaps (for example range{1,7,2} => [1,3,5,7]). This would imply reworking Layouts, namely the way they are indexed with a range. //NOTE: not a priority, avoid for the time being
-    ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
+    ☐ Generalize to al
+    low also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ Concept HolorType @done(22-03-31 09:29) @project(Concepts)
   ✔ //FIXME add decay to layout type constraints @done(22-03-29 16:48) @project(Concepts)
   ✔ Concept LayoutType @done(22-03-22 09:22) @project(Concepts)
   ✔ //WIP //FIXME: now Holors can have 0 dimensions. This may not be optimal. Check if it shoud be constrained (and all the methods inside holor and holor_ref) @done(22-03-21 10:51) @project(holor.h and holor_ref.h)
