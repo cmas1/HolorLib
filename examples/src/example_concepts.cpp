@@ -29,25 +29,33 @@ using namespace holor;
 
 
 int main(){
+
     Layout<2> simple_layout;
-    static_assert(LayoutType<decltype(simple_layout)>);
+    std::vector<float> simple_vector;
+    std::cout << " \033[32m Layout<2> simple_layout; \033[0m \n";
+    std::cout << " \033[32m std::vector<float> simple_vector; \033[0m \n";
+    std::cout << "  LayoutType<decltype(simple_layout)> = \033[33m" << LayoutType<decltype(simple_layout)> << "\033[0m\n";
+    std::cout << "  LayoutType<decltype(&simple_layout)> = \033[33m" << LayoutType<decltype(&simple_layout)> << "\033[0m\n";
+    std::cout << "  DecaysToLayoutType<Layout<2>&)> = \033[33m" << DecaysToLayoutType<Layout<2>&> << "\033[0m\n";
+    std::cout << "  LayoutType<decltype(simple_vector)> = \033[33m" << LayoutType<decltype(simple_vector)> << "\033[0m\n\n";
 
-    Layout<1> pippo{6};
-    pippo.slice_dimension<0>({1,2});
-    static_assert(LayoutType<decltype(pippo)>);
 
-    Holor<int,2> pluto;
-    pluto.row(0);
-
+    Holor<int,1> simple_holor1D;
+    Holor<int,2> simple_holor2D{{1,2,3},{4,5,6}};
     std::vector<int> datavec{1,2,3,4};
-    HolorRef<int,2> minni(datavec.data(), Layout<2>{2,2});
+    HolorRef<int,2> simple_HolorRef2D(datavec.data(), Layout<2>{2,2});
+    std::cout << " \033[32m Holor<int,1> simple_holor1D; \033[0m \n";
+    std::cout << " \033[32m Holor<int,2> simple_holor2D{{1,2,3},{4,5,6}}; \033[0m \n";
+    std::cout << " \033[32m std::vector<int> datavec{1,2,3,4}; \033[0m \n";
+    std::cout << " \033[32m HolorRef<int,2> simple_HolorRef2D(datavec.data(), Layout<2>{2,2}); \033[0m \n";
+    std::cout << "  HolorType<decltype(simple_holor1D)> = \033[33m" << HolorType<decltype(simple_holor1D)> << "\033[0m\n";
+    std::cout << "  HolorType<decltype(simple_holor2D)> = \033[33m" << HolorType<decltype(simple_holor2D)> << "\033[0m\n";
+    std::cout << "  HolorType<decltype(datavec)> = \033[33m" << HolorType<decltype(datavec)> << "\033[0m\n";
+    std::cout << "  HolorType<decltype(simple_HolorRef2D)> = \033[33m" << HolorType<decltype(simple_HolorRef2D)> << "\033[0m\n";
+    std::cout << "  HolorType<HolorRef<int,2>> = \033[33m" << HolorType<HolorRef<int,2>> << "\033[0m\n";
+    std::cout << "  HolorType<HolorRef<int,2>&> = \033[33m" << HolorType<HolorRef<int,2>&> << "\033[0m\n";
+    std::cout << "  DecaysToHolorType<HolorRef<int,2>&> = \033[33m" << DecaysToHolorType<HolorRef<int,2>&> << "\033[0m\n\n";
 
-
-    Holor<int,1> paperino;
-
-    static_assert(HolorType<decltype(pluto)>);
-    static_assert(HolorType<decltype(minni)>);
-    static_assert(HolorType<decltype(paperino)>);
 
     return 0;
 

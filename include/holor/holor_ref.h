@@ -1,6 +1,6 @@
-// This file is part of Holor, a C++ template library for multi-dimensional containers
+// This file is part of Holor, a C++ header-only template library for multi-dimensional containers
 
-// Copyright 2020-2021 Carlo Masone
+// Copyright 2020-2022 Carlo Masone
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to 
@@ -10,7 +10,7 @@
 // furnished to do so, subject to the following conditions:
 
 // The above copyright notice and this permission notice shall be included in
-// all copies or suholorantial portions of the Software.
+// all copies or substantial portions of the Software.
 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -28,9 +28,9 @@
 #include <cstddef>
 #include <vector>
 
-#include "layout.h"
+#include "../layout/layout.h"
 #include "initializer.h"
-#include "holor_types.h"
+#include "holor_concepts.h"
 #include "../common/static_assertions.h"
 
 
@@ -515,13 +515,13 @@ class HolorRef{
      * \param rhs HolorRef containr from where the values are copied
      */
     //TODO: use a proper concept for HolorContainer
-    template<typename HolorContainer> requires ( (HolorContainer::dimensions == N) && (std::is_same_v<typename HolorContainer::value_type, T>) )
+    template<HolorType HolorContainer> requires ( (HolorContainer::dimensions == N) && (std::is_same_v<typename HolorContainer::value_type, T>) )
     void substitute(const HolorContainer& rhs){
         assert::dynamic_assert(this->layout_.lengths() == rhs.lengths(), EXCEPTION_MESSAGE("Incompatible dimensions."));
         std::copy(rhs.cbegin(), rhs.cend(), this->begin());
     }
 
-    template<typename HolorContainer> requires ( (HolorContainer::dimensions == N) && (std::is_same_v<typename HolorContainer::value_type, T>) )
+    template<HolorType HolorContainer> requires ( (HolorContainer::dimensions == N) && (std::is_same_v<typename HolorContainer::value_type, T>) )
     void substitute(HolorContainer&& rhs){
         assert::dynamic_assert(this->layout_.lengths() == rhs.lengths(), EXCEPTION_MESSAGE("Incompatible dimensions."));
         std::move(rhs.begin(), rhs.end(), this->begin());

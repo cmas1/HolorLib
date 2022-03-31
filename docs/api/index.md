@@ -14,3 +14,4 @@
 |-------|-------------|
 |[Indices](./Indexes.html)| HolorLib uses an index notation to provide the interface to access individual elements or range of elements stored in a Holor container. |
 |[Exceptions](./Exceptions.html)| HolorLib defines some exceptions that may be thrown by runtime assertions. |
+|[Concepts](./Concepts.html)| HolorLib defines some concepts that can be used to denote a type that is a Layout or a holor container. |

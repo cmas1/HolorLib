@@ -1,6 +1,6 @@
-// This file is part of Holor, a C++ template library for multi-dimensional containers
+// This file is part of Holor, a C++ header-only template library for multi-dimensional containers
 
-// Copyright 2020-2021 Carlo Masone
+// Copyright 2020-2022 Carlo Masone
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to 
@@ -10,7 +10,7 @@
 // furnished to do so, subject to the following conditions:
 
 // The above copyright notice and this permission notice shall be included in
-// all copies or suholorantial portions of the Software.
+// all copies or substantial portions of the Software.
 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -171,7 +171,7 @@ TEST(TestHolorRef, CheckGetSet){
         std::array<size_t,3> tmp_lengths{2,2,2};
         EXPECT_EQ(hr.lengths(), tmp_lengths);
         EXPECT_EQ(hr.size(), 8);
-        EXPECT_EQ(hr.dataptr(), vec_data.data());
+        EXPECT_EQ(hr.data(), vec_data.data());
     }
 }
 

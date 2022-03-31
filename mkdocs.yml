@@ -34,7 +34,7 @@ edit_uri: ""
 
 
 # Copyright
-copyright: Copyright &copy; 2020 - 2021 Carlo Masone
+copyright: Copyright &copy; 2020 - 2022 Carlo Masone
 
 
 
@@ -112,6 +112,7 @@ nav:
     - HolorRef: api/HolorRef.md
     - Indices: api/Indexes.md
     - Exceptions : api/Exceptions.md
+    - Concepts : api/Concepts.md
 
 
 # #Not editable

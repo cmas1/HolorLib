@@ -242,7 +242,7 @@ Return the number of elements in the container, a `size_t`.
 
 
 
-#### datap
+#### data
 ##### signature
 1. 
 ``` cpp

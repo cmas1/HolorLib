@@ -59,7 +59,7 @@ Ready to start using HolorLib? The official HolorLib [documentation page](https:
 
 ## MIT License
 
-Copyright 2020-2021 Carlo Masone
+Copyright 2020-2022 Carlo Masone
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to 

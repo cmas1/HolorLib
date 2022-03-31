@@ -1,19 +1,9 @@
-license:
-    ☐ update license in all files, correcting also the typo suholorantial //TODO next
 
 static_assertions.h:
     ☐ revisit container concepts (check BSTools)
 
 holor.h and holor_ref.h:
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
-
-Concepts:
-    ☐ Add Documentation for the LayoutType Concept //TODO next
-    ☐ Add Documentation for the HolorType Concept //TODO next
-
-Code Organization:
-    ☐ Put the layout stuff in another folder and reorganize the documentation accordingly //TODO next
-    ☐ in layout_types.h and holor_types.h may leave only the tag, moving the rest into layout_concepts.h and holor_concepts. //TODO next
 
 layout.h:
     ☐ In the constructor from containers of lengths, use the universal reference &&
@@ -24,6 +14,11 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ update license in all files, correcting also the typo suholorantial @done(22-03-31 11:31) @project(license)
+  ✔ Put the layout stuff in another folder and reorganize the documentation accordingly @done(22-03-31 11:24) @project(Code Organization)
+  ✘ in layout_types.h and holor_types.h may leave only the tag, moving the rest into layout_concepts.h and holor_concepts. //TODO next @cancelled(22-03-31 11:15) @project(Code Organization)
+  ✔ Add Documentation for the LayoutType Concept @done(22-03-31 11:15) @project(Concepts)
+  ✔ Add Documentation for the HolorType Concept @done(22-03-31 11:15) @project(Concepts)
   ✔ Concept HolorType @done(22-03-31 09:29) @project(Concepts)
   ✔ //FIXME add decay to layout type constraints @done(22-03-29 16:48) @project(Concepts)
   ✔ Concept LayoutType @done(22-03-22 09:22) @project(Concepts)
