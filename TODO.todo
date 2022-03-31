@@ -21,8 +21,7 @@ layout.h:
 
 indexes.h:
     ☐ So far the step in range is not supported to create ranges with gaps (for example range{1,7,2} => [1,3,5,7]). This would imply reworking Layouts, namely the way they are indexed with a range. //NOTE: not a priority, avoid for the time being
-    ☐ Generalize to al
-    low also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
+    ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
   ✔ Concept HolorType @done(22-03-31 09:29) @project(Concepts)
