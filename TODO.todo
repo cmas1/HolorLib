@@ -3,6 +3,7 @@ static_assertions.h:
     ☐ revisit container concepts (check BSTools)
 
 holor.h and holor_ref.h:
+    ☐ //WIP add function to access an element given a container of SingleIndex
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
 
 layout.h:
