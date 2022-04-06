@@ -292,13 +292,18 @@ The stride of the layout along the dimension `dim`.
 ```
 2. 
 ``` cpp
-    template<SingleIndex ID>
-    size_t operator()(std::array<ID,N> dims) const;
+    template <class Container> requires assert::SizedContainer<Container, N> && SingleIndex<typename Container::value_type>
+    size_t operator()(Container dims) const;
+```
+3. 
+``` cpp
+    template <class Container> requires assert::ResizeableContainer<Container> && SingleIndex<typename Container::value_type>
+    size_t operator()(Container dims) const;
 ```
 ##### brief
 Get the position in memory of a single element according to the mapping described in the Layout.
 ##### parameters
-* `dims`: the coordinates of the element accessed, given either as a parameter pack or as an array of `SingleIndex` elements (Refer to [Indices](./Indexes.html) for more details).
+* `dims`: the coordinates of the element accessed, given either as a parameter pack or as a container of `SingleIndex` elements (Refer to [Indices](./Indexes.html) for more details).
 
 !!! warning
     When indexing a Layout using a parameter pack (signature 1.) an `holor::exception::HolorRuntimeError` exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details. This check is not performed when using the signature 2.

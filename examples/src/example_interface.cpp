@@ -43,6 +43,11 @@ int main(){
 
     std::cout << "The memory layout of A can be retrieved as A.layout() .\n";
     std::cout << "The layout contains the neccessary information to index a Holor, such as the strides and offset..\n";
+
+    auto lay = A.layout();
+    std::cout << "lay = A.layout(); \n";
+    std::cout << "lay(std::array<size_t,3>{1,2,1}) = " << lay(std::array<size_t,3>{1,2,1}) << "\n";
+    std::cout << "lay(std::vector<size_t>{1,2,1}) = " << lay(std::vector<size_t>{1,2,1}) << "\n\n";
     
     return 0;
 }

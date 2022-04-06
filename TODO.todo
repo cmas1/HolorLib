@@ -15,6 +15,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ //WIP extend operator() to work with both sized and resizeabe containers of SingleIndex @done(22-04-06 08:21) @project(layout.h)
   ✔ update license in all files, correcting also the typo suholorantial @done(22-03-31 11:31) @project(license)
   ✔ Put the layout stuff in another folder and reorganize the documentation accordingly @done(22-03-31 11:24) @project(Code Organization)
   ✘ in layout_types.h and holor_types.h may leave only the tag, moving the rest into layout_concepts.h and holor_concepts. //TODO next @cancelled(22-03-31 11:15) @project(Code Organization)

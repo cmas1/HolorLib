@@ -309,14 +309,25 @@ class Layout{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
 
+
         /*!
-         * \brief Function for indexing a single element from the Layout
-         * \tparam ID is a SingleIndex type
+         * \brief Function for indexing a single element from the Layout given a container of indices
+         * \tparam Container is a container (resizeable or with a fixed size) of SingleIndex type
          * \param dims a container of indices, one for each dimension of the layout
          * \return the index in memory of the selected element.
          */
-        template<SingleIndex ID>
-        size_t operator()(std::array<ID,N> dims) const{
+        template <class Container> requires assert::SizedContainer<Container, N> && SingleIndex<typename Container::value_type>
+        size_t operator()(Container dims) const{
+            auto result = offset_;
+            for (auto cnt = 0; cnt<N; cnt++){
+                result += dims[cnt]*strides_[cnt];
+            }
+            return result;
+        }
+
+        template <class Container> requires assert::ResizeableContainer<Container> && SingleIndex<typename Container::value_type>
+        size_t operator()(Container dims) const{
+            assert::dynamic_assert(dims.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
             auto result = offset_;
             for (auto cnt = 0; cnt<N; cnt++){
                 result += dims[cnt]*strides_[cnt];

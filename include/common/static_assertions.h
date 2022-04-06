@@ -131,10 +131,22 @@ namespace assert{
     concept  ResizeableTypedContainer = Iterable<T> && Resizable<T> && Convertible<T,U>;
 
     /*!
+     * \brief concept for a resizeable container with iterators
+     */
+    template<class T>
+    concept  ResizeableContainer = Iterable<T> && Resizable<T>;
+
+    /*!
      * \brief concept for a fixed legnth container, with N elements convertible to U and iterators
      */
     template<class T, class U, size_t N>
     concept SizedTypedContainer = Iterable<T> && !Resizable<T> && Convertible<T,U> && Sized<T,N>;
+
+    /*!
+     * \brief concept for a fixed legnth container, with N elements and iterators
+     */
+    template<class T, size_t N>
+    concept SizedContainer = Iterable<T> && !Resizable<T> && Sized<T,N>;
 
 
 
