@@ -349,10 +349,21 @@ A `std::vector` with the data.
     template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
     const T operator()(Dims&&... dims) const;
 ```
+3. 
+``` cpp
+    template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
+    T& operator()(const Container& indices);
+```
+4. 
+``` cpp
+    template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
+    const T access(const Container& indices) const;
+```
 ##### brief
 Access a single element in the container.
 ##### parameters
 * `dims`: pack of indices, one per dimension of the Holor container, given either as a parameter pack or as an array of `SingleIndex` elements (Refer to [Indices](./Indexes.html) for more details).
+* `indices`: container of `SingleIndex` elements (e.g. a std::vector or a std::array).
 
 !!! warning
     When indexing a Holor, the conversion from indices to a memory location performed by the Layout may throw an `holor::exception::HolorRuntimeError` if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.

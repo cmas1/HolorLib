@@ -440,6 +440,22 @@ class HolorRef{
 
 
         /*!
+         * \brief Access a single element in the container
+         * \param indices Container of indices, one per dimension of the Holor container
+         * \return the value of the Holor stored at the position indexed by the indices
+         */
+        template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
+        T& operator()(const Container& indices){
+            return *(dataptr_ + layout_(indices));
+        }
+
+        template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
+        const T access(const Container& indices) const{
+            return *(dataptr_ + layout_(indices));
+        }
+
+
+        /*!
          * \brief Access a slice of the container by providing a single index or a range of indices for each dimension
          * \param dims pack of indices, one per dimension of the container
          * \return the value of the Holor stored at the position indexed by the indices

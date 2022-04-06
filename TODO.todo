@@ -3,7 +3,6 @@ static_assertions.h:
     ☐ revisit container concepts (check BSTools)
 
 holor.h and holor_ref.h:
-    ☐ //WIP add function to access an element given a container of SingleIndex
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
 
 layout.h:
@@ -15,6 +14,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ //WIP add function to access an element given a container of SingleIndex @done(22-04-06 20:16) @project(holor.h and holor_ref.h)
   ✔ //WIP extend operator() to work with both sized and resizeabe containers of SingleIndex @done(22-04-06 08:21) @project(layout.h)
   ✔ update license in all files, correcting also the typo suholorantial @done(22-03-31 11:31) @project(license)
   ✔ Put the layout stuff in another folder and reorganize the documentation accordingly @done(22-03-31 11:24) @project(Code Organization)

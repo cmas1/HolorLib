@@ -292,34 +292,20 @@ class Holor{
         }
 
 
-        //WIP==================================================================
         /*!
          * \brief Access a single element in the container
          * \param indices Container of indices, one per dimension of the Holor container
          * \return the value of the Holor stored at the position indexed by the indices
          */
-        //template <class Container> requires assert::SizedTypedContainer<Container, size_t, N> SingleIndex<Container::value_type>
-        // T& access(const Container& indices){
-        //  if constexpr()
-        // }
-        // const T access(const Container& indices) const{}
+        template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
+        T& operator()(const Container& indices){
+            return *(data() + layout_(indices));
+        }
 
-        //template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
-        // T& access(const Container& indices){}
-        // const T access(const Container& indices) const{}
-
-
-        // template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
-        // T& operator()(Dims&&... dims){
-        //     return *(data() + layout_(std::forward<Dims>(dims)...));
-        // }
-
-        // template<SingleIndex... Dims> requires ((sizeof...(Dims)==N) )
-        // const T operator()(Dims&&... dims) const{
-        //     return data_[layout_(std::forward<Dims>(dims)...)];
-        // }
-        //WIP==================================================================
-
+        template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
+        const T access(const Container& indices) const{
+            return data_[layout_(indices)];
+        }
 
 
         /*!

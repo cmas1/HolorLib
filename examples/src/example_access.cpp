@@ -39,10 +39,17 @@ int main(){
 
     //an Holor can be accessed element by element
     std::cout << "A(0,1,2) = "  << A(0,1,2) << "\n";
+    std::cout << "A(std::vector<size_t>{0,1,2}) = "  << A(std::vector<size_t>{0,1,2}) << "\n";
+    std::cout << "A(std::array<size_t,3>{0,1,2}) = "  << A(std::array<size_t,3>{0,1,2}) << "\n\n";
 
-    //an Holor can be sliced
+    //an Holor can be sliced ...
     std::cout << "A(range(0,1), range(1,2), range(2,3)) = "<< A(range(0,1), range(1,2), range(2,3)) << "\n";
     std::cout << "A(0, range(0,1), range(2,3)) = "<< A(0, range(0,1), range(2,3)) << "\n\n";
+
+    //... and the slice can be accessed by element or further sliced
+    auto B = A(0, range(0,1), range(2,3));
+    std::cout << "B = A(0, range(0,1), range(2,3)) => "<< B << "\n";
+    std::cout << "B(std::vector<size_t>{1,1} = "<< B(std::vector<size_t>{1,1}) << "\n\n";
 
 
     //there are other functions that allow to slice an Holor
