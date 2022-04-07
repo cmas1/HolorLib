@@ -3,7 +3,6 @@ static_assertions.h:
     ☐ revisit container concepts (check BSTools)
 
 holor operations:
-    ☐ create header holor_ops.h for common operations on holors //WIP
     ☐ create a broadcast function //WIP
 
 holor.h and holor_ref.h:
@@ -18,6 +17,7 @@ indexes.h:
     ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
 
 Archive:
+  ✔ create header holor_ops.h for common operations on holors //WIP @done(22-04-07 20:14) @project(holor operations)
   ✔ //WIP add function to access an element given a container of SingleIndex @done(22-04-06 20:16) @project(holor.h and holor_ref.h)
   ✔ //WIP extend operator() to work with both sized and resizeabe containers of SingleIndex @done(22-04-06 08:21) @project(layout.h)
   ✔ update license in all files, correcting also the typo suholorantial @done(22-03-31 11:31) @project(license)
