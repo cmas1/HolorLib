@@ -21,12 +21,34 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#ifndef HOLOR_FULL_H
-#define HOLOR_FULL_H
 
-#include "holor.h"
-#include "holor_comparisons.h"
-#include "holor_printer.h"
-#include "holor_operations.h"
 
-#endif // HOLOR_FULL_H
+#include <holor/holor_full.h>
+#include <iostream>
+#include <vector>
+#include <array>
+#include <algorithm>
+
+using namespace holor;
+
+
+int main(){
+    Holor<int, 2> A;
+    A.set_lengths(4,3);
+    std::ranges::fill(A,1);
+    std::cout << "A = " << A << "\n\n";
+
+    Holor<int, 1> B{1,2,3};
+    Holor<int, 1> C{8,7,6,5};
+    std::cout << "B = " << B << "\n";
+    std::cout << "C = " << C << "\n";
+    
+    // holor::broadcast<1>(A, B, [](auto& a, auto b, int i){return a*b(i);});
+    holor::broadcast<1>(A, B, [](auto& a, auto b, int i){ for(auto& x:a) { x*=b(i);}});
+    holor::broadcast<0>(A, C, [](auto& a, auto b, int i){ for(auto& x:a) { x*=b(i);}});
+
+
+    std::cout<< "A = " << A << "\n\n";
+
+    return 0;
+}

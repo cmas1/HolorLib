@@ -25,6 +25,8 @@
 
 
 #include "holor_concepts.h"
+#include "../common/runtime_assertions.h"
+
 
 namespace holor{
 
@@ -33,6 +35,17 @@ namespace holor{
                                     Holor Operations
 ================================================================================================*/
 
+/*!
+ * \brief broadcast function
+ */
+template <size_t D, HolorType DestHolor, HolorType SourceHolor, class Op> requires ((D < DestHolor::dimensions) && (SourceHolor::dimensions==1))
+void broadcast(DestHolor& dest, SourceHolor source, Op&& operation ){
+    assert::dynamic_assert(dest.length(D) == source.size(), EXCEPTION_MESSAGE("The dimension of the destination where the sources should be broadcasted should have length equal to the size of the source!"));
+    for( auto i = 0; i < dest.length(D); i++){
+        auto slice = dest.template slice<D>(i);
+        std::invoke(std::forward<Op>(operation), slice, source, i);
+    }
+}
 
 
 } //namespace holor

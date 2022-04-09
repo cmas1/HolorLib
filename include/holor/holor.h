@@ -303,7 +303,7 @@ class Holor{
         }
 
         template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
-        const T access(const Container& indices) const{
+        const T operator()(const Container& indices) const{
             return data_[layout_(indices)];
         }
 
