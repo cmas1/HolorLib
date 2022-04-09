@@ -43,9 +43,8 @@ int main(){
     std::cout << "B = " << B << "\n";
     std::cout << "C = " << C << "\n";
     
-    // holor::broadcast<1>(A, B, [](auto& a, auto b, int i){return a*b(i);});
-    holor::broadcast<1>(A, B, [](auto& a, auto b, int i){ for(auto& x:a) { x*=b(i);}});
-    holor::broadcast<0>(A, C, [](auto& a, auto b, int i){ for(auto& x:a) { x*=b(i);}});
+    holor::multiply_dim<1>(A, B);
+    holor::multiply_dim<0>(A, C);
 
 
     std::cout<< "A = " << A << "\n\n";

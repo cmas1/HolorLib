@@ -35,6 +35,8 @@ namespace holor{
                                     Holor Operations
 ================================================================================================*/
 
+//TODO: write comments
+//TODO: test when the source is a rvalue or a reference
 /*!
  * \brief broadcast function
  */
@@ -45,6 +47,11 @@ void broadcast(DestHolor& dest, SourceHolor source, Op&& operation ){
         auto slice = dest.template slice<D>(i);
         std::invoke(std::forward<Op>(operation), slice, source, i);
     }
+}
+
+template <size_t D, HolorType DestHolor, ToHolorType SourceHolor> requires ((D < DestHolor::dimensions) && (SourceHolor::dimensions==1))
+void multiply_dim(DestHolor& dest, SourceHolor source){
+    holor::broadcast<D>(dest, source, [](auto& a, auto b, int i){ for(auto& x:a) { x*=b(i);}});
 }
 
 
