@@ -3,8 +3,8 @@ static_assertions.h:
     ☐ revisit container concepts (check BSTools)
 
 holor operations:
-    ☐ test the broadcast function with references
-    ☐ write comments on the functions
+    ☐ test the broadcast function with references //WIP
+    ☐ write comments on the functions //WIP
 
 holor.h and holor_ref.h:
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
