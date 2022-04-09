@@ -49,7 +49,7 @@ void broadcast(DestHolor& dest, SourceHolor source, Op&& operation ){
     }
 }
 
-template <size_t D, HolorType DestHolor, ToHolorType SourceHolor> requires ((D < DestHolor::dimensions) && (SourceHolor::dimensions==1))
+template <size_t D, HolorType DestHolor, HolorType SourceHolor> requires ((D < DestHolor::dimensions) && (SourceHolor::dimensions==1))
 void multiply_dim(DestHolor& dest, SourceHolor source){
     holor::broadcast<D>(dest, source, [](auto& a, auto b, int i){ for(auto& x:a) { x*=b(i);}});
 }
