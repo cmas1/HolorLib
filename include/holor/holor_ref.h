@@ -530,7 +530,6 @@ class HolorRef{
      * \tparam HolorContainer template parameter used to refer to type of the Holor container
      * \param rhs HolorRef containr from where the values are copied
      */
-    //TODO: use a proper concept for HolorContainer
     template<HolorType HolorContainer> requires ( (HolorContainer::dimensions == N) && (std::is_same_v<typename HolorContainer::value_type, T>) )
     void substitute(const HolorContainer& rhs){
         assert::dynamic_assert(this->layout_.lengths() == rhs.lengths(), EXCEPTION_MESSAGE("Incompatible dimensions."));
