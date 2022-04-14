@@ -2,18 +2,15 @@
 static_assertions.h:
     ☐ revisit container concepts (check BSTools)
 
-holor operations:
+holor operations (beta only):
     ☐ test the broadcast function with references //WIP
     ☐ write comments on the functions //WIP
     ☐ write documentation
     ☐ add tests
     ☐ add benchmarks
 
-Circulators:
-    ☐ consider whether is it feasible to implement cyclic pseudo-iterators, instead of having HolorRefDisjoined //WIP
-
-HolorRefDisjoined:
-    ☐ create a new file for HolorRefDisjoined. These object need to contain a Holor of indices for the sliced element //WIP
+HolorRefDisjoined (Holor views with non contiguous elements denoted with indices):
+    ☐ create a new file for HolorRefDisjoined. These object need to contain a Holor of indices for the sliced element
     ☐ HolorRefDisjoined shall be constructed from a Holor or HolorRef, given a set of indices
     ☐ implement iterators for HolorRefDisjoined
     ☐ implement acces operations for HolorRefDisjoined
@@ -24,14 +21,16 @@ holor.h and holor_ref.h:
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
 
 layout.h:
+    ☐ //WIP Modify Layouts to support circular indexing
     ☐ In the constructor from containers of lengths, use the universal reference &&
     ☐ //IMPROVEMENT!! When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This is inefficient, as confirmed by the benchmark BM_HolorSlicing. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation. 
 
 indexes.h:
-    ☐ So far the step in range is not supported to create ranges with gaps (for example range{1,7,2} => [1,3,5,7]). This would imply reworking Layouts, namely the way they are indexed with a range. //NOTE: not a priority, avoid for the time being
-    ☐ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being
+    ☐ //WIP modify ranges to support decreasing order. Remove the step, because for now we will consider only unit steps, but it is necessary to add a direction
 
 Archive:
+  ✘ So far the step in range is not supported to create ranges with gaps (for example range{1,7,2} => [1,3,5,7]). This would imply reworking Layouts, namely the way they are indexed with a range. //NOTE: not a priority, avoid for the time being @cancelled(22-04-14 09:05) @project(indexes.h)
+  ✘ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being @cancelled(22-04-14 09:05) @project(indexes.h)
   ✔ create a broadcast function @done(22-04-09 10:20) @project(holor operations)
   ✔ create header holor_ops.h for common operations on holors //WIP @done(22-04-07 20:14) @project(holor operations)
   ✔ //WIP add function to access an element given a container of SingleIndex @done(22-04-06 20:16) @project(holor.h and holor_ref.h)
