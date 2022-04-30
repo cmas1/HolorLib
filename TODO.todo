@@ -26,9 +26,10 @@ layout.h:
     ☐ //IMPROVEMENT!! When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This is inefficient, as confirmed by the benchmark BM_HolorSlicing. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation. 
 
 indexes.h:
-    ☐ //WIP modify ranges to support decreasing order. Remove the step, because for now we will consider only unit steps, but it is necessary to add a direction
+    ☐  add support for non unitary steps in range
 
 Archive:
+  ✘ //WIP modify ranges to support decreasing order. Remove the step, because for now we will consider only unit steps, but it is necessary to add a direction @cancelled(22-04-30 11:33) @project(indexes.h)
   ✘ So far the step in range is not supported to create ranges with gaps (for example range{1,7,2} => [1,3,5,7]). This would imply reworking Layouts, namely the way they are indexed with a range. //NOTE: not a priority, avoid for the time being @cancelled(22-04-14 09:05) @project(indexes.h)
   ✘ Generalize to allow also ranges in decreasing order (for example range{7,1,-2} => [7,5,3,1]). This would imply reworking Layouts, namely the way they are indexed with a range.  //NOTE: not a priority, avoid for the time being @cancelled(22-04-14 09:05) @project(indexes.h)
   ✔ create a broadcast function @done(22-04-09 10:20) @project(holor operations)
