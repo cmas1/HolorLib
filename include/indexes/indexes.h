@@ -42,25 +42,23 @@ namespace holor{
  * \b Note: `range{1, 5, 1}` is equivalent to `1:5` in Matlab. `range{1, 5, 2}` yields the indexes `1, 3, 5`.
  */
 struct range{
-    size_t start_; /*! beginning of the range */
-    size_t end_; /*! end of the range (this element is included in the range) */
-    size_t step_; /*! number of steps between elements. \b Example: step = 1, the elements in the range are contiguous; step = 2, the range skips every other element. */
+    size_t start_;  /*! beginning of the range */
+    size_t end_;    /*! end of the range (this element is included in the range) */
+    int step_;      /*! number of steps between elements. \b Example: step = +1, the elements in the range are contiguous and iterated in a positive direction; step = -2, the range skips every other element, moving in a negative direction. */
 
     /*!
      * \brief Constructor with checks on the arguments
      * \param start beginning of the range
      * \param end end (last element) of the range
      * \param step step between two elements in the range. Defaults to 1.
-     * \exception holor::exception::HolorRuntimeError if the argeuments for the constructor do not implement a meaningful range of indices, i.e., if they do not satisfy `(start>=0) && (end>start) && (step>0)`. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to AssertionLevel::no_checks to exclude this check.
+     * \exception holor::exception::HolorRuntimeError if the arguments for the constructor do not implement a meaningful range of indices, i.e., if they do not satisfy `(start>=0) && (end>start) && (step>0)`. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to AssertionLevel::no_checks to exclude this check.
      */
-    range(size_t start, size_t end, size_t step=1): start_{start}, end_{end}, step_{step}{
-        assert::dynamic_assert( (start>=0) && (end>start) && (step>0) , EXCEPTION_MESSAGE("Invalid range!"));
-        // TODO: generalize to allow also ranges in decreasing order, e.g., start = 5, end = 1, step = -2
+    range(size_t start, size_t end, int step=1): start_{start}, end_{end}, step_{step}{
+        assert::dynamic_assert( (start>=0) && (end>=0) && (start!=end), EXCEPTION_MESSAGE("Invalid range!"));
     }        
 };
 
 
-        
 
 /*================================================================================================
                                 CONCEPTS AND PREDICATES PERTAINING INDEXES
@@ -105,6 +103,7 @@ namespace impl{
         return assert::all(Index<Args>...);
     };
 }
+
 
 } //namespace holor
 
