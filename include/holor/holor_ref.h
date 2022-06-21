@@ -29,7 +29,6 @@
 #include <vector>
 
 #include "../layout/layout.h"
-#include "initializer.h"
 #include "holor_concepts.h"
 #include "../common/static_assertions.h"
 

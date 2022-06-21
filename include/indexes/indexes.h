@@ -55,6 +55,8 @@ struct range{
      */
     range(size_t start, size_t end, int step=1): start_{start}, end_{end}, step_{step}{
         assert::dynamic_assert( (start>=0) && (end>=0) && (start!=end), EXCEPTION_MESSAGE("Invalid range!"));
+        assert::dynamic_assert( (end>start), EXCEPTION_MESSAGE("Invalid range!")); //TODO: right now let's only allow ranges in increasing order. This has to be removd to allow ranges in reverse order
+        assert::dynamic_assert( (start>=0) && (end>=0) && (start!=end), EXCEPTION_MESSAGE("Invalid range!")); //TODO: right now let's only allow +1 as step. This has to be removed to allow other steps
     }        
 };
 
