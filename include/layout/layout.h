@@ -141,28 +141,15 @@ class Layout{
         Layout<N>& operator=(Layout<N>&& layout) = default;         ///< \brief default move assignment
 
         /*!
-         * \brief Constructor of a layout from a container of lengths with compile-time size equal to `N` (e.g., `std::array<size_t,N>`).
+         * \brief Constructor of a layout from a container of `N` elements specifying the lengths of the Layout
          * \param lengths container of the number of elements along each dimension of the layout
          * \return a Layout
          */
-        template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
+        template <class Container> requires assert::RSTypedContainer<Container, size_t, N>
         explicit Layout(const Container& lengths) {
-            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(positive_lengths(lengths), EXCEPTION_MESSAGE("Zero length is not allowed!"));
-            offset_ = 0;
-            std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
-            update_strides_size();
-        };
-
-        /*!
-         * \brief Constructor of a layout from a resizeable container of lengths with size equal to `N` (e.g., `std::vector<size_t>`). The dimensionality check on the lenght of the container is done at runtime. 
-         * \param lengths container of the number of elements along each dimension of the layout
-         * \exception holor::exception::HolorRuntimeError if the length of the resizeable container is not equal to `N`. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to AssertionLevel::no_checks to exclude this check.
-         * \return a Layout
-         */
-        template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
-        explicit Layout(const Container& lengths) {
-            assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
-            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(positive_lengths(lengths), EXCEPTION_MESSAGE("Zero length is not allowed!"));
+            if constexpr(assert::ResizeableContainer<Container>){
+                assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
+            }
             offset_ = 0;
             std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
             update_strides_size();
@@ -241,17 +228,11 @@ class Layout{
             update_strides_size();
         }
 
-        template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
+        template <class Container> requires assert::RSTypedContainer<Container, size_t, N>
         void set_lengths(const Container& lengths){
-            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(positive_lengths(lengths), EXCEPTION_MESSAGE("Zero length is not allowed!"));
-            std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
-            update_strides_size();
-        }
-
-        template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
-        void set_lengths(const Container& lengths){
-            assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
-            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(positive_lengths(lengths), EXCEPTION_MESSAGE("Zero length is not allowed!"));
+            if constexpr(assert::ResizeableContainer<Container>){
+                assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
+            }
             std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
             update_strides_size();
         }
@@ -316,25 +297,17 @@ class Layout{
          * \param dims a container of indices, one for each dimension of the layout
          * \return the index in memory of the selected element.
          */
-        template <class Container> requires assert::SizedContainer<Container, N> && SingleIndex<typename Container::value_type>
+        template <class Container> requires assert::RSContainer<Container, N> && SingleIndex<typename Container::value_type>
         size_t operator()(Container dims) const{
+            if constexpr(assert::ResizeableContainer<Container>){
+                assert::dynamic_assert(dims.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
+            }
             auto result = offset_;
             for (auto cnt = 0; cnt<N; cnt++){
                 result += dims[cnt]*strides_[cnt];
             }
             return result;
         }
-
-        template <class Container> requires assert::ResizeableContainer<Container> && SingleIndex<typename Container::value_type>
-        size_t operator()(Container dims) const{
-            assert::dynamic_assert(dims.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
-            auto result = offset_;
-            for (auto cnt = 0; cnt<N; cnt++){
-                result += dims[cnt]*strides_[cnt];
-            }
-            return result;
-        }
-        
 
         /*!
          * \brief Specialization of the function Layout<N>::operator()(Dims&&... dims) for the case when `N=1, ..., 4`, for a more efficient implementation. For the general case Layout<N> this specialization is not defined.
@@ -464,6 +437,7 @@ class Layout{
             }
         }
 
+
         /*!
          * \brief Helper recursive template function that is used to index a single element of the layout. It uses a variadic template, where the indices for each dimension of the layout are unwind one at a time
          * \tparam M dimension to be indexed by the `FirstArg`
@@ -484,7 +458,6 @@ class Layout{
             assert::dynamic_assert(first>=0 && first<lengths_[M], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
             return first * strides_[M];
         }
-
 
 
         /*!
@@ -555,29 +528,6 @@ class Layout{
             lengths_[M] = arg;
         }
 
-
-        /*!
-         * \brief Helper function to verify that a container of lenghts passed to the constructors only has positive values (to prevent from passing zero lengths)
-         * \tparam Container is a resizable container of lenghts
-         * \param lenghts is the container of lengths
-         * \return true if all the lengths are > 0
-         */
-        template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
-        bool positive_lengths(const Container& lengths) {
-            return std::all_of(lengths.cbegin(), lengths.cend(), [](size_t i){return i>0;});
-        };
-
-
-        /*!
-         * \brief Helper function to verify that a container of lenghts passed to the constructors only has positive values (to prevent from passing zero lengths)
-         * \tparam Container is a resizable container of lenghts
-         * \param lenghts is the container of lengths
-         * \return true if all the lengths are > 0
-         */
-        template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
-        bool positive_lengths(const Container& lengths) {
-            return std::all_of(lengths.cbegin(), lengths.cend(), [](size_t i){return i>0;});
-        };
 
 }; //class Layout
 

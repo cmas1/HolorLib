@@ -73,7 +73,7 @@ TEST(TestHolor, CheckConstructors){
     //test for constructor from nested list
     {
         {
-            Holor<int, 1> my_holor{1,2,3,4};
+            Holor<size_t, 1> my_holor{1,2,3,4};
             auto my_layout = my_holor.layout();
             Layout<1> tmp_layout{4};
             EXPECT_EQ(tmp_layout, my_layout);
@@ -86,7 +86,7 @@ TEST(TestHolor, CheckConstructors){
         }
 
         {
-            Holor<int, 2> my_holor{{1,2},{3,4}};
+            Holor<size_t, 2> my_holor{{1,2},{3,4}};
             auto my_layout = my_holor.layout();
             Layout<2> tmp_layout{2,2};
             EXPECT_EQ(tmp_layout, my_layout);

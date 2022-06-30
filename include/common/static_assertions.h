@@ -93,7 +93,22 @@ namespace assert{
                         Container Concepts
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     /*!
-     * \brief Type that as a resize function
+     * \brief concept used to represent a container that has size, begin and end functions, and a value type
+     */
+    template<class T>
+    concept IterableContainer = requires(T container)
+    {
+        container.begin();
+        container.end();
+        container.cbegin();
+        container.cend();
+        container.size();
+        typename std::remove_reference_t<T>::value_type;
+    };
+
+
+    /*!
+     * \brief concept used to represent a container that has a resize function
      */
     template<class T>
     concept Resizable = requires(T container)
@@ -101,70 +116,65 @@ namespace assert{
         container.resize(std::size_t{0});
     };
 
-    /*!
-     * \brief Type that has size, begin and end functions
-     */
-    template<class T>
-    concept Iterable = requires(T container)
-    {
-        container.begin();
-        container.end();
-        container.size();
-    };
 
     /*!
-     * \brief Type that has size, begin and end functions
-     */
-    template<class T, class U>
-    concept Convertible = std::convertible_to<typename T::value_type,U>;
-
-    /*!
-     * \brief Container that has size fixed to N
+     * \brief concept used to represent a container that has size fixed to N
      */
     template<class T, size_t N>
-    concept Sized = (std::tuple_size<T>::value==N);    
+    concept Sized = (std::tuple_size<T>::value==N); 
+
 
     /*!
-     * \brief concept for a resizeable container, with elements convertible to U and iterators
+     * \brief concept used to represent containers whose elements are convertible to a specified type
      */
     template<class T, class U>
-    concept  ResizeableTypedContainer = Iterable<T> && Resizable<T> && Convertible<T,U>;
+    concept ConvertibleElements = std::convertible_to<typename std::remove_reference_t<T>::value_type,U>;
 
+    
     /*!
-     * \brief concept for a resizeable container with iterators
+     * \brief concept representing a container whose elements are of a specific type
+     */
+    template<class T, class U>
+    concept TypedContainer = IterableContainer<T> && ConvertibleElements<T,U>;
+
+    
+    /*!
+     * \brief concept representing a resizeable container with iterators
      */
     template<class T>
-    concept  ResizeableContainer = Iterable<T> && Resizable<T>;
+    concept  ResizeableContainer = IterableContainer<T> && Resizable<T>;
+       
+    /*!
+     * \brief concept representing a resizeable container, with elements convertible to U and iterators
+     */
+    template<class T, class U>
+    concept  ResizeableTypedContainer = IterableContainer<T> && Resizable<T> && ConvertibleElements<T,U>;
 
     /*!
-     * \brief concept for a fixed legnth container, with N elements convertible to U and iterators
+     * \brief concept representing a fixed length container, with N elements and iterators
+     */
+    template<class T, size_t N>
+    concept SizedContainer = IterableContainer<T> && !Resizable<T> && Sized<T,N>;
+
+    /*!
+     * \brief concept representing a fixed length container, with N elements convertible to U and iterators
      */
     template<class T, class U, size_t N>
-    concept SizedTypedContainer = Iterable<T> && !Resizable<T> && Convertible<T,U> && Sized<T,N>;
+    concept SizedTypedContainer = IterableContainer<T> && !Resizable<T> && ConvertibleElements<T,U> && Sized<T,N>;
 
     /*!
-     * \brief concept for a fixed legnth container, with N elements and iterators
+     * \brief concept representing an iterale container that is either resizeable or it has a fixed length
      */
     template<class T, size_t N>
-    concept SizedContainer = Iterable<T> && !Resizable<T> && Sized<T,N>;
-
-    /*!
-     * \brief concept for a container that can be resizeable or wized, with N elements and iterators
-     */
-    template<class T, size_t N>
-    concept RSContainer = Iterable<T> && (Resizable<T> || Sized<T,N>);
+    concept RSContainer = IterableContainer<T> && (Resizable<T> || Sized<T,N>);
 
     /*!
      * \brief concept for a typed container that can be resizeable or sized, with N elements and iterators
      */
     template<class T, class U, size_t N>
-    concept RSTypedContainer = Iterable<T> && Convertible<T,U> && (Resizable<T> || Sized<T,N>);
+    concept RSTypedContainer = IterableContainer<T> && ConvertibleElements<T,U> && (Resizable<T> || (!Resizable<T> && Sized<T,N>) );
 
-    /*!
-     * \brief concept for a typed container
-     */
-    template<class T, class U>
-    concept TypedContainer = Iterable<T> && Convertible<T,U>;
+    
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             Concept Printable

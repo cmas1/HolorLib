@@ -78,24 +78,13 @@ class Holor{
     
         /*!
          * \brief Constructor that creates a Holor by specifying the length of each dimension
-         * \param lengths fixed length container with `N` lengths (e.g., a std::array)
+         * \param lengths container with `N` lengths
          * \return a Holor with specified lenghts but without initialization of its elements
          */
-        template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
+        template <class Container> requires assert::RSTypedContainer<Container, size_t, N>
         explicit Holor(const Container& lengths): layout_{lengths}{
             data_.resize(layout_.size());
         }
-
-        /*!
-         * \brief Constructor that creates a Holor by specifying the length of each dimension
-         * \param lengths variable length container with `N` lengths (e.g., a std::vector)
-         * \return a Holor with specified lenghts but without initialization of its elements
-         */
-        template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
-        explicit Holor(const Container& lengths): layout_{lengths}{
-            data_.resize(layout_.size());
-        }
-
 
         /*!
          * \brief Constructor from a HolorRef object. Only copy is allowed, because the HolorRef does not own the objects it contains.
@@ -115,33 +104,17 @@ class Holor{
          * \param init nested list of the elements to be inserted in the container
          * \return a Holor containing the elements in the list
          */
-        template<typename U> //requires (std::convertible_to<U, T>)
-        Holor(holor::nested_list<U,N> init) {
-            layout_ = Layout<N>(impl::derive_lengths<N>(init));
-            data_.reserve(layout_.size());
-            impl::insert_flat(init, data_);
-        }
-
         Holor(holor::nested_list<T,N> init) {
             layout_ = Layout<N>(impl::derive_lengths<N>(init));
             data_.reserve(layout_.size());
             impl::insert_flat(init, data_);
         }
 
-
         /*!
          * \brief Assignment from a nested list of elements
          * \param init nested list of the elements to be inserted in the container
          * \return a reference to a Holor containing the elements in the list
          */
-        template<typename U> //requires (std::convertible_to<U, T>)
-        Holor& operator=(holor::nested_list<U,N> init) {
-            layout_ = Layout<N>{impl::derive_lengths<N>(init)};
-            data_.reserve(layout_.size());
-            impl::insert_flat(init, data_);
-            return *this;
-        }
-
         Holor& operator=(holor::nested_list<T,N> init) {
             layout_ = Layout<N>{impl::derive_lengths<N>(init)};
             data_.reserve(layout_.size());
@@ -207,13 +180,7 @@ class Holor{
             data_.resize(layout_.size());
         }
 
-        template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
-        void set_lengths(const Container& lengths){
-            layout_.set_lengths(lengths);
-            data_.resize(layout_.size());
-        }
-
-        template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
+        template <class Container> requires assert::RSTypedContainer<Container, size_t, N>
         void set_lengths(const Container& lengths){
             layout_.set_lengths(lengths);
             data_.resize(layout_.size());

@@ -148,6 +148,6 @@ int main(){
     std::cout << "\033[32m empty_holor.set_length(0,5); \033[0m \n";
     std::cout << "\033[32m empty_holor.set_length(1,2); \033[0m \n";
     std::cout << "=> empty_holor = " << empty_holor << "\n\n";
-
+    
     return 0;
 }
