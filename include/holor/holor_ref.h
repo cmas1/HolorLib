@@ -336,23 +336,13 @@ class HolorRef{
 
 
         /*!
-         * \brief Constructor that creates a HolorRef by specifying a data pointer and a container of lengths with compile-time size equal to `N` (e.g., `std::array<size_t,N>`).
+         * \brief Constructor that creates a HolorRef by specifying a data pointer and a container of lengths.
          * \param dataptr pointer to the location where the data is hosted
          * \param lengths container of the number of elements along each dimension of the layout
          * \return a HolorRef
          */
-        template <class Container> requires assert::SizedTypedContainer<Container, size_t, N>
-        explicit HolorRef(T* dataptr, const Container& lengths): layout_{lengths}, dataptr_{dataptr}{}
-        
-        
-        /*!
-         * \brief Constructor that creates a HolorRef by specifying a data pointer and a container of lengths with run-time size equal to `N` (e.g., `std::vector<size_t>`).
-         * \param dataptr pointer to the location where the data is hosted
-         * \param lengths container of the number of elements along each dimension of the layout
-         * \return a HolorRef
-         */
-        template <class Container> requires assert::ResizeableTypedContainer<Container, size_t>
-        explicit HolorRef(T* dataptr, const Container& lengths): layout_{lengths}, dataptr_{dataptr}{}        
+        template <class Container> requires assert::RSTypedContainer<Container, size_t, N>
+        explicit HolorRef(T* dataptr, const Container& lengths): layout_{lengths}, dataptr_{dataptr}{}       
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             GET/SET FUNCTIONS
@@ -443,12 +433,12 @@ class HolorRef{
          * \param indices Container of indices, one per dimension of the Holor container
          * \return the value of the Holor stored at the position indexed by the indices
          */
-        template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
+        template <class Container> requires (assert::RSContainer<Container, N> && SingleIndex<typename Container::value_type>)
         T& operator()(const Container& indices){
             return *(dataptr_ + layout_(indices));
         }
 
-        template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
+        template <class Container> requires (assert::RSContainer<Container, N> && SingleIndex<typename Container::value_type>)
         const T operator()(const Container& indices) const{
             return *(dataptr_ + layout_(indices));
         }

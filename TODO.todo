@@ -1,15 +1,17 @@
 
-static_assertions.h:
-    ☐ revisit container concepts (check BSTools)
-
 holor operations (beta only):
-    ☐ Define the set of operations needed (broadcast, gather, ..., circulate, ...).
+    ☐ Implement Broadcast op
+    ☐ Implement Gather op
+    ☐ Implement Reduce op
+    ☐ Implement Apply op
+    ☐ Implement Circulate op
+    ☐ Implement Transpose op
+    ☐ Should implement an apply method? //CHECK
     ☐ test the broadcast function with references
     ☐ write comments on the functions
     ☐ write documentation
     ☐ add tests
     ☐ add benchmarks
-
 
 holor.h and holor_ref.h:
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
@@ -22,7 +24,12 @@ indexes.h:
     ☐ add support for ranges in decreasing order
     ☐ add support for non unitary steps in range
 
+New Features:
+    ☐ Add circular layouts? //CHECK it does not seem to be feasible - see notes
+    ☐ Add layout with indices to allow slicing a container selecting disjoined elements //CHECK This can be done, but the interface with the existing layouts and holors should be consistent. Can a indexed layout only be sliced by passing indices or could it be sliced also normally?
+
 Archive:
+  ✔ revisit container concepts (check BSTools) @done(22-07-01 12:08) @project(static_assertions.h)
   ✘ LayoutIndexed (required by HolorRefIndexed): @cancelled(22-06-21 18:48)
   ✘ create structure with indices @cancelled(22-06-21 18:48)
   ✘ write constructors and assignment @cancelled(22-06-21 18:48)

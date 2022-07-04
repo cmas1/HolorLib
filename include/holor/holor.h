@@ -122,16 +122,6 @@ class Holor{
             return *this;
         }
 
-
-        /*!
-         * \brief Remove the constructor and assignment from a std::initializer_list, in order to allow using the constructor from holor::nested_list
-         */
-        // template<typename U>
-        // Holor(std::initializer_list<U>) = delete;
-
-        // template<typename U>
-        // Holor& operator=(std::initializer_list<U>) = delete;
-
         
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             ITERATORS
@@ -264,12 +254,12 @@ class Holor{
          * \param indices Container of indices, one per dimension of the Holor container
          * \return the value of the Holor stored at the position indexed by the indices
          */
-        template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
+        template <class Container> requires (assert::RSContainer<Container, N> && SingleIndex<typename Container::value_type>)
         T& operator()(const Container& indices){
             return *(data() + layout_(indices));
         }
 
-        template <class Container> requires ((assert::SizedContainer<Container, N> || assert::ResizeableContainer<Container>) && SingleIndex<typename Container::value_type>)
+        template <class Container> requires (assert::RSContainer<Container, N> && SingleIndex<typename Container::value_type>)
         const T operator()(const Container& indices) const{
             return data_[layout_(indices)];
         }

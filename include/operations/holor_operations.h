@@ -24,7 +24,7 @@
 #define HOLOR_OPERATIONS_H
 
 
-#include "holor_concepts.h"
+#include "../holor/holor_concepts.h"
 #include "../common/runtime_assertions.h"
 
 
@@ -34,6 +34,8 @@ namespace holor{
 /*================================================================================================
                                     Holor Operations
 ================================================================================================*/
+
+//TODO: BROADCAST  broadcasts a slice in a certain direction and applies an op
 
 //TODO: write comments
 //TODO: test when the source is a rvalue or a reference
@@ -49,6 +51,19 @@ void broadcast(DestHolor& dest, SourceHolor source, Op&& operation ){
     }
 }
 
+//TODO: REDUCE applies an op to all elements in the container and returns a single element from them
+
+//TODO: GATHER? takes two cntainers with the same dimensions and outputs a new container by applying an op on the pairs of elements
+//TODO: stitches together several slices (each slice at a potentially different runtime offset) of an input array.
+
+//TODO: APPLY applies an op to all elements in the container, modifying it
+
+//TODO: CIRCULATE applies an op to all elements in the container, modifying it
+
+
+
+
+//TODO generalize to multiply slice
 template <size_t D, HolorType DestHolor, HolorType SourceHolor> requires ((D < DestHolor::dimensions) && (SourceHolor::dimensions==1))
 void multiply_dim(DestHolor& dest, SourceHolor source){
     holor::broadcast<D>(dest, source, [](auto& a, auto b, int i){ for(auto& x:a) { x*=b(i);}});

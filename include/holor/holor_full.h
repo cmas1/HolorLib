@@ -27,6 +27,6 @@
 #include "holor.h"
 #include "holor_comparisons.h"
 #include "holor_printer.h"
-#include "holor_operations.h"
+#include "./operations/holor_operations.h"
 
 #endif // HOLOR_FULL_H
