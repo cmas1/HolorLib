@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <type_traits>
 #include <numeric>
+#include <cmath>
 
 namespace holor{
 
@@ -37,7 +38,8 @@ namespace holor{
                                     Holor Operations
 ================================================================================================*/
 
-//TODO: add requires clauses to constrain the OPs to be a binary/unary function (depending on the use case)
+//TODO: add requires clauses to constrain the OPs to be a binary/unary function (depending on the use case). 
+//NOTE: for this purpose use std::is_invocable or std::is_invocable_r from <type_traits>
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     BROADCAST
@@ -137,85 +139,71 @@ void apply(Destination& dest, Op&& operation ){
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    CONCATENATE
+                    CONCATENATION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-//WIP: this should be restricted to holors that all have the same number of dimensions (here N), and the concatenation dimension should be a value in [0, N)
-//TODO: CONCATENATE? takes a pack of containers with the same dimensions and outputs a new container by applying an op on the pairs of elements
-namespace impl{
-    template <DecaysToHolorType Arg1, DecaysToHolorType Arg2>
-    constexpr size_t unroll_min_dim(){
-        return std::min(std::decay_t<Arg1>::dimensions, std::decay_t<Arg2>::dimensions);
-    }
+//TODO: check again and add descriptions
 
-    template <DecaysToHolorType Arg1, DecaysToHolorType... Args> requires (sizeof...(Args)>=2)
-    constexpr size_t unroll_min_dim(){
-        return std::min(std::decay_t<Arg1>::dimensions, unroll_min_dim<Args...>());
-    }
-
-    template <DecaysToHolorType... Args>
-    constexpr size_t min_dim(){
-        return unroll_min_dim<Args...>();
-    }  
-    
-    template <DecaysToHolorType Arg1, DecaysToHolorType Arg2>
-    constexpr size_t unroll_max_dim(){
-        return std::max(std::decay_t<Arg1>::dimensions, std::decay_t<Arg2>::dimensions);
-    }
-
-    template <DecaysToHolorType Arg1, DecaysToHolorType... Args> requires (sizeof...(Args)>=2)
-    constexpr size_t unroll_max_dim(){
-        return std::max(std::decay_t<Arg1>::dimensions, unroll_max_dim<Args...>());
-    }
-
-    template <DecaysToHolorType... Args>
-    constexpr size_t max_dim(){
-        return unroll_max_dim<Args...>();
-    }
-
-
-
-    template <size_t Dim, assert::IterableContainer Lenghts, DecaysToHolorType Arg1, DecaysToHolorType... Args> requires (sizeof...(Args)>=1)
-    void concatenation_lengths(Lenghts& lengths, Arg1 h1, Args&&... args){
-        auto h1_lengths = h1.lengths();
-        std::copy(h1_lengths.begin(), h1_lengths.end(), lengths.begin());
-        if (std::decay_t<Arg1>::dimensions < lengths.size()){
-            lengths.back()=1;
+namespace impl_concatenate{
+    template <class Container, DecaysToHolorType First_Arg> requires (assert::IterableContainer<Container>)
+    void check_lengths(Container lengths, First_Arg first_arg){
+        static_assert(std::is_same_v<decltype(lengths), decltype(first_arg.lengths())>, "The arguments of the concatenation have different dimensions!" );
+        if constexpr(std::is_same_v<decltype(lengths), decltype(first_arg.lengths())>){
+            assert::dynamic_assert(lengths==first_arg.lengths(), EXCEPTION_MESSAGE("The arguments of the concatenation have different lengths!"));
         }
     }
 
-    // template <size_t Dim, DecaysToHolorType Arg1, DecaysToHolorType Arg2>
-    // auto simple_concat(Arg1 h1){
+    template <class Container, DecaysToHolorType First_Arg, DecaysToHolorType... Args> requires (assert::IterableContainer<Container>)
+    void check_lengths(Container lengths, First_Arg first_arg, Args&&... args){
+        static_assert(std::is_same_v<decltype(lengths), decltype(first_arg.lengths())>, "The arguments of the concatenation have different dimensions!" );
+        if constexpr(std::is_same_v<decltype(lengths), decltype(first_arg.lengths())>){
+            assert::dynamic_assert(lengths==first_arg.lengths(), EXCEPTION_MESSAGE("The arguments of the concatenation have different lengths!"));
+        }
+        check_lengths(lengths, std::forward<Args>(args)...);
+    }
 
-    //     return h1;
-    // }
+    template<typename T, DecaysToHolorType First_Arg>
+    void check_type(First_Arg arg){
+        static_assert(std::is_same_v<T, typename std::decay_t<First_Arg>::value_type>, "The arguments of the concatenation have inconsistent value_type");
+    }
 
-    // template <size_t Dim, DecaysToHolorType Arg1, DecaysToHolorType... Args> requires (sizeof...(Args)>=1)
-    // auto unroll_concat(Arg1 h1, Args&&... args){
-        
-    //     if constexpr(Dim<std::decay_t<Arg1>::dimensions){
-    //         auto lengths = (h1.slice<Dim>(0)).lengths();
-    //     } else{
-    //         auto lengths
-    //     }
+    template<typename T, DecaysToHolorType First_Arg, DecaysToHolorType... Args>
+    void check_type(First_Arg arg, Args&&... args){
+        static_assert(std::is_same_v<T, typename std::decay_t<First_Arg>::value_type>, "The arguments of the concatenation have inconsistent value_type");
+        check_type<T>(std::forward<Args>(args)...);
+    }
 
-    // }
+    template <size_t Dim, DecaysToHolorType First_Arg, DecaysToHolorType... Args>
+    auto check_args(First_Arg first_arg, Args&&... args){
+        auto lengths = first_arg.lengths();
+        check_lengths(lengths, std::forward<Args>(args)...);
+        check_type<typename std::decay_t<First_Arg>::value_type>(std::forward<Args>(args)...);
+        static_assert(Dim<lengths.size(), "Invalid dimension for the concatenation.");
+        constexpr auto N_concatenate = sizeof...(Args);
+        lengths[Dim] *=(N_concatenate+1);
+        return Holor<typename First_Arg::value_type, First_Arg::dimensions> (lengths);
+    }
+
+    template <size_t Dim, size_t M, DecaysToHolorType Result, DecaysToHolorType First_Arg>
+    void do_concatenation(Result& result, First_Arg first_arg){
+        auto length = first_arg.length(Dim);
+        auto slice_result = result.template slice<Dim>(holor::range{M*length, (M+1)*length-1});
+        slice_result.substitute(first_arg);
+    }
+
+    template <size_t Dim, size_t M, DecaysToHolorType Result, DecaysToHolorType First_Arg, DecaysToHolorType... Args>
+    void do_concatenation(Result& result, First_Arg first_arg, Args&&... args){
+        auto length = first_arg.length(Dim);
+        auto slice_result = result.template slice<Dim>(holor::range{M*length, (M+1)*length-1});
+        slice_result.substitute(first_arg);
+        do_concatenation<Dim, M+1>(result, std::forward<Args>(args)...);
+    }
 }
 
-
 template <size_t Dim, DecaysToHolorType... Args> requires (sizeof...(Args)>=2)
-auto concat(Args&&... args){
-    constexpr auto min_dim = impl::min_dim<Args...>();
-    constexpr auto max_dim = impl::max_dim<Args...>();
-    static_assert(max_dim <= min_dim+1, "Invalid dimensions of the Holors to be concatenated");
-    static_assert(Dim <= min_dim, "Invalid concatenation dimension");
-    std::array<size_t,std::max(max_dim, Dim+1)> concat_lengths;
-    impl::concatenation_lengths<Dim>(concat_lengths, std::forward<Args>(args)...);
-    //1) compute the lenght of the slice
-    //2) compute the length of the concatenation dimension
-    //3) recursive process the various holors
-        //3a) check lengths and concatenate
-        //3b) iterate
-    return impl::min_dim<Args...>(); //impl::start_unroll_concat<Dim>(lengths, std::forward<Args>(args)...);
+auto concatenate(Args&&... args){
+    auto result = impl_concatenate::check_args<Dim>(std::forward<Args>(args)...);
+    impl_concatenate::do_concatenation<Dim,0>(result, std::forward<Args>(args)...);
+    return result;
 }
 
 
@@ -266,14 +254,26 @@ auto transpose_view(Source& source){
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    CIRCULATE
+                    SHIFT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-//TODO: CIRCULATE applies an op to all elements in the container, modifying it
-//Si tratta solo di fare uno shift dei dati a seconda degli strides
-
-
-
-
+/*!
+ * \brief The `shift` function is an operation that shifts the content of a Holor along a certain direction
+ * \tparam Dim is the direction along which the Holor is shifted
+ * \param source is the holor that is transposed
+ * \param n indicates how many places the content should be shifted
+ * \return a new Holor that is equal to the original one but shifted
+ */
+template <size_t Dim, HolorType Source> requires (Dim<Source::dimensions)
+auto shift(Source source, int n){
+    int length = source.length(Dim);
+    Holor<typename Source::value_type, Source::dimensions> result(source.layout());
+    for (int i = 0; i < length; i++){
+        auto source_slice = source.template slice<Dim>(i);
+        auto result_slice = result.template slice<Dim>(std::abs((i+n)%length));
+        result_slice.substitute(source_slice);
+    }
+    return result;
+}
 
 
 } //namespace holor

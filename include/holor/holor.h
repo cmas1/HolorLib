@@ -340,6 +340,24 @@ class Holor{
         }
 
 
+        //WIP: fix comments and add to docs
+        /*!
+         * \brief Access a slice of a single dimension (e.g., the fifth row or the second column)
+         * \tparam M is the dimension to be sliced. 0 is a row, 1 is a column, ...
+         * \param i index of the slice alonge the `M-th` dimension
+         * \return a reference container to the slice 
+         */
+        template<size_t M> requires (M<N)
+        auto slice(range range_slice){
+            return HolorRef<T, N>(data_.data(), layout_.template slice_dimension<M>(range_slice));
+        }
+
+        template<size_t M> requires (M<N)
+        const auto slice(range range_slice) const{
+            return HolorRef<T, N>(data_.data(), layout_.template slice_dimension<M>(range_slice));
+        }
+
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         PRIVATE MEMBERS AND FUNCTIONS
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/

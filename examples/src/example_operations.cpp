@@ -65,10 +65,19 @@ int main(){
     holor::apply(A, [](auto& a){return a/2;});
     std::cout<< "A = " << A << "\n\n";
 
+    std::cout<< "shift<0>(A,2) = " << shift<0>(A,2) << "\n";
+    std::cout<< "shift<0>(A,-1) = " << shift<0>(A,-1) << "\n\n";
+
+
 
     Holor<int,1> pippo{1,1,1};
+    Holor<int,1> minni{2,2,2};
     Holor<int,2> pluto {{2,3}, {2,3}, {2,3}};
-    std::cout << "concat(pippo,pluto) = " << concat<1>(pippo,pluto) << "\n";
+    Holor<int,2> paperino{{4,5}, {4,5}, {4,5}};;
+    std::cout << "concatenate<0>(pippo,minni) = " << concatenate<0>(pippo,minni) << "\n";
+    std::cout << "concatenate<1>(pluto,paperino) = " << concatenate<1>(pluto,paperino) << "\n\n";
+    // concatenate<0>(pippo,paperino);
+    // std::cout << "concatenate(pippo,pluto) = " << concat<1>(pippo,pluto) << "\n";
 
     return 0;
 }

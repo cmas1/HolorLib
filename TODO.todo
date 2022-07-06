@@ -3,14 +3,14 @@ documentation:
 
 holor operations (beta only):
     ✔ Implement Broadcast op @done(22-07-04 14:23)
-    ☐ Implement Concatenate op
+    ☐ //WIP Implement Concatenate op
     ✔ Implement Reduce op @done(22-07-04 14:23)
     ✔ Implement Apply op @done(22-07-04 14:39)
-    ☐ Implement Circulate op
+    ✔ Implement Circulate op @done(22-07-06 14:49)
     ✔ Implement Transpose op @done(22-07-06 12:22)
     ✔ Implement Transpose_view op @done(22-07-06 12:26)
-    ☐ In broadcast add require clause to constrain OP to be a binary function
-    ☐ test the broadcast function with references
+    ☐ In all operations add require clause to constrain OP to be a binary or unary function?
+    ☐ test the operations with references
     ☐ write comments on the functions
     ☐ write documentation
     ☐ add tests
@@ -18,16 +18,19 @@ holor operations (beta only):
     ☐ //IMPROVE: the operations should be computed more efficiently, pipelining them.
 
 holor_concepts.h:
-    ☐ make a single HolorType (what is currently the DecaysToHolorType)
+    ☐ make a single HolorType (what is currently the DecaysToHolorType) and restructure the rest of the library accordingly
 
 holor.h and holor_ref.h:
+    ☐ //WIP: finish adding the slice operation that takes a range as input
     ✔ //WIP cleanup contructor from layout and add to docs @done(22-07-06 12:37)
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
+    ☐ Add a remove singleton dimension function that removes the coordinates that have unit length
 
 layout.h:
     ✔ //WIP add transpose functions to docs @done(22-07-06 12:37)
     ☐ In the constructor from containers of lengths, use the universal reference &&
     ☐ //IMPROVE: When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This is inefficient, as confirmed by the benchmark BM_HolorSlicing. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation. 
+    ☐ Add a remove singleton dimension function that removes the coordinates that have unit length
 
 indexes.h:
     ☐ add support for ranges in decreasing order
