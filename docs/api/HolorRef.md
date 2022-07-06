@@ -390,21 +390,32 @@ The slice corresponding to the `i`-th column. This slice is a HolorRef with `N-1
     template<size_t M> requires (M<N)
     const auto slice(size_t i) const;
 ```
+3. 
+``` cpp
+    template<size_t M> requires (M<N)
+    auto slice(range range_slice)
+```
+4. 
+``` cpp
+    template<size_t M> requires (M<N)
+    const auto slice(range range_slice) const;
+```
 ##### brief
-Get the `i`-th slice of a single dimension (e.g., the fifth row or the second column)
+Slice the HolorRef along the `M`-th dimension.
 ##### template parameters
 * `M` is the dimension to be sliced. 0 is a row, 1 is a column, ...
 ##### parameters
-* `i` is the index of the slice to be taken along the `M`-th dimension.
+* `i` is the index of a single component to be taken along the `M`-th dimension.
+* `range_slice` is a range of indices to be taken along the `M`-th dimension.
 
 !!! warning
-    When slicing a dimension of the Holor an `holor::exception::HolorRuntimeError` exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.
-    
+    When slicing a dimension of the HolorRef an `holor::exception::HolorRuntimeError` exception maybe thrown if the arguments are outside the admissible range for each coordinate of the Layout. The compiler flag DDEFINE_ASSERT_LEVEL in the CMakeLists can be set to `AssertionLevel::no_checks` to exclude this check. Refer to [Exceptions](./Exceptions.html) for more details.
+
 ##### return
-The slice corresponding to the `i`-th coordinate along the `M`-th dimension. This slice is a HolorRef with `N-1` dimensions.
+A HolorRef to the slice taken along the `M`-th dimension. This slice is a HolorRef with `N-1` dimensions if it is indexed with a single index `i` (1-2), and a a HolorRef with `N` dimensions if it is indexed with a range of indices `range_slice` (3-4).
 
 !!! warning
-    Since the slice has `N-1` dimensions, this function is available only for Holor containers with `N>1`. Moreover, it must be `M<N`.
+    This function is available only for Holor containers with `N>1`. Moreover, it must be `M<N`.
 
 ## Non-Member functions
 

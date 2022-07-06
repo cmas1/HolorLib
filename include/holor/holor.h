@@ -340,11 +340,10 @@ class Holor{
         }
 
 
-        //WIP: fix comments and add to docs
         /*!
-         * \brief Access a slice of a single dimension (e.g., the fifth row or the second column)
+         * \brief Slice the Holor along a dimension and selecting a range of components from said dimension
          * \tparam M is the dimension to be sliced. 0 is a row, 1 is a column, ...
-         * \param i index of the slice alonge the `M-th` dimension
+         * \param range_slice is the range of indices to be taken along the `M-th` dimension
          * \return a reference container to the slice 
          */
         template<size_t M> requires (M<N)

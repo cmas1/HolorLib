@@ -21,7 +21,7 @@ holor_concepts.h:
     ☐ make a single HolorType (what is currently the DecaysToHolorType) and restructure the rest of the library accordingly
 
 holor.h and holor_ref.h:
-    ☐ //WIP: finish adding the slice operation that takes a range as input
+    ✔ finish adding the slice operation that takes a range as input @done(22-07-06 18:52)
     ✔ //WIP cleanup contructor from layout and add to docs @done(22-07-06 12:37)
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
     ☐ Add a remove singleton dimension function that removes the coordinates that have unit length

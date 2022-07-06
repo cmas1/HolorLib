@@ -141,8 +141,9 @@ void apply(Destination& dest, Op&& operation ){
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     CONCATENATION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-//TODO: check again and add descriptions
-
+/*!
+ * \brief Helper functions that are used to implement the concatenate operation
+ */
 namespace impl_concatenate{
     template <class Container, DecaysToHolorType First_Arg> requires (assert::IterableContainer<Container>)
     void check_lengths(Container lengths, First_Arg first_arg){

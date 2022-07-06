@@ -501,6 +501,23 @@ class HolorRef{
         }
 
 
+        /*!
+         * \brief Slice the HolorRef along a dimension and selecting a range of components from said dimension
+         * \tparam M is the dimension to be sliced. 0 is a row, 1 is a column, ...
+         * \param range_slice is the range of indices to be taken along the `M-th` dimension
+         * \return a reference container to the slice 
+         */
+        template<size_t M> requires (M<N)
+        auto slice(range range_slice){
+            return HolorRef<T, N>(data_.data(), layout_.template slice_dimension<M>(range_slice));
+        }
+
+        template<size_t M> requires (M<N)
+        const auto slice(range range_slice) const{
+            return HolorRef<T, N>(data_.data(), layout_.template slice_dimension<M>(range_slice));
+        }
+
+
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         ELEMENT ASSIGNMENT FUNCTIONS
