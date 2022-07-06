@@ -1188,15 +1188,18 @@ Holors are implemented with a <a href="https://en.wikipedia.org/wiki/Row-_and_co
 </code></pre></div></li>
 <li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">Holor</span><span class="p">(</span><span class="n">holor</span><span class="o">::</span><span class="n">nested_list</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="n">init</span><span class="p">);</span><span class="w"></span>
 </code></pre></div></li>
+<li><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">explicit</span><span class="w"> </span><span class="n">Holor</span><span class="p">(</span><span class="n">Layout</span><span class="o">&lt;</span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="n">layout</span><span class="p">);</span><span class="w"></span>
+</code></pre></div></li>
 </ol>
 <h5 id="brief">brief<a class="headerlink" href="#brief" title="Permanent link">&para;</a></h5>
-<p>Create a Holor object, either as an empty holor with 0-length dimensions (1), or initializing it from another Holor (2, 3) or HolorRef (6), or providing the lenghts (number of elements) in each dimension (4, 5), or by passing as arguments a nested list with the elements (7).</p>
+<p>Create a Holor object, either as an empty holor with 0-length dimensions (1), or initializing it from another Holor (2, 3) or HolorRef (6), or providing the lenghts (number of elements) in each dimension (4, 5), or by passing as arguments a nested list with the elements (7), or by passing a Layout and without initializing the elements (8).</p>
 <h5 id="parameters">parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h5>
 <ul>
 <li><code>holor</code>:  Holor object used to initialize the created Holor from. </li>
 <li><code>lengths</code>: number of elements per dimension (a container such as <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"></span></code> or <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"></span></code>).</li>
 <li><code>ref</code>: HolorRef object used to initialize the created Holor from.</li>
 <li><code>init</code>: nested list of the elements to be inserted in the container.</li>
+<li><code>layout</code>: a Layout object that is used to set the Layout of the Holor.</li>
 </ul>
 <h5 id="return">return<a class="headerlink" href="#return" title="Permanent link">&para;</a></h5>
 <p>A Holor container.</p>
