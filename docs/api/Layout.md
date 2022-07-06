@@ -277,6 +277,24 @@ Get the stride along a single dimension of the layout, i.e., the distance in the
 The stride of the layout along the dimension `dim`.
 
 
+#### transpose
+##### signature
+1. 
+``` cpp
+    void transpose();
+```
+2. 
+```cpp
+    template <class Container> requires assert::RSTypedContainer<Container, size_t, N>
+    void transpose(const Container& order);
+```
+##### brief
+Function that transposes the layout, i.e. that reorders the lengths and strides. The operation can simply invert the order (1) or specify a new order (2).
+##### parameters
+* `order`: an array specifying the new order for the Layout coordinates. There is no check on the feasibility of the values in `order`.
+
+<hr style="background-color:#9999ff; opacity:0.4; width:50%"> 
+
 <hr style="border:1px solid #9999ff; background-color:#9999ff; opacity:0.7"> </hr>
 
 

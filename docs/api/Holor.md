@@ -75,15 +75,20 @@ Holors are implemented with a [row-major](https://en.wikipedia.org/wiki/Row-_and
 ``` cpp
     Holor(holor::nested_list<T,N> init);
 ```
+8. 
+``` cpp
+    explicit Holor(Layout<N> layout);
+```
 
 ##### brief
-Create a Holor object, either as an empty holor with 0-length dimensions (1), or initializing it from another Holor (2, 3) or HolorRef (6), or providing the lenghts (number of elements) in each dimension (4, 5), or by passing as arguments a nested list with the elements (7).
+Create a Holor object, either as an empty holor with 0-length dimensions (1), or initializing it from another Holor (2, 3) or HolorRef (6), or providing the lenghts (number of elements) in each dimension (4, 5), or by passing as arguments a nested list with the elements (7), or by passing a Layout and without initializing the elements (8).
 
 ##### parameters
 * `holor`:  Holor object used to initialize the created Holor from. 
 * `lengths`: number of elements per dimension (a container such as `#!cpp std::vector<size_t>` or `#!cpp std::array<size_t, N>`).
 * `ref`: HolorRef object used to initialize the created Holor from.
 * `init`: nested list of the elements to be inserted in the container.
+* `layout`: a Layout object that is used to set the Layout of the Holor.
 
 ##### return
 A Holor container.

@@ -67,7 +67,7 @@ function main() {
     parse_cmdline_arguments "$@"
     cmake ${HOLOR_ROOT_PATH} ${PARSED_OPTIONS} -DCMAKE_BUILD_TYPE=Release -DHOLOR_BUILD_TESTS=OFF -DHOLOR_BUILD_BENCHMARKS=OFF -DHOLOR_BUILD_EXAMPLES=ON -DHOLOR_INSTALL_LIBRARY=OFF
     cmake --build . --target clean
-    cmake --build . --config Release
+    cmake --build . --config Release -j8
     cd ${HOLOR_ROOT_PATH}
 
     echo

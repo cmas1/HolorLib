@@ -76,6 +76,17 @@ class Holor{
         Holor& operator=(const Holor<T, N>& holor) = default;   ///< \brief default copy assignment
         ~Holor() = default;                                     ///< \brief default destructor
     
+        
+        //TODO: cleanup and add to docs
+        /*!
+         * \brief Constructor that creates a Holor by specifying its layout
+         * \param layout the memory layout
+         * \return a Holor with specified layout but without initializing its elements
+         */
+        explicit Holor(Layout<N> layout): layout_{layout}{
+            data_.resize(layout_.size());
+        }
+        
         /*!
          * \brief Constructor that creates a Holor by specifying the length of each dimension
          * \param lengths container with `N` lengths
@@ -159,6 +170,14 @@ class Holor{
             return layout_.lengths();
         }
 
+        /*!
+         * \brief Function that returns the strides of the container
+         * \return the strides of each dimension of the Holor container 
+         */
+        auto strides() const{
+            return layout_.strides();
+        }
+
 
         /*!
          * \brief Function changes the number of elements along each of the container's dimensions. This operation may destroy some elements or create new elements with unspecified values
@@ -175,7 +194,6 @@ class Holor{
             layout_.set_lengths(lengths);
             data_.resize(layout_.size());
         }
-
 
         /*!
          * \brief Function that returns the number of elements along a specific dimension of the container

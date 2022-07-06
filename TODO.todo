@@ -1,24 +1,33 @@
+documentation:
+    ☐ review all documentation
 
 holor operations (beta only):
-    ☐ Implement Broadcast op
-    ☐ Implement Gather op
-    ☐ Implement Reduce op
-    ☐ Implement Apply op
+    ✔ Implement Broadcast op @done(22-07-04 14:23)
+    ☐ Implement Concatenate op
+    ✔ Implement Reduce op @done(22-07-04 14:23)
+    ✔ Implement Apply op @done(22-07-04 14:39)
     ☐ Implement Circulate op
-    ☐ Implement Transpose op
-    ☐ Should implement an apply method? //CHECK
+    ✔ Implement Transpose op @done(22-07-06 12:22)
+    ✔ Implement Transpose_view op @done(22-07-06 12:26)
+    ☐ In broadcast add require clause to constrain OP to be a binary function
     ☐ test the broadcast function with references
     ☐ write comments on the functions
     ☐ write documentation
     ☐ add tests
     ☐ add benchmarks
+    ☐ //IMPROVE: the operations should be computed more efficiently, pipelining them.
+
+holor_concepts.h:
+    ☐ make a single HolorType (what is currently the DecaysToHolorType)
 
 holor.h and holor_ref.h:
+    ✔ //WIP cleanup contructor from layout and add to docs @done(22-07-06 12:37)
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
 
 layout.h:
+    ✔ //WIP add transpose functions to docs @done(22-07-06 12:37)
     ☐ In the constructor from containers of lengths, use the universal reference &&
-    ☐ //IMPROVEMENT!! When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This is inefficient, as confirmed by the benchmark BM_HolorSlicing. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation. 
+    ☐ //IMPROVE: When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This is inefficient, as confirmed by the benchmark BM_HolorSlicing. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation. 
 
 indexes.h:
     ☐ add support for ranges in decreasing order

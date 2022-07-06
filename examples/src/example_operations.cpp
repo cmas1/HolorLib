@@ -38,16 +38,37 @@ int main(){
     std::ranges::fill(A,1);
     std::cout << "A = " << A << "\n\n";
 
+    std::cout << "sum(A) = " << holor::reduce_all(A, 0, std::plus{}) << "\n";
+    std::cout << "mul(A) = " << holor::reduce_all(A, 1, std::multiplies{}) << "\n";
+    std::cout << "sum<0>(A) = " <<  holor::reduce<0>(A, Holor<int, 1>{0,0,0}, std::plus{}) << "\n";
+    std::cout << "sum<1>(A) = " <<  holor::reduce<1>(A, Holor<int, 1>{0,0,0, 0}, std::plus{}) << "\n\n";
+
     Holor<int, 1> B{1,2,3};
     Holor<int, 1> C{8,7,6,5};
     std::cout << "B = " << B << "\n";
     std::cout << "C = " << C << "\n";
-    
-    holor::multiply_dim<1>(A, B);
-    holor::multiply_dim<0>(A, C);
 
-
+       
+    holor::broadcast<0>(A, B, [](auto& a, auto b){return a*b;});
+    holor::broadcast<1>(A, C, std::multiplies{});
     std::cout<< "A = " << A << "\n\n";
+
+    std::cout<< "transpose(A) = " << transpose(A,std::array<size_t,2>{1,0}) << "\n";
+    auto AT = transpose_view(A);
+    std::cout<< "AT = transpose_view(A) = " << AT << "\n";
+    AT(1,2)=1212;
+    std::cout<< "AT(1,2) = 1212; A = " << A << "\n\n";
+
+    holor::broadcast_all(A, 2, std::multiplies{});
+    std::cout<< "A = " << A << "\n\n";
+
+    holor::apply(A, [](auto& a){return a/2;});
+    std::cout<< "A = " << A << "\n\n";
+
+
+    Holor<int,1> pippo{1,1,1};
+    Holor<int,2> pluto {{2,3}, {2,3}, {2,3}};
+    std::cout << "concat(pippo,pluto) = " << concat<1>(pippo,pluto) << "\n";
 
     return 0;
 }

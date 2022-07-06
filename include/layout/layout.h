@@ -274,6 +274,29 @@ class Layout{
             return strides_[dim];
         }
 
+        /*!
+         * \brief Function that inverts the lengths and strides of the layout. It is useful to perfrom transpose operations
+         */
+        void transpose(){
+            std::ranges::reverse(lengths_);
+            std::ranges::reverse(strides_);
+        }
+
+        /*!
+         * \brief Function that reorders the lengths and strides of the layout based on an input. It is useful to perfrom transpose operations
+         * \param order is a container that containes the indices of the new order of the lengths and strides. There is no check on the feasibility of its values.
+         */
+        template <class Container> requires assert::RSTypedContainer<Container, size_t, N>
+        void transpose(const Container& order){
+            std::array<size_t, N> reordered_lengths;
+            std::array<size_t, N> reordered_strides;
+            for (auto i = 0; i < N; i++){
+                reordered_lengths[i] = lengths_[order[i]];
+                reordered_strides[i] = strides_[order[i]];
+            }
+            std::copy(reordered_lengths.begin(), reordered_lengths.end(), lengths_.begin()); 
+            std::copy(reordered_strides.begin(), reordered_strides.end(), strides_.begin()); 
+        }
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             INDEXING AND SLICING
