@@ -509,12 +509,12 @@ class HolorRef{
          */
         template<size_t M> requires (M<N)
         auto slice(range range_slice){
-            return HolorRef<T, N>(data_.data(), layout_.template slice_dimension<M>(range_slice));
+            return HolorRef<T, N>(dataptr_, layout_.template slice_dimension<M>(range_slice));
         }
 
         template<size_t M> requires (M<N)
         const auto slice(range range_slice) const{
-            return HolorRef<T, N>(data_.data(), layout_.template slice_dimension<M>(range_slice));
+            return HolorRef<T, N>(dataptr_, layout_.template slice_dimension<M>(range_slice));
         }
 
 

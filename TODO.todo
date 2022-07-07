@@ -2,18 +2,9 @@ documentation:
     ☐ review all documentation
 
 holor operations (beta only):
-    ✔ Implement Broadcast op @done(22-07-04 14:23)
-    ☐ //WIP Implement Concatenate op
-    ✔ Implement Reduce op @done(22-07-04 14:23)
-    ✔ Implement Apply op @done(22-07-04 14:39)
-    ✔ Implement Circulate op @done(22-07-06 14:49)
-    ✔ Implement Transpose op @done(22-07-06 12:22)
-    ✔ Implement Transpose_view op @done(22-07-06 12:26)
-    ☐ In all operations add require clause to constrain OP to be a binary or unary function?
-    ☐ test the operations with references
-    ☐ write comments on the functions
     ☐ write documentation
     ☐ add tests
+    ☐ test the operations with references
     ☐ add benchmarks
     ☐ //IMPROVE: the operations should be computed more efficiently, pipelining them.
 
@@ -21,13 +12,10 @@ holor_concepts.h:
     ☐ make a single HolorType (what is currently the DecaysToHolorType) and restructure the rest of the library accordingly
 
 holor.h and holor_ref.h:
-    ✔ finish adding the slice operation that takes a range as input @done(22-07-06 18:52)
-    ✔ //WIP cleanup contructor from layout and add to docs @done(22-07-06 12:37)
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
     ☐ Add a remove singleton dimension function that removes the coordinates that have unit length
 
 layout.h:
-    ✔ //WIP add transpose functions to docs @done(22-07-06 12:37)
     ☐ In the constructor from containers of lengths, use the universal reference &&
     ☐ //IMPROVE: When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This is inefficient, as confirmed by the benchmark BM_HolorSlicing. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation. 
     ☐ Add a remove singleton dimension function that removes the coordinates that have unit length
@@ -41,6 +29,20 @@ New Features:
     ☐ Add layout with indices to allow slicing a container selecting disjoined elements //CHECK This can be done, but the interface with the existing layouts and holors should be consistent. Can a indexed layout only be sliced by passing indices or could it be sliced also normally?
 
 Archive:
+  ✔ Implement Broadcast op @done(22-07-04 14:23) @project(holor operations (beta only))
+  ✔ Implement Concatenate op @done(22-07-06 23:16) @project(holor operations (beta only))
+  ✔ Implement Reduce op @done(22-07-04 14:23) @project(holor operations (beta only))
+  ✔ Implement Apply op @done(22-07-04 14:39) @project(holor operations (beta only))
+  ✔ Implement Circulate op @done(22-07-06 14:49) @project(holor operations (beta only))
+  ✔ Implement Transpose op @done(22-07-06 12:22) @project(holor operations (beta only))
+  ✔ Implement Transpose_view op @done(22-07-06 12:26) @project(holor operations (beta only))
+  ✔ In all operations add require clause to constrain OP to be a binary or unary function? @done(22-07-07 10:14) @project(holor operations (beta only))
+  ✔ in all operations verify that the types of the inputs are consistent @done(22-07-07 10:15) @project(holor operations (beta only))
+  ✔ write comments on the functions @done(22-07-07 11:22) @project(holor operations (beta only))
+  ✔ write examples @done(22-07-07 11:22) @project(holor operations (beta only))
+  ✔ finish adding the slice operation that takes a range as input @done(22-07-06 18:52) @project(holor.h and holor_ref.h)
+  ✔ //WIP cleanup contructor from layout and add to docs @done(22-07-06 12:37) @project(holor.h and holor_ref.h)
+  ✔ //WIP add transpose functions to docs @done(22-07-06 12:37) @project(layout.h)
   ✔ revisit container concepts (check BSTools) @done(22-07-01 12:08) @project(static_assertions.h)
   ✘ LayoutIndexed (required by HolorRefIndexed): @cancelled(22-06-21 18:48)
   ✘ create structure with indices @cancelled(22-06-21 18:48)

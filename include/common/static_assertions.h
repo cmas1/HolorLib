@@ -188,6 +188,20 @@ namespace assert{
     };
 
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        Unary and Binary Functions
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    template <typename return_type, typename arg1_type, typename Func> 
+    concept Unaryfunction = requires (Func func, arg1_type arg1){
+        { std::invoke(std::forward<Func>(func), arg1) } -> std::same_as<return_type>;
+    };
+
+    template <typename return_type, typename arg1_type, typename arg2_type, typename Func> 
+    concept Binaryfunction = requires (Func func, arg1_type arg1, arg2_type arg2){
+        { std::invoke(std::forward<Func>(func), arg1, arg2) } -> std::same_as<return_type>;
+    };
+
+
 } //namespace assert
 
 } //namespace holor

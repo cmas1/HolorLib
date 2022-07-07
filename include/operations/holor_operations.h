@@ -38,8 +38,6 @@ namespace holor{
                                     Holor Operations
 ================================================================================================*/
 
-//TODO: add requires clauses to constrain the OPs to be a binary/unary function (depending on the use case). 
-//NOTE: for this purpose use std::is_invocable or std::is_invocable_r from <type_traits>
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     BROADCAST
@@ -54,7 +52,7 @@ namespace holor{
  * \param source_slice is the holor that is broadcasted
  * \param operation is the function that is applied to the pairs of elements from dest and source_slice
  */
-template <size_t D, HolorType Destination, HolorType Slice, class Op> requires ((D < Destination::dimensions) && (Slice::dimensions==Destination::dimensions-1) && (std::is_same_v<typename Destination::value_type, typename Slice::value_type>))
+template <size_t D, HolorType Destination, HolorType Slice, class Op> requires ((D < Destination::dimensions) && (Slice::dimensions==Destination::dimensions-1) && (std::is_same_v<typename Destination::value_type, typename Slice::value_type>) && assert::Binaryfunction<typename Destination::value_type, typename Destination::value_type, typename Slice::value_type, Op>)
 void broadcast(Destination& dest, Slice source_slice, Op&& operation ){
     assert::dynamic_assert(dest.template slice<D>(0).lengths() == source_slice.lengths(), EXCEPTION_MESSAGE("The lengths of slice to be broadcasted are not consistent with the lengths of the destination container!"));
     for( auto i = 0; i < dest.length(D); i++){
@@ -72,7 +70,7 @@ void broadcast(Destination& dest, Slice source_slice, Op&& operation ){
  * \param element is the element that is broadcasted
  * \param operation is the function that is applied to the pairs of elements
  */
-template <HolorType Destination, class ElementType, class Op> requires (std::is_same_v<typename Destination::value_type, ElementType>)
+template <HolorType Destination, class ElementType, class Op> requires ( (std::is_same_v<typename Destination::value_type, ElementType>) && assert::Binaryfunction<typename Destination::value_type, typename Destination::value_type, ElementType, Op>)
 void broadcast_all(Destination& dest, ElementType element, Op&& operation ){
     for(auto& e : dest){
         e = std::invoke(std::forward<Op>(operation), e, element);
@@ -84,7 +82,7 @@ void broadcast_all(Destination& dest, ElementType element, Op&& operation ){
                     REDUCE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 /*!
- * \brief The `reduce_all` function is an operation that takes an holor and reduces it to a single scalar value obtained by applying a unitary function to all the elements of the container.
+ * \brief The `reduce_all` function is an operation that takes an holor and reduces it to a single scalar value obtained by applying a binary function to all the elements of the container.
  * \tparam Source is the Holor container to be reduced
  * \tparam ElementType is the type of the result
  * \tparam OP is the binary function that is applied to the elements
@@ -92,7 +90,7 @@ void broadcast_all(Destination& dest, ElementType element, Op&& operation ){
  * \param result is the initial value from which the result is computed
  * \param operation is the function that is applied to the pairs of elements
  */
-template <HolorType Source, class ElementType, class Op> requires (std::is_same_v<typename Source::value_type, ElementType>)
+template <HolorType Source, class ElementType, class Op> requires ( (std::is_same_v<typename Source::value_type, ElementType>) && assert::Binaryfunction<ElementType, typename Source::value_type, ElementType, Op> )
 auto reduce_all(Source source, ElementType result, Op&& operation ){
     for(auto& e : source){
         result = std::invoke(std::forward<Op>(operation), e, result);
@@ -101,7 +99,7 @@ auto reduce_all(Source source, ElementType result, Op&& operation ){
 }
 
 /*!
- * \brief The `reduce` function is an operation that takes an holor and reduces it to a slice value obtained by applying a unitary function to all the elements of the container.
+ * \brief The `reduce` function is an operation that takes an holor and reduces it to a slice value obtained by applying a binary function to all the elements of the container.
  * \tparam D is the dimension of the source holor along which it is reduced
  * \tparam Source is the Holor container to be reduced
  * \tparam InitHolor is the type of the result
@@ -110,7 +108,7 @@ auto reduce_all(Source source, ElementType result, Op&& operation ){
  * \param result is the initial value from which the result is computed
  * \param operation is the function that is applied to the pairs of elements
  */
-template <size_t D, HolorType Source, HolorType InitHolor, class Op> requires ((D < Source::dimensions) && (InitHolor::dimensions==Source::dimensions-1) && (std::is_same_v<typename Source::value_type, typename InitHolor::value_type>))
+template <size_t D, HolorType Source, HolorType InitHolor, class Op> requires ((D < Source::dimensions) && (InitHolor::dimensions==Source::dimensions-1) && (std::is_same_v<typename Source::value_type, typename InitHolor::value_type>) && assert::Binaryfunction<typename Source::value_type, typename Source::value_type, typename InitHolor::value_type, Op>)
 auto reduce(Source source, InitHolor result, Op&& operation ){
     assert::dynamic_assert(source.template slice<D>(0).lengths() == result.lengths(), EXCEPTION_MESSAGE("The lenghts of the result container are not consistent with the dimensions of the source container!"));
     for( auto i = 0; i < source.length(D); i++){
@@ -131,7 +129,7 @@ auto reduce(Source source, InitHolor result, Op&& operation ){
  * \param dest is the holor that is modified
  * \param operation is the function that is applied to the elements in the container
  */
-template <HolorType Destination, class Op>
+template <HolorType Destination, class Op> requires assert::Unaryfunction<typename Destination::value_type, typename Destination::value_type, Op>
 void apply(Destination& dest, Op&& operation ){
     std::ranges::transform(dest, dest.begin(), std::forward<Op>(operation));
 }
@@ -145,6 +143,9 @@ void apply(Destination& dest, Op&& operation ){
  * \brief Helper functions that are used to implement the concatenate operation
  */
 namespace impl_concatenate{
+    /*!
+     *\brief helper function to verify that the arguments of the concatenate function have consistent dimensions and lengths
+     */
     template <class Container, DecaysToHolorType First_Arg> requires (assert::IterableContainer<Container>)
     void check_lengths(Container lengths, First_Arg first_arg){
         static_assert(std::is_same_v<decltype(lengths), decltype(first_arg.lengths())>, "The arguments of the concatenation have different dimensions!" );
@@ -162,6 +163,9 @@ namespace impl_concatenate{
         check_lengths(lengths, std::forward<Args>(args)...);
     }
 
+    /*!
+     *\brief helper function to verify that the arguments of the concatenate function have consistent type
+     */
     template<typename T, DecaysToHolorType First_Arg>
     void check_type(First_Arg arg){
         static_assert(std::is_same_v<T, typename std::decay_t<First_Arg>::value_type>, "The arguments of the concatenation have inconsistent value_type");
@@ -173,6 +177,9 @@ namespace impl_concatenate{
         check_type<T>(std::forward<Args>(args)...);
     }
 
+    /*!
+     *\brief helper function to verify that the arguments of the concatenate function are consistent and to initialize the result Holor
+     */
     template <size_t Dim, DecaysToHolorType First_Arg, DecaysToHolorType... Args>
     auto check_args(First_Arg first_arg, Args&&... args){
         auto lengths = first_arg.lengths();
@@ -184,6 +191,9 @@ namespace impl_concatenate{
         return Holor<typename First_Arg::value_type, First_Arg::dimensions> (lengths);
     }
 
+    /*!
+     *\brief helper function to iterate through all the arguments and concatenate them
+     */
     template <size_t Dim, size_t M, DecaysToHolorType Result, DecaysToHolorType First_Arg>
     void do_concatenation(Result& result, First_Arg first_arg){
         auto length = first_arg.length(Dim);
@@ -200,6 +210,12 @@ namespace impl_concatenate{
     }
 }
 
+/*!
+ * \brief function that takes as input a sequence of Holor containers all with the same number of dimensions, lengths and value type, and concatenates them along a dimension
+ * \tparam Dim is the direction where the Holors are concatenated. It must be `0 <= Dim < N` where `N` is the number of dimensions of the input Holors.
+ * \param args the Holors to be concatenated passed as a parameter pack
+ * \return a new Holor that concatenates all the input ones
+ */
 template <size_t Dim, DecaysToHolorType... Args> requires (sizeof...(Args)>=2)
 auto concatenate(Args&&... args){
     auto result = impl_concatenate::check_args<Dim>(std::forward<Args>(args)...);
@@ -270,7 +286,11 @@ auto shift(Source source, int n){
     Holor<typename Source::value_type, Source::dimensions> result(source.layout());
     for (int i = 0; i < length; i++){
         auto source_slice = source.template slice<Dim>(i);
-        auto result_slice = result.template slice<Dim>(std::abs((i+n)%length));
+        int shift = (i+n)%length;
+        if (shift<0){
+            shift += length;
+        }
+        auto result_slice = result.template slice<Dim>(shift);
         result_slice.substitute(source_slice);
     }
     return result;
