@@ -29,6 +29,7 @@ New Features:
     ☐ Add layout with indices to allow slicing a container selecting disjoined elements //CHECK This can be done, but the interface with the existing layouts and holors should be consistent. Can a indexed layout only be sliced by passing indices or could it be sliced also normally?
 
 Archive:
+  ✔ add permutation operation @done(22-07-13 09:39) @project(holor operations (beta only))
   ✔ Implement Broadcast op @done(22-07-04 14:23) @project(holor operations (beta only))
   ✔ Implement Concatenate op @done(22-07-06 23:16) @project(holor operations (beta only))
   ✔ Implement Reduce op @done(22-07-04 14:23) @project(holor operations (beta only))
