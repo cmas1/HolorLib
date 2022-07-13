@@ -150,5 +150,19 @@ int main(){
     std::cout<< "This yields \033[32m DE_hor : " << DE_hor << "\033[0m\n\n";
 
 
+
+    /*
+     * 7) Permutation operation. The permutation function allows to swap the content of a Holor along a certain dimension
+     */
+    std::cout << "\n\033[33m Example 7): Permutation\033[0m\nThe permutation function swaps the content of a Holor along a certain dimension. the components to be swapped must be either specified as a pair (pairwise permutation) or listing the indices of all the components in the dimension\n";
+    std::cout << "To demonstrate this function, let's try and perform a permutation on DE_hor:\n";
+    std::cout<< "\033[32m DE_hor : " << DE_hor << "\033[0m\n";
+    std::cout << "Now, let's swap the second and last columns by doing \033[32m auto DE_hor_perm = permutation_pair<1>(DE_hor,1,3); \033[0m\n";
+    auto DE_hor_perm = permutation_pair<1>(DE_hor,1,3);
+    std::cout<< "This yields \033[32m DE_hor_perm : " << DE_hor_perm << "\033[0m\n\n";
+    std::cout << "Now, let's swap all the columns of DE_hor_perm by doing \033[32m auto DE_hor_perm2 = permutation_pair<1>(DE_hor_perm, std::array<size_t,4>{1,0,3,2}); \033[0m\n";
+    auto DE_hor_perm2 = permutation<1>(DE_hor_perm, std::array<size_t,4>{1,0,3,2});
+    std::cout<< "This yields \033[32m DE_hor_perm2 : " << DE_hor_perm2 << "\033[0m\n\n";
+
     return 0;
 }

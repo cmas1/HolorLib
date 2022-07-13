@@ -297,6 +297,41 @@ auto shift(Source source, int n){
 }
 
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    PERMUTATION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/*!
+ * \brief The `permutation` and `permutation_pair` functions implement an operation that swaps selected components of a Holor container along a direction. The function does not modify the original Holor, but returns a new one.
+ * \tparam Dim is the direction along which the components to be swapped are selected (e.g. when Dim = 0 the permutation is done on rows, when Dim = 1 the permutation is done on columns, etc.)
+ * \param source is the holor which is permuted.
+ * \param n1 is the index of the first component to be swapped in a pairwise permutation
+ * \param n2 is the index of the second component to be swapped in a pairwise permutation
+ * \param order is a container with the indices of the components along the selected dimension. For example {3, 0, 2, 1} means that the result of trhe permutation is a new Holor that along the selected dimension presents the components of the initial Holor taken in the order of these indices.
+ * \return a new Holor that is the result of the permutation operation
+ */
+template <size_t Dim, HolorType Source, class Container> requires (assert::TypedContainer<Container, size_t> && (Dim < Source::dimensions))
+auto permutation(Source& source, Container order){
+    Holor<typename Source::value_type, Source::dimensions> result(source);
+    assert::dynamic_assert(order.size() == source.length(Dim), EXCEPTION_MESSAGE("The indices of the permutation do not match the length of the container!"));
+    for (auto i =0; i < source.length(Dim); i++){
+        auto result_slice = result.template slice<Dim>(i);  
+        result_slice.substitute(source.template slice<Dim>(order[i]));
+    }
+    return result;
+}
+
+template <size_t Dim, HolorType Source> requires (Dim < Source::dimensions)
+auto permutation_pair(Source& source, size_t n1, size_t n2){
+    Holor<typename Source::value_type, Source::dimensions> result(source);
+    auto result_slice1 = result.template slice<Dim>(n1);
+    auto result_slice2 = result.template slice<Dim>(n2);
+    result_slice1.substitute(source.template slice<Dim>(n2));
+    result_slice2.substitute(source.template slice<Dim>(n1));
+    return result;
+}
+
+
 } //namespace holor
 
 #endif // HOLOR_OPERATIONS_H
