@@ -1,10 +1,6 @@
 documentation:
     ☐ review all documentation
 
-circular slicing:
-    ☐ //WIP: implement LayoutCircular (similar to Layout, with divided offests and a different indexing function). What about slicing?
-    ☐ implement a HolorRefCircular
-    ☐ implement a slice_circular function in Holor and HolorRef
 
 holor operations (beta only):
     ☐ write documentation
