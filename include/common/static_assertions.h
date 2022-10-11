@@ -26,6 +26,7 @@
 #define HOLOR_STATIC_ASSERTIONS_H
 
 #include <type_traits>
+#include <functional>
 #include <iostream>
 
 

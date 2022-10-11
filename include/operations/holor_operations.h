@@ -300,28 +300,28 @@ auto shift(Source source, int n){
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 CIRCULAR SLICE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-//NOTE: this function is a temporary workaround to the implementation of more general Holors that i) allow circular access to their elements (using a circular layout), and ii) can be indexed by passing a list of indices
-//WIP <><><><><><><><><><><><><><><><><><><><><><>
-/*!
- * \brief The `shift` function is an operation that shifts the content of a Holor along a certain direction
- * \param source is the holor that is sliced circularly
- * \param n indicates how many places the content should be shifted
- * \return a new Holor that is equal to the original one but shifted
- */
-template <HolorType Source, class ContainerOffsets, class ContainerLengths> requires ((assert::TypedContainer<ContainerOffsets, size_t>) && (assert::TypedContainer<ContainerLengths, size_t>))
-auto circular_slice(Source source, ContainerOffsets offsets, ContainerLengths lengths){
-    Holor<typename Source::value_type, Source::dimensions> result(Layout<Source::dimensions>(lengths));
-    for (int i = 0; i < length; i++){
-        auto source_slice = source.template slice<Dim>(i);
-        int shift = (i+n)%length;
-        if (shift<0){
-            shift += length;
-        }
-        auto result_slice = result.template slice<Dim>(shift);
-        result_slice.substitute(source_slice);
-    }
-    return result;
-}
+// //NOTE: this function is a temporary workaround to the implementation of more general Holors that i) allow circular access to their elements (using a circular layout), and ii) can be indexed by passing a list of indices
+// //WIP <><><><><><><><><><><><><><><><><><><><><><>
+// /*!
+//  * \brief The `shift` function is an operation that shifts the content of a Holor along a certain direction
+//  * \param source is the holor that is sliced circularly
+//  * \param n indicates how many places the content should be shifted
+//  * \return a new Holor that is equal to the original one but shifted
+//  */
+// template <HolorType Source, class ContainerOffsets, class ContainerLengths> requires ((assert::TypedContainer<ContainerOffsets, size_t>) && (assert::TypedContainer<ContainerLengths, size_t>))
+// auto circular_slice(Source source, ContainerOffsets offsets, ContainerLengths lengths){
+//     Holor<typename Source::value_type, Source::dimensions> result(Layout<Source::dimensions>(lengths));
+//     for (int i = 0; i < lengths; i++){
+//         auto source_slice = source.template slice<Dim>(i);
+//         int shift = (i+n)%lengths;
+//         if (shift<0){
+//             shift += lengths;
+//         }
+//         auto result_slice = result.template slice<Dim>(shift);
+//         result_slice.substitute(source_slice);
+//     }
+//     return result;
+// }
 
 
 
