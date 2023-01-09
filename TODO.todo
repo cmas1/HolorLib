@@ -1,3 +1,6 @@
+cmake and compilation:
+    ☐ //TODO: on MacOS, suing the latest Xcode version, the code does not compile because ranges are not yet supported by Apple Clang. As a temporary workaround, we qare using the LLVM Clang version on macOS, and we specify in the cmakelists to use the -fexperimental-library compiler flag if on apple. this check is a temporary workaround and should be improved, checking also the compiler version.
+
 documentation:
     ☐ update the installation page to use the provide scripts
     ☐ review all documentation
