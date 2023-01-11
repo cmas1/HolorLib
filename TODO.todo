@@ -6,12 +6,17 @@ documentation:
     ☐ review all documentation
 
 holor operations:
-    ☐ //WIP operation Circular slice now commented
+    ☐ //WIP remove operation Circular slice
     ☐ write documentation
     ☐ add tests
     ☐ test the operations with references
     ☐ add benchmarks
     ☐ //IMPROVE: the operations should be computed more efficiently, pipelining them.
+
+circular slices:
+    ☐ //TODO create a circular layout, which cannot be indexed with a slicing operation
+    ☐ there must be a Layout Type for normal and circular layouts
+    ☐ add in Holor and HolorRef the possibility to slice circularly, but the obtained slice cannot be further sliced (circularly).
 
 holor_concepts.h:
     ☐ make a single HolorType (what is currently the DecaysToHolorType) and restructure the rest of the library accordingly

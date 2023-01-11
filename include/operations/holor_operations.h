@@ -300,6 +300,7 @@ auto shift(Source source, int n){
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 CIRCULAR SLICE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+// FIXME: slicing the holors should not be an operation. This op should be removed
 // //NOTE: this function is a temporary workaround to the implementation of more general Holors that i) allow circular access to their elements (using a circular layout), and ii) can be indexed by passing a list of indices
 // //WIP <><><><><><><><><><><><><><><><><><><><><><>
 // /*!
@@ -323,7 +324,8 @@ auto shift(Source source, int n){
 //     return result;
 // }
 
-
+// 1) For each dimension in the holor, shift it if necessary (i.e. only if that dimension is sliced with a range where range.start>range.end )
+// 2) Index the shifted range with the indexes. Note that for the shifted dimensions, the range index should also be shifted
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     PERMUTATION
