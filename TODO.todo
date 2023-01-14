@@ -6,15 +6,14 @@ documentation:
     ☐ review all documentation
 
 circular slice:
-    ☐ create a circular Layout that allows to circularly take a slice, but which cannot be indexed using ranges (i.r. it cannot be further sliced)
-    ☐ Update the layout concepts: a layout Type can be one of two concepts, a sliceable layout (like a normal layout) or a circular layout (not sliceable)
+    ☐ //WIP create a circular Layout that allows to circularly take a slice, but which cannot be indexed using ranges (i.r. it cannot be further sliced)
+    ☐ Update the layout concepts: a layout Type can be one of two concepts, a sliceable layout (like a normal layout) or a circular layout (not sliceable). Perhaps differentiate the LayoutTypeTag in layout_concepts.h
     ☐ Update the other files that use layouts concepts, to use a sliceable laayout concept
     ☐ create a circular holor view (only a view), which cannot be sliced
     ☐ modify Holor and HolorRef to allow them to be circularly sliced, in which case they return a circular holor view
     ☐ update holor concepts
 
 holor operations:
-    ☐ //FIXME remove operation Circular Slice
     ☐ write documentation
     ☐ add tests
     ☐ test the operations with references
@@ -42,6 +41,7 @@ New Features:
     ☐ Add layout with indices to allow slicing a container selecting disjoined elements //CHECK This can be done, but the interface with the existing layouts and holors should be consistent. Can a indexed layout only be sliced by passing indices or could it be sliced also normally?
 
 Archive:
+  ✔ //FIXME remove operation Circular Slice @done(23-01-14 09:32) @project(holor operations)
   ✔ add permutation operation @done(22-07-13 09:39) @project(holor operations (beta only))
   ✔ Implement Broadcast op @done(22-07-04 14:23) @project(holor operations (beta only))
   ✔ Implement Concatenate op @done(22-07-06 23:16) @project(holor operations (beta only))
