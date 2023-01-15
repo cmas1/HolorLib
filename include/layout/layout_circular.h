@@ -34,6 +34,7 @@
 
 #include "../indexes/indexes.h"
 #include "./layout_concepts.h"
+#include "./layout.h"
 #include "../common/static_assertions.h"
 #include "../common/runtime_assertions.h"
 
@@ -75,7 +76,6 @@ class LayoutCircular{
         using layout_type = holor::impl::LayoutTypeTag; ///<!  \brief tags a Layout type
         
 
-        //TODO: check again the constructors after the indexing function has been reviewed. Indexing with a circular layout  requires storing some info from the originally sliced layout, and they must be passed to the constructor (or the original Layout may be passed)
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 CONSTRUCTORS, ASSIGNMENTS AND DESTRUCTOR
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/ 
@@ -89,34 +89,46 @@ class LayoutCircular{
         LayoutCircular(LayoutCircular<N>&& layout) = default;                       ///< \brief default move constructor
         LayoutCircular<N>& operator=(LayoutCircular<N>&& layout) = default;         ///< \brief default move assignment
 
+
         /*!
-         * \brief Constructor of a layout from a container of `N` elements specifying the lengths of the Layout
+         * \brief Constructor of a layout from containers of `N` elements specifying the lengths of the LayoutCircular as well as the strides, offsets and lengths of the original Layout
          * \param lengths container of the number of elements along each dimension of the layout
-         * \return a Layout
+         * \param strides container of the strides along each dimension of the layout
+         * \param offsets container of the offsets along each dimension of the layout
+         * \param lengthsOG container of the number of elements along each dimension of the sliced (original) layout
+         * \return a LayoutCircular
          */
         template <class Container> requires assert::RSTypedContainer<Container, size_t, N>
-        explicit LayoutCircular(const Container& lengths) {
+        explicit LayoutCircular(const Container& lengths, const Container& strides, const Container& offsets, const Container& lengthsOG) {
             if constexpr(assert::ResizeableContainer<Container>){
                 assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
             }
-            //TODO: it isn't a single offset anymore
-            offset_ = 0;
-            std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
-            update_strides_size();
+            std::copy(lengths.begin(), lengths.end(), lengths_.begin());
+            std::copy(strides.begin(), strides.end(), strides_.begin());
+            std::copy(offsets.begin(), offsets.end(), offsets_.begin());
+            std::copy(lengthsOG.begin(), lengthsOG.end(), lengthsOG_.begin());
+            size_ = std::accumulate(lengths_.begin(), lengths_.end(), 1, std::multiplies<size_t>());
         };
 
         /*!
-         * \brief Constructor from a variadic template of lengths. For example, `Layout<N> my_layout(5,2)` creates a Layout for a container with 5 elements in the first dimension and 2 elements in the second dimension.
-         * \tparam Lengths parameter pack of lengths. There must be `N` arguments in the pack.   
-         * \param lengths variadic arguments denoting the number of elements along each dimension of the container.
-         * \return a Layout
+         * \brief Constructor of a layout from containers of `N` elements specifying the lengths of the LayoutCircular as well as the strides, offsets and lengths of the original Layout
+         * \param lengths container of the number of elements along each dimension of the layout
+         * \param strides container of the strides along each dimension of the layout
+         * \param offsets container of the offsets along each dimension of the layout
+         * \param lengthsOG container of the number of elements along each dimension of the sliced (original) layout
+         * \return a LayoutCircular
          */
-        template<typename... Lengths> requires ((sizeof...(Lengths)==N) && (assert::all(std::is_convertible_v<Lengths,size_t>...)) )
-        explicit LayoutCircular(Lengths&&... lengths) {
-            offset_ = 0;
-            single_length_copy<0>(std::forward<Lengths>(lengths)...);
-            update_strides_size();
-        }
+        template <class Container> requires assert::RSTypedContainer<Container, size_t, N>
+        explicit LayoutCircular(const Container& lengths, const Container& offsets, const Layout<N>& layoutOG) {
+            if constexpr(assert::ResizeableContainer<Container>){
+                assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
+            }
+            std::copy(lengths.begin(), lengths.end(), lengths_.begin());
+            std::copy(offsets.begin(), offsets.end(), offsets_.begin());
+            std::ranges::copy(layoutOG.strides(), strides_.begin());
+            std::ranges::copy(layoutOG.lengths(), lengthsOG_.begin());
+            size_ = std::accumulate(lengths_.begin(), lengths_.end(), 1, std::multiplies<size_t>());
+        };
 
 
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -152,18 +164,14 @@ class LayoutCircular{
             return size_;
         }
 
-        //TODO: modify to acount for the fact that it is not a singlew offset anymore
         /*!
-         * \brief Get the offset of the layout. This is a const function.
-         * \return the offset (with respect to the layout Holor container) of the layout
+         * \brief Get the offsets of the layout. This is a const function.
+         * \return the offsets (with respect to the layout Holor container) of the layout
          */
-        size_t offset() const{
-            return offset_;
+        std::array<size_t,N> offsets() const{
+            return offsets_;
         }
         
-
-        //TODO add get function for lengthsOG
-
         /*!
          * \brief Get the lengths of the layout. This is a const function.
          * \return the lengths (number of elements per dimension) of the layout
@@ -172,24 +180,12 @@ class LayoutCircular{
             return lengths_;
         }
 
-        //TODO: is set_lengths needed?
         /*!
-         * \brief Function changes the number of elements along each of the container's dimensions. This operation may destroy some elements or create new elements with unspecified values
-         * \param lengths the lengths of each dimension of the Holor container 
+         * \brief Get the lengths of the original (sliced) layout. This is a const function.
+         * \return the lengths (number of elements per dimension) of the originally sliced layout
          */
-        template<typename... Lengths> requires ((sizeof...(Lengths)==N) && (assert::all(std::is_convertible_v<Lengths,size_t>...)) )
-        void set_lengths(Lengths&&... lengths) {
-            single_length_copy<0>(std::forward<Lengths>(lengths)...);
-            update_strides_size();
-        }
-
-        template <class Container> requires assert::RSTypedContainer<Container, size_t, N>
-        void set_lengths(const Container& lengths){
-            if constexpr(assert::ResizeableContainer<Container>){
-                assert::dynamic_assert(lengths.size()==N, EXCEPTION_MESSAGE("Wrong number of elements!"));
-            }
-            std::copy(lengths.begin(), lengths.end(), lengths_.begin()); 
-            update_strides_size();
+        std::array<size_t,N> lengthsOG() const{
+            return lengthsOG_;
         }
 
         /*!
@@ -199,19 +195,6 @@ class LayoutCircular{
          */
         auto length(size_t dim) const{
             return lengths_[dim];
-        }
-
-        //TODO: is set_length needed?
-        /*!
-         * \brief Function changes the number of elements along a single dimension of the container. This operation may destroy some elements or create new elements with unspecified values
-         * \param dim the dimension to modify
-         * \param length the new length of the dimension
-         */
-        void set_length(size_t dim, size_t length){
-            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(length>0, EXCEPTION_MESSAGE("Zero length is not allowed!"));
-            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(dim>=0 && dim <N, EXCEPTION_MESSAGE("Invalid dimension!"));
-            lengths_[dim] = length;
-            update_strides_size();
         }
 
         /*!
@@ -230,6 +213,7 @@ class LayoutCircular{
             return strides_[dim];
         }
 
+        //TODO: not sure that the transpose operation is needed for this layout
         /*!
          * \brief Function that inverts the lengths and strides of the layout. It is useful to perfrom transpose operations
          */
@@ -257,7 +241,6 @@ class LayoutCircular{
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             INDEXING AND SLICING
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        //TODO: change th implementation of the indexing function, following the notes
         /*!
          * \brief Function for indexing a single element from the Layout
          * \tparam Dims are the types of the parameter pack. Dims must e a pack of `N` parameters, each indexing a single element along a dimension of the Layout
@@ -270,7 +253,6 @@ class LayoutCircular{
             return offset_ + single_element_indexing_helper<0>(std::forward<Dims>(dims)...);
         }
 
-        //TODO: change th implementation of the indexing function, following the notes
         /*!
          * \brief Function for indexing a single element from the Layout given a container of indices
          * \tparam Container is a container (resizeable or with a fixed size) of SingleIndex type
@@ -284,7 +266,7 @@ class LayoutCircular{
             }
             auto result = offset_;
             for (auto cnt = 0; cnt<N; cnt++){
-                result += dims[cnt]*strides_[cnt];
+                result += (offsets_[cnt] + dims[cnt] * strides_[cnt]) % lengthsOG[cnt];
             }
             return result;
         }
@@ -315,18 +297,6 @@ class LayoutCircular{
         std::array<size_t,N> strides_; /*! distance between consecutive elements in each dimension */
         size_t size_; /*! total number of elements of the layout */
 
-        //TODO: check if this is needed, depending on how this layout is constructed
-        /*!
-         * \brief Computes and sets the strides and total size of the Layout based on its lengths
-         */
-        void update_strides_size(){
-            size_ = 1;
-            for(int i = N-1; i>=0; --i){
-                strides_[i] = size_;
-                size_ *= lengths_[i];
-            }
-        }
-
         /*!
          * \brief Helper recursive template function that is used to index a single element of the layout. It uses a variadic template, where the indices for each dimension of the layout are unwind one at a time
          * \tparam M dimension to be indexed by the `FirstArg`
@@ -347,30 +317,6 @@ class LayoutCircular{
             assert::dynamic_assert(first>=0 && first<lengths_[M], EXCEPTION_MESSAGE("holor::Layout - Tried to index invalid element.") );
             return (offsets_[M] + first * strides_[M]) % lengthsOG[M];
         }
-
-        
-        //TODO: check if this is needed
-        /*!
-         * \brief Helper recursive template function that is used to construct a Layout from a parameter pack of sizes that specify the number of elements along each dimension
-         * \tparam M unsigned integer used to unpack the parameter pack, one element at a time, and copy into `lenghts_`
-         * \tparam FirstLength first element of the parameter pack
-         * \tparam OtherLengths remaining elements of the parameter pack
-         * \param arg is the first dimension in the parameter pack
-         * \param other remaining dimensions in the parameter pack
-         */
-        template<size_t M, typename FirstLength, typename... OtherLengths> requires (std::convertible_to<FirstLength, size_t>)
-        void single_length_copy(FirstLength arg, OtherLengths&&... other){
-            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(arg>0, EXCEPTION_MESSAGE("Zero length is not allowed!"));
-            lengths_[M] = arg;
-            single_length_copy<M+1>(std::forward<OtherLengths>(other)...);
-        }
-
-        template<size_t M, typename FirstLength> requires (std::convertible_to<FirstLength, size_t>)
-        void single_length_copy(FirstLength arg){
-            assert::dynamic_assert<assert::assertion_level(assert::AssertionLevel::release), exception::HolorInvalidArgument>(arg>0, EXCEPTION_MESSAGE("Zero length is not allowed!"));
-            lengths_[M] = arg;
-        }
-
 
 }; //class Layout
 

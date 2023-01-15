@@ -9,6 +9,7 @@ circular slice:
     ☐ //WIP create a circular Layout that allows to circularly take a slice, but which cannot be indexed using ranges (i.r. it cannot be further sliced)
     ☐ Update the layout concepts: a layout Type can be one of two concepts, a sliceable layout (like a normal layout) or a circular layout (not sliceable). Perhaps differentiate the LayoutTypeTag in layout_concepts.h
     ☐ Update the other files that use layouts concepts, to use a sliceable laayout concept
+    ☐ modify Layout to return a LayoutCircular when sliced with a inverted range
     ☐ create a circular holor view (only a view), which cannot be sliced
     ☐ modify Holor and HolorRef to allow them to be circularly sliced, in which case they return a circular holor view
     ☐ update holor concepts
