@@ -298,36 +298,6 @@ auto shift(Source source, int n){
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                CIRCULAR SLICE
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-// FIXME: slicing the holors should not be an operation. This op should be removed
-// //NOTE: this function is a temporary workaround to the implementation of more general Holors that i) allow circular access to their elements (using a circular layout), and ii) can be indexed by passing a list of indices
-// //WIP <><><><><><><><><><><><><><><><><><><><><><>
-// /*!
-//  * \brief The `shift` function is an operation that shifts the content of a Holor along a certain direction
-//  * \param source is the holor that is sliced circularly
-//  * \param n indicates how many places the content should be shifted
-//  * \return a new Holor that is equal to the original one but shifted
-//  */
-// template <HolorType Source, class ContainerOffsets, class ContainerLengths> requires ((assert::TypedContainer<ContainerOffsets, size_t>) && (assert::TypedContainer<ContainerLengths, size_t>))
-// auto circular_slice(Source source, ContainerOffsets offsets, ContainerLengths lengths){
-//     Holor<typename Source::value_type, Source::dimensions> result(Layout<Source::dimensions>(lengths));
-//     for (int i = 0; i < lengths; i++){
-//         auto source_slice = source.template slice<Dim>(i);
-//         int shift = (i+n)%lengths;
-//         if (shift<0){
-//             shift += lengths;
-//         }
-//         auto result_slice = result.template slice<Dim>(shift);
-//         result_slice.substitute(source_slice);
-//     }
-//     return result;
-// }
-
-// 1) For each dimension in the holor, shift it if necessary (i.e. only if that dimension is sliced with a range where range.start>range.end )
-// 2) Index the shifted range with the indexes. Note that for the shifted dimensions, the range index should also be shifted
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     PERMUTATION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
