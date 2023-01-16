@@ -5,18 +5,21 @@ documentation:
     ☐ update the installation page to use the provide scripts
     ☐ review all documentation
 
+circular slice:
+    ☐ //WIP create a circular Layout that allows to circularly take a slice, but which cannot be indexed using ranges (i.r. it cannot be further sliced)
+    ☐ Update the layout concepts: a layout Type can be one of two concepts, a sliceable layout (like a normal layout) or a circular layout (not sliceable). Perhaps differentiate the LayoutTypeTag in layout_concepts.h
+    ☐ Update the other files that use layouts concepts, to use a sliceable laayout concept
+    ☐ modify Layout to return a LayoutCircular when sliced with a inverted range
+    ☐ create a circular holor view (only a view), which cannot be sliced
+    ☐ modify Holor and HolorRef to allow them to be circularly sliced, in which case they return a circular holor view
+    ☐ update holor concepts
+
 holor operations:
-    ☐ //WIP remove operation Circular slice
     ☐ write documentation
     ☐ add tests
     ☐ test the operations with references
     ☐ add benchmarks
     ☐ //IMPROVE: the operations should be computed more efficiently, pipelining them.
-
-circular slices:
-    ☐ //TODO create a circular layout, which cannot be indexed with a slicing operation
-    ☐ there must be a Layout Type for normal and circular layouts
-    ☐ add in Holor and HolorRef the possibility to slice circularly, but the obtained slice cannot be further sliced (circularly).
 
 holor_concepts.h:
     ☐ make a single HolorType (what is currently the DecaysToHolorType) and restructure the rest of the library accordingly
@@ -24,7 +27,7 @@ holor_concepts.h:
 holor.h and holor_ref.h:
     ☐ Layout has a function slice_unreduced, to slice a Layout without removing its singleton dimensions. However, its counterpart is not present in Holor or HolorRef. We should add to them a slice_unreduced command that uses internally the layout::slice_unreduced.
     ☐ Add a remove singleton dimension function that removes the coordinates that have unit length
-
+    
 layout.h:
     ☐ In the constructor from containers of lengths, use the universal reference &&
     ☐ //IMPROVE: When slicing a Layout in slice_dimension, each step of the recursion returns a subLayout. This is inefficient, as confirmed by the benchmark BM_HolorSlicing. Is it possible to avoid the creation of all these intermediate objects, perhaps using Coroutines? Additionally, the slicing of the arrays of lengths and strides that are inside the Layout to be sliced could be done with ranges, which support lazy evaluation. 
@@ -39,6 +42,7 @@ New Features:
     ☐ Add layout with indices to allow slicing a container selecting disjoined elements //CHECK This can be done, but the interface with the existing layouts and holors should be consistent. Can a indexed layout only be sliced by passing indices or could it be sliced also normally?
 
 Archive:
+  ✔ //FIXME remove operation Circular Slice @done(23-01-14 09:32) @project(holor operations)
   ✔ add permutation operation @done(22-07-13 09:39) @project(holor operations (beta only))
   ✔ Implement Broadcast op @done(22-07-04 14:23) @project(holor operations (beta only))
   ✔ Implement Concatenate op @done(22-07-06 23:16) @project(holor operations (beta only))
