@@ -22,10 +22,6 @@ set(HOLOR_CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# //FIXME: temporary hack to compile on macOs using LLVM clang 15
-if(APPLE)
-    add_compile_options(-fexperimental-library)
-endif()
 #====================================================
 #               BUILD TYPE
 #====================================================
